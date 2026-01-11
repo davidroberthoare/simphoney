@@ -1,108 +1,26 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <title>SimPhone — Setup</title>
-  <link rel="stylesheet" href="https://unpkg.com/framework7/framework7-bundle.min.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="/2196f3">
+  <title>SymPhoney</title>
+  <link rel="stylesheet" href="https://unpkg.com/framework7@9.0.2/framework7-bundle.min.css">
   <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
 
+  <!-- App root element -->
   <div id="app">
-    <!-- Setup Mode -->
-    <div id="setup" class="view">
-      <div class="page">
-        <div class="page-content">
-          <h1>SimPhone — Setup</h1>
-          <div class="tabs">
-            <div class="tab-nav">
-              <a href="#" id="tabDesignBtn" class="tab-btn active">Design</a>
-              <a href="#" id="tabSettingsBtn" class="tab-btn">Settings</a>
-            </div>
-            <div id="tabDesign" class="tab-panel">
-              <form id="notifyForm">
-                <div class="list">
-                  <label>Sender</label>
-                  <input id="sender" type="text" placeholder="Sender name" required>
-                  <label>Message</label>
-                  <textarea id="message" rows="3" placeholder="Notification message" required></textarea>
-                  <label>Icon (optional)</label>
-                  <input id="iconFile" type="file" accept="image/*">
-                </div>
-                <div>
-                  <button id="saveBtn" type="button">Save Notification</button>
-                  <button id="playBtn" type="button">Play Last</button>
-                </div>
-              </form>
-
-              <h2>Saved Notifications</h2>
-              <div id="list"></div>
-            </div>
-
-            <div id="tabSettings" class="tab-panel hidden">
-              <h2>Global Settings</h2>
-              <form id="settingsForm">
-                <label>Playback background</label>
-                <div>
-                  <label><input type="radio" name="bgType" value="locked" checked> Locked (image)</label>
-                  <label><input type="radio" name="bgType" value="webpage"> Webpage (URL)</label>
-                </div>
-                <div id="bgLocked">
-                  <label>Background image (optional)</label>
-                  <input id="bgImageFile" type="file" accept="image/*">
-                  <label>Background color</label>
-                  <input id="bgColor" type="color" value="#000000">
-                </div>
-                <div id="bgWebpage" class="hidden">
-                  <label>Webpage URL</label>
-                  <input id="bgUrl" type="url" placeholder="https://example.com">
-                </div>
-
-                <label>Platform</label>
-                <select id="platformSelect">
-                  <option value="android">Android</option>
-                  <option value="ios">iOS</option>
-                </select>
-
-                <label>Theme</label>
-                <select id="themeSelect">
-                  <option value="light">Light</option>
-                  <option value="dark">Dark</option>
-                </select>
-
-                <div style="margin-top:12px;">
-                  <button id="saveSettingsBtn" type="button">Save Settings</button>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Playback Mode -->
-    <div id="playback" class="view hidden">
-      <div class="phone-frame">
-        <div class="status-bar">SimPhone</div>
-        <div id="phoneScreen" class="phone-screen">
-          <iframe id="bgIframe" class="bg-iframe hidden" sandbox="allow-same-origin allow-scripts"></iframe>
-          <div id="bgOverlay" class="bg-overlay"></div>
-          <div class="home">Playback mode — tap the notification when it appears.</div>
-        </div>
-      </div>
-      <div id="notificationPopup" class="notification hidden" role="dialog" aria-live="polite">
-        <img id="popupIcon" src="" alt="" class="popup-icon">
-        <div class="popup-text">
-          <div id="popupSender" class="popup-sender"></div>
-          <div id="popupMessage" class="popup-message"></div>
-        </div>
-      </div>
-      <button id="backHotspot" class="hotspot" title="Back to setup" aria-hidden="true"></button>
-    </div>
+    <!-- Main view -->
+    <div class="view view-main view-init" data-url="/"></div>
   </div>
 
-  <script src="https://unpkg.com/framework7/framework7-bundle.min.js"></script>
+  <script src="https://unpkg.com/framework7@9.0.2/framework7-bundle.min.js"></script>
   <script src="app.js"></script>
 </body>
+
 </html>

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'simphone-v1';
+const CACHE_NAME = 'simphoney_v1';
 const ASSETS = [
   './', './index.html', './styles.css', './app.js', './manifest.json',
   'https://unpkg.com/framework7/framework7-bundle.min.css',

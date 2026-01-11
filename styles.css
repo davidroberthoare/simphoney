@@ -1,51 +1,30 @@
-:root{--phone-width:360px;--phone-height:720px;}
-.html, body { height: 100%; }
-body{font-family:system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; margin:0;}
-.hidden{display:none}
-.page-content{padding:16px;color:#111}
+@font-face {
+  font-family: 'Framework7 Icons';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Framework7 Icons'), local('Framework7Icons-Regular'),
+    url('./fonts/Framework7Icons-Regular.woff2') format('woff2'), url('./fonts/Framework7Icons-Regular.woff')
+      format('woff'), url('./fonts/Framework7Icons-Regular.ttf') format('truetype');
+}
 
-/* Ensure our setup/playback views remain visible even if Framework7 CSS hides .view */
-/* Make the app occupy the full viewport */
-#setup, #playback { display:block !important; position:relative; height:100vh; box-sizing:border-box; }
-
-/* Make the phone area full screen without border */
-.phone-frame{width:100%;height:100vh;border:0;border-radius:0;box-shadow:none;overflow:hidden;margin:0;background:#fff}
-
-.error-overlay{position:fixed;left:8px;right:8px;bottom:8px;background:#ffefef;border:1px solid #f5c2c2;color:#600;padding:10px;border-radius:6px;z-index:9999;max-height:40vh;overflow:auto;font-family:monospace;font-size:13px}
-.status-bar{background:#222;color:#fff;padding:8px 12px;font-weight:600}
-.phone-screen{height:calc(100vh - 56px);background:linear-gradient(#f8f8f8,#eee);display:flex;align-items:center;justify-content:center}
-.bg-iframe{position:absolute;left:0;top:0;width:100%;height:100%;border:0;z-index:0}
-.bg-overlay{position:absolute;left:0;top:0;width:100%;height:100%;background-size:cover;background-position:center;z-index:1}
-.phone-screen > .home{position:relative;z-index:10}
-.notification{position:fixed;left:50%;transform:translateX(-50%);top:80px;max-width:320px;background:#fff;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.3);display:flex;align-items:center;padding:10px;gap:10px;z-index:50}
-.notification.hidden{display:none}
-.popup-icon{width:48px;height:48px;border-radius:10px;object-fit:cover;background:#eee}
-.popup-sender{font-weight:700}
-.popup-message{color:#333}
-.hotspot{position:fixed;top:0;left:0;width:36px;height:36px;opacity:0;border:0;background:transparent}
-.saved{display:flex;align-items:center;padding:8px;border-bottom:1px solid #eee}
-.saved-icon{width:48px;height:48px;border-radius:8px;object-fit:cover;background:#ddd}
-.saved-left{margin-right:8px}
-.saved-body{flex:1}
-.saved-actions button{margin-left:6px}
-.empty{color:#666;padding:12px}
-form .list label{display:block;margin-top:8px}
-form input[type="text"], form textarea{width:100%;padding:8px;border:1px solid #ccc;border-radius:6px}
-button{background:#007aff;color:#fff;border:0;padding:8px 12px;border-radius:6px;cursor:pointer}
-button[disabled]{opacity:.5}
-
-/* Tabs in setup */
-.tabs{border-top:1px solid #eee;padding-top:8px}
-.tab-nav{display:flex;gap:8px;margin-bottom:12px}
-.tab-btn{padding:8px 12px;border-radius:6px;border:1px solid #ddd;background:#f5f5f5;cursor:pointer}
-.tab-btn.active{background:#007aff;color:#fff;border-color:#007aff}
-.tab-panel{display:block}
-
-/* Playback platform and theme classes */
-.platform-ios .notification{border-radius:16px}
-.platform-android .notification{border-radius:6px}
-.theme-dark .notification{background:#1f1f1f;color:#eee}
-.theme-dark .popup-message{color:#ddd}
-
-/* Ensure popup is above bg layers */
-.notification{z-index:60}
+.f7-icons,
+.framework7-icons {
+  font-family: 'Framework7 Icons';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 28px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-feature-settings: 'liga';
+  -moz-font-feature-settings: 'liga=1';
+  -moz-font-feature-settings: 'liga';
+  font-feature-settings: 'liga';
+}
