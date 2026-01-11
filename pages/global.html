@@ -1,19 +1,72 @@
 <!-- HOME PAGE -->
-      <div data-name="home" class="page">
-        <div class="navbar">
-          <div class="navbar-inner">
-            <div class="left">
-              <a href="#" class="link" onclick="navigateTo('/')"><i class="f7-icons">chevron_left</i></a>
-            </div>
-            <div class="title">Settings</div>
-            <!-- <div class="right"> -->
-              <!-- <a href="/play/" class="link"><i class="f7-icons">play</i></a> -->
-            <!-- </div> -->
-          </div>
-        </div>
-        <div class="page-content">
-          <div class="block">
-            <p>GLOBAL</p>
-          </div>
-        </div>
+<div data-name="global" class="page">
+  <div class="navbar">
+    <div class="navbar-inner">
+      <div class="left">
+        <a href="#" class="link" onclick="navigateTo('/')"><i class="f7-icons">chevron_left</i></a>
       </div>
+      <div class="title">Settings</div>
+    </div>
+  </div>
+  <div class="page-content">
+    <form class="list list-strong inset list-dividers-ios" id="settings_form">
+      <div id="settings_list" class="list">
+        <ul>
+          <!-- dark mode toggle -->
+          <li>
+            <div class="item-content">
+              <div class="item-inner">
+                <div class="item-title">Dark-Mode</div>
+                <div class="item-after">
+                  <label class="toggle">
+                    <input type="checkbox" name="dark_mode" value="true" /><i class="toggle-icon"></i>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </li>
+
+          <!-- os dropdown selector ios/android -->
+          <li>
+            <div class="item-content item-input">
+              <div class="item-inner">
+                <div class="item-title item-label">OS</div>
+                <div class="item-input-wrap">
+                  <select name="os">
+                    <option value="male" selected="selected">iOS</option>
+                    <option value="female">Android</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </li>
+
+          <!-- background image selector -->
+          <li>
+            <div class="item-content item-input">
+              <div class="item-inner">
+                <div class="item-title item-label">Background Image</div>
+                <div class="item-input-wrap">
+                  <input type="file" id="background_img_upload" name="background_img_upload" accept="image/*" />
+                </div>
+              </div>
+            </div>
+          </li>
+          <!-- background image preview -->
+          <li>
+            <div class="item-content">
+              <div class="item-inner">
+                <div id="background_img_preview_container" style="display: none; padding: 10px 0;">
+                  <div style="font-size: 12px; color: #888; margin-bottom: 8px;">Preview:</div>
+                  <img id="background_img_preview" style="width: 100%; max-width: 200px; border-radius: 8px; display: block;" />
+                  <button type="button" id="background_img_clear" class="button button-outline" style="margin-top: 8px; width: 100%;">Clear Image</button>
+                </div>
+              </div>
+            </div>
+          </li>
+
+        </ul>
+      </div>
+    </form>
+  </div>
+</div>

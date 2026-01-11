@@ -28,3 +28,31 @@
   -moz-font-feature-settings: 'liga';
   font-feature-settings: 'liga';
 }
+
+.size-14 {
+  font-size: 14px;
+}
+.size-20 {
+  font-size: 20px;
+}
+.size-25 {
+  font-size: 25px;
+}
+.size-30 {
+  font-size: 30px;
+}
+
+
+/* built-in style overrides */
+.notification-icon img {
+  border-radius: 50%;
+}
+
+.notification {
+  top: 40%;
+}
+
+.page {
+  background-size: cover;
+  background-position: center;
+}
