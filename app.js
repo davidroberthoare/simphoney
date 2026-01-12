@@ -11,6 +11,7 @@ var app = new Framework7({
     { path: '/', name: 'home', url: './pages/home.html' },
     { path: '/global/', name: 'global', url: './pages/global.html' },
     { path: '/notification/', name: 'notification', url: './pages/notification.html' },
+    { path: '/notification_edit/', name: 'notification_edit', url: './pages/notification_edit.html' },
   ]
 });
 
@@ -55,7 +56,6 @@ function initializeDefaultAppData() {
         sent_time: 'now',
         sender_name: 'Sender Name',
         sender_image: generateRandomAvatar(),
-        title: 'Hello!',
         message: 'This is an example notification message.',
       },
       s_2: {
@@ -67,7 +67,6 @@ function initializeDefaultAppData() {
         sent_time: '12:30pm',
         sender_name: 'Your Friend',
         sender_image: generateRandomAvatar(),
-        title: 'This is the title',
         message: 'Here is the message.',
       },
       s_3: {
@@ -112,7 +111,6 @@ loadAppData();
 
 // global page navigation function
 function navigateTo(route) {
-  saveAppData(); // Save data before navigating
   if (route == "/") {
     // console.log("going Back to:", route);
     mainView.router.back(route);
@@ -121,52 +119,6 @@ function navigateTo(route) {
     mainView.router.navigate(route);
   }
 }
-
-
-
-
-// SIM ACTIONS -------------------------------------
-// SIM ACTIONS -------------------------------------
-// SIM ACTIONS -------------------------------------
-
-function playSim(simId) {
-  const sim = appData.sims[simId];
-  if (!sim) {
-    console.error('Sim not found:', simId);
-    return;
-  }
-  console.log('Playing sim:', sim);
-  // Store current sim to play in a temporary variable or state
-  appData.currentSim = sim;
-  navigateTo('/' + sim.type + '/');
-}
-
-function editSim(simId) {
-  const sim = appData.sims[simId];
-  if (!sim) {
-    console.error('Sim not found for editing:', simId);
-    return;
-  }
-  console.log('Editing sim:', sim);
-  // Store current sim to edit in a temporary variable or state
-  appData.currentSim = sim;
-
-  // open the appropriate editor popup or page based on sim type
-  app.notification.create({
-    title: "whoops",
-    text: "No editor: " + sim.name,
-    closeTimeout: 1000,
-    closeOnClick: true,
-  }).open();
-}
-
-
-
-
-// DOM Listeners -------------------------------------
-// DOM Listeners -------------------------------------
-// DOM Listeners -------------------------------------
-
 
 
 

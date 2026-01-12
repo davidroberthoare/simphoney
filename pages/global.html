@@ -9,8 +9,7 @@
     </div>
   </div>
   <div class="page-content">
-    <form class="list list-strong inset list-dividers-ios" id="settings_form">
-      <div id="settings_list" class="list">
+    <form id="settings_list" class="list list-strong inset list-dividers-ios">
         <ul>
           <!-- dark mode toggle -->
           <li>
@@ -19,7 +18,7 @@
                 <div class="item-title">Dark-Mode</div>
                 <div class="item-after">
                   <label class="toggle">
-                    <input type="checkbox" name="dark_mode" value="true" /><i class="toggle-icon"></i>
+                    <input type="checkbox" id="global-dark_mode" value="true" /><i class="toggle-icon"></i>
                   </label>
                 </div>
               </div>
@@ -32,9 +31,9 @@
               <div class="item-inner">
                 <div class="item-title item-label">OS</div>
                 <div class="item-input-wrap">
-                  <select name="os">
-                    <option value="male" selected="selected">iOS</option>
-                    <option value="female">Android</option>
+                  <select id="global-os">
+                    <option value="ios">iOS</option>
+                    <option value="android">Android</option>
                   </select>
                 </div>
               </div>
@@ -66,7 +65,6 @@
           </li>
 
         </ul>
-      </div>
     </form>
   </div>
 </div>

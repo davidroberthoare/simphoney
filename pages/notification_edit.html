@@ -1,0 +1,118 @@
+<div data-name="notification_edit" class="page">
+    <div class="navbar">
+        <div class="navbar-inner">
+            <div class="left">
+                <a href="#" class="link back" onclick="navigateTo('/')"><i class="f7-icons">chevron_left</i></a>
+            </div>
+            <div class="title">Notification</div>
+        </div>
+    </div>
+    <div class="page-content">
+        <div class="block"><button class="button button-fill color-green" onclick="playThisSim()">Play Now</button></div>
+
+        <form class="list list-strong inset list-dividers-ios settings">
+            <ul>
+                <!-- sim_name -->
+                <li>
+                    <div class="item-content item-input">
+                        <div class="item-inner">
+                            <div class="item-title item-label">Name</div>
+                            <div class="item-input-wrap">
+                                <input type="text" name="name" placeholder="Notification Name" />
+                            </div>
+                        </div>
+                    </div>
+                </li>
+
+                <!-- sender_name -->
+                <li>
+                    <div class="item-content item-input">
+                        <div class="item-inner">
+                            <div class="item-title item-label">Sender Name</div>
+                            <div class="item-input-wrap">
+                                <input type="text" name="sender_name" placeholder="Sender Name" />
+                            </div>
+                        </div>
+                    </div>
+                </li>
+
+                <!-- sender_image -->
+                <li>
+                    <div class="item-content item-input">
+                        <div class="item-media">
+                            <img class="avatar" id="sender_image_preview">
+                        </div>
+                        <div class="item-inner">
+                            <div class="item-title item-label">Sender Image</div>
+                            <div class="item-input-wrap">
+                                <input type="file" id="sender_image_upload" name="sender_image_upload" accept="image/*" />
+                            </div>
+                        </div>
+                    </div>
+                </li>
+
+                <!-- messsage -->
+                <li>
+                    <div class="item-content item-input">
+                        <div class="item-inner">
+                            <div class="item-title item-label">Message</div>
+                            <div class="item-input-wrap">
+                                <input type="text" name="message" placeholder="Message" />
+                            </div>
+                        </div>
+                    </div>
+                </li>
+
+
+
+                <!-- sent_time -->
+                <li>
+                    <div class="item-content item-input">
+                        <div class="item-inner">
+                            <div class="item-title item-label">Sent Time</div>
+                            <div class="item-input-wrap">
+                                <input type="text" name="sent_time" placeholder="Now" value="Now" />
+                            </div>
+                        </div>
+                    </div>
+                </li>
+
+
+                <!-- trigger_type selector timed/remote-->
+                <li>
+                    <div class="item-content item-input">
+                        <div class="item-inner">
+                            <div class="item-title item-label">Trigger Type</div>
+                            <div class="item-input-wrap">
+                                <select name="trigger_type">
+                                    <option value="timed">Timed</option>
+                                    <option value="remote">Remote</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+
+
+
+                <!-- delay -->
+                <li>
+                    <div class="item-content item-input">
+                        <div class="item-inner">
+                            <div class="item-title item-label">Delay (seconds)</div>
+                            <div class="item-input-wrap">
+                                <input type="number" name="delay" placeholder="3" value="3" />
+                            </div>
+                        </div>
+                    </div>
+                </li>
+
+
+
+
+            </ul>
+        </form>
+
+        <div class="block"><button class="button button-fill color-red" onclick="deleteThisSim()">Delete</button></div>
+    </div>
+</div>

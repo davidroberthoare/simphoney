@@ -1,7 +1,20 @@
 function populateGlobalSettings() {
   // Set background color selector
+  console.log("Populating global settings:", appData.global);
   $$('#global-background').val(appData.global.background);
+  $$('#global-os').val(appData.global.os);
+  $$('#global-dark_mode').prop('checked', appData.global.dark_mode ? 'checked' : '');
 }
+
+
+function updateGlobalSettings() {
+    appData.global.os = $$("#global-os").val();
+    appData.global.dark_mode = $$("#global-dark_mode").prop('checked');
+    console.log('Global settings updated:', appData.global);
+}
+
+
+
 
 // Handle background image upload
 function setupBackgroundImageUpload() {
@@ -60,8 +73,16 @@ function setupBackgroundImageUpload() {
 
 
 
+$$(document).on('page:beforeout', '.page[data-name="global"]', function (e, page) {
+  updateGlobalSettings();
+});
+
+$$(document).on('page:beforein', '.page[data-name="global"]', function (e, page) {
+});
+
 // Initialize image upload on global page
 $$(document).on('page:afterin', '.page[data-name="global"]', function (e, page) {
+  populateGlobalSettings();
   setupBackgroundImageUpload();
 });
 
