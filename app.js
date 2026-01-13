@@ -8,9 +8,9 @@ var app = new Framework7({
   panel: { swipe: true },
   touch: { tapHold: true },
   routes: [
-    { path: '/', name: 'home', url: './pages/home.html' },
-    { path: '/global/', name: 'global', url: './pages/global.html' },
-    { path: '/notification/', name: 'notification', url: './pages/notification.html' },
+    { path: '/', name: 'home', componentUrl: './pages/home.html' },
+    { path: '/global/', name: 'global', componentUrl: './pages/global.html' },
+    { path: '/notification/', name: 'notification', componentUrl: './pages/notification.html' },
     { path: '/notification_edit/', name: 'notification_edit', url: './pages/notification_edit.html' },
   ]
 });

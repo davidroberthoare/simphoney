@@ -11,3 +11,41 @@
     
   </div>
 </div>
+
+<script>
+$$(document).on('page:beforein', '.page[data-name="notification"]', function (e, page) {
+    console.log('Preparing notification page...');
+    const sim = appData.currentSim;
+    if (!sim || sim.type !== 'notification') {
+      console.error('No valid notification sim');
+      return;
+    }
+    if (appData.global.background_img) {
+      $$('.page[data-name="notification"]').css('background-image', `url(${appData.global.background_img})`);
+    } else {
+      $$('.page[data-name="notification"]').css('background-image', 'none');
+    }
+});
+
+
+$$(document).on('page:afterin', '.page[data-name="notification"]', function (e, page) {
+  console.log('play page displayed...', appData.currentSim);
+  const sim = appData.currentSim;
+  if (!sim || sim.type !== 'notification') {
+    console.error('No valid notification sim');
+    return;
+  }
+
+  let notification = app.notification.create({
+    icon: `<img src="${sim.sender_image}">`,
+    title: sim.sender_name,
+    titleRightText: sim.sent_time,
+    text: sim.message,
+    closeOnClick: true,
+    swipeToClose: true,
+  });
+  setTimeout(() => {
+    notification.open();
+  }, sim.delay * 1000);
+})
+</script>
