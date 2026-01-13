@@ -1,177 +1,236 @@
 <!-- HOME PAGE -->
-<div data-name="home" class="page">
-    <div class="navbar">
-        <div class="navbar-inner">
-            <div class="left">
-                <a href="#" class="link" onclick="navigateTo('/global/')"><i class="f7-icons">menu</i></a>
-            </div>
-            <div class="title">SimPhoney</div>
-            <div class="right">
-                <a href="#" class="link icon-only" id="fullscreen-btn" title="Toggle fullscreen">
-                    <div class="f7-icons">expand</div>
-                </a>
+<template>
+    <div data-name="home" class="page">
+        <div class="navbar">
+            <div class="navbar-inner">
+                <div class="left">
+                    <a href="#" class="link" onclick="navigateTo('/global/')"><i class="f7-icons">menu</i></a>
+                </div>
+                <div class="title">SimPhoney</div>
+                <div class="right">
+                    <a href="#" class="link icon-only" id="fullscreen-btn" title="Toggle fullscreen">
+                        <div class="f7-icons">expand</div>
+                    </a>
+                </div>
             </div>
         </div>
-    </div>
-    <div class="page-content">
-        <div id="sims_list" class="list list-outline-ios list-strong-ios list-dividers-ios">
-            <ul>
-                <li class="list-group-title" data-type="notification">Notifications<div class="item-after">
-                        <div class="f7-icons size-14 link create" data-type="notification">plus</div>
-                    </div>
-                </li>
-                <li class="list-group-title" data-type="sms">SMS Conversations<div class="item-after">
-                        <div class="f7-icons size-14 link create" data-type="sms">plus</div>
-                    </div>
-                </li>
-            </ul>
-        </div>
-    </div>
-
-</div>
-<script>
-function populateHome() {
-    console.log("populating home page with sim data", appData.sims);
-    $$("#sims_list li:not(.list-group-title)").remove(); // Clear existing sims, keep titles
-
-    // Populate sims
-    for (const simId in appData.sims) {
-        const sim = appData.sims[simId];
-        const simItem = `
-            <li class="sim-item" data-sim-id="${sim.id}">
-                <a href="#" class="item-link item-content">
-                 <div class="item-media"><div class="f7-icons play_trigger">play</div></div>
-                    <div class="item-inner">
-                        <div class="item-title-row">
-                            <div class="item-title">${sim.name}</div>
+        <div class="page-content">
+            <div id="sims_list" class="list list-outline-ios list-strong-ios list-dividers-ios">
+                <ul>
+                    <li class="list-group-title" data-type="notification">Notifications<div class="item-after">
+                            <div class="f7-icons size-14 link create" data-type="notification">plus</div>
                         </div>
-                    </div>
-                </a>
-            </li>
-        `;
-        $$(simItem).insertAfter('#sims_list li.list-group-title[data-type="' + sim.type + '"]');
+                    </li>
+                    <li class="list-group-title" data-type="sms">SMS Conversations<div class="item-after">
+                            <div class="f7-icons size-14 link create" data-type="sms">plus</div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+</template>
+
+<!-- component styles -->
+<style>
+    .red-link {
+        color: red;
     }
-}
+</style>
 
 
-// SIM ACTIONS -------------------------------------
+<!-- rest of component logic -->
+<script>
+    // script must return/export component function
+    export default (props, { $f7, $on }) => {
+        const title = 'Component Page';
+        const names = ['John', 'Vladimir', 'Timo'];
 
-function playSim(simId) {
-    if (typeof simId === 'undefined' || simId === null) {
-        simId = appData.currentSim.id;
-    }
-
-    const sim = appData.sims[simId];
-    if (!sim) {
-        console.error('Sim not found:', simId);
-        return;
-    }
-    console.log('Playing sim:', sim);
-    appData.currentSim = sim;
-
-    navigateTo('/' + sim.type + '/');
-}
-
-function editSim(simId) {
-    const sim = appData.sims[simId];
-    if (!sim) {
-        console.error('Sim not found for editing:', simId);
-        return;
-    }
-    console.log('Editing sim:', sim);
-    appData.currentSim = sim;
-
-    navigateTo('/' + sim.type + '_edit/');
-}
-
-
-function createSim(type) {
-    console.log('Creating new sim of type:', type);
-    const newSimId = generateUniqueId();
-    const newSim = {
-        id: newSimId,
-        name: `New ${type.charAt(0).toUpperCase() + type.slice(1)} Sim`,
-        type: type,
-    };
-    appData.currentSim = newSim;
-    navigateTo('/' + newSim.type + '_edit/');
-}
-
-function updateFullscreenButton() {
-    const $icon = $$('#fullscreen-btn .f7-icons');
-    if ($icon.length === 0) return;
-    if (document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement) {
-        $icon.text('arrow_down_right_arrow_up_left');
-    } else {
-        $icon.text('expand');
-    }
-}
-
-
-$$(document).on('page:beforein', '.page[data-name="home"]', function (e, page) {
-    console.log('Loading HOME data...');
-    populateHome();
-})
-
-
-$$(document).on('page:init', '.page[data-name="home"]', (e, page) => {
-    console.log("Page init: ", page.name);
-
-    updateFullscreenButton();
-
-    try {
-        document.removeEventListener('fullscreenchange', updateFullscreenButton);
-        document.removeEventListener('webkitfullscreenchange', updateFullscreenButton);
-        document.removeEventListener('msfullscreenchange', updateFullscreenButton);
-    } catch (err) {}
-    document.addEventListener('fullscreenchange', updateFullscreenButton);
-    document.addEventListener('webkitfullscreenchange', updateFullscreenButton);
-    document.addEventListener('msfullscreenchange', updateFullscreenButton);
-
-    $$("#sims_list").on('click', '.play_trigger', function (e) {
-        e.preventDefault();
-        e.stopPropagation();
-
-        const simId = $$(this).closest('.sim-item').data('sim-id');
-        console.log('PLAY trigger clicked for sim:', simId);
-        playSim(simId);
-    });
-
-    $$("#sims_list").on('click', 'li', function (e) {
-        console.log('List item clicked', e, $$(this));
-        if ($$(e.target).hasClass('play_trigger')) {
-            return;
-        }
-        else if ($$(e.target).hasClass('create')) {
-            return;
+        const openAlert = () => {
+            $f7.dialog.alert('Hello world!');
         }
 
-        else {
-            const simId = $$(this).closest('.sim-item').data('sim-id');
-            console.log('EDIT trigger clicked for sim:', simId);
-            editSim(simId);
+
+
+        const populateHome = () => {
+            console.log("populating home page with sim data", appData.sims);
+            $$("#sims_list li:not(.list-group-title)").remove(); // Clear existing sims, keep titles
+
+            // Populate sims
+            for (const simId in appData.sims) {
+                const sim = appData.sims[simId];
+                const simItem = `
+      <li class="sim-item" data-sim-id="${sim.id}">
+        <a href="#" class="item-link item-content">
+         <div class="item-media"><div class="f7-icons play_trigger">play</div></div>
+          <div class="item-inner">
+            <div class="item-title-row">
+              <div class="item-title">${sim.name}</div>
+            </div>
+          </div>
+        </a>
+      </li>
+    `;
+                $$(simItem).insertAfter('#sims_list li.list-group-title[data-type="' + sim.type + '"]');
+            }
+        }
+
+
+
+
+        // SIM ACTIONS -------------------------------------
+        // SIM ACTIONS -------------------------------------
+        // SIM ACTIONS -------------------------------------
+
+        const playSim = (simId) => {
+            //use the active one if none specified
+            if (typeof simId === 'undefined' || simId === null) {
+                simId = appData.currentSim.id;
+            }
+
+            const sim = appData.sims[simId];
+            if (!sim) {
+                console.error('Sim not found:', simId);
+                return;
+            }
+            console.log('Playing sim:', sim);
+            // Store current sim to play in a temporary variable or state
+            appData.currentSim = sim;
+
+            navigateTo('/' + sim.type + '/');
+        }
+
+        const editSim = (simId) => {
+            const sim = appData.sims[simId];
+            if (!sim) {
+                console.error('Sim not found for editing:', simId);
+                return;
+            }
+            console.log('Editing sim:', sim);
+            // Store current sim to edit in a temporary variable or state
+            appData.currentSim = sim;
+
+            navigateTo('/' + sim.type + '_edit/');
 
         }
-    });
 
 
-    $$("#sims_list").on('click', 'li div.create', function (e) {
-        const type = $$(this).data('type');
-        console.log('CREATE type:', type);
-        createSim(type);
-    });
-
-    $$(document).off('click', '#fullscreen-btn');
-    $$(document).on('click', '#fullscreen-btn', function (e) {
-        e.preventDefault();
-        e.stopPropagation();
-        if (document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement) {
-            exitFullscreen();
-        } else {
-            enterFullscreen();
+        const createSim = (type) => {
+            console.log('Creating new sim of type:', type);
+            // Generate a new sim object with default values
+            const newSimId = generateUniqueId();
+            const newSim = {
+                id: newSimId,
+                name: `New ${type.charAt(0).toUpperCase() + type.slice(1)} Sim`,
+                type: type,
+                // Add other default properties as needed
+            };
+            // Store current sim to edit in a temporary variable or state
+            appData.currentSim = newSim;
+            navigateTo('/' + newSim.type + '_edit/');
         }
-        updateFullscreenButton();
-    });
 
-});
+        // Update fullscreen button icon based on current fullscreen state
+        const updateFullscreenButton = () => {
+            const $icon = $$('#fullscreen-btn .f7-icons');
+            if ($icon.length === 0) return;
+            if (document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement) {
+                $icon.text('arrow_down_right_arrow_up_left');
+            } else {
+                $icon.text('expand');
+            }
+        }
+
+
+
+        $on('pageInit', (e, page) => {
+            // do something on page init
+            console.log('Home page initialized');
+
+
+            console.log("Page init: ", page.name);
+
+            // ensure icon reflects current fullscreen state when the page loads
+            updateFullscreenButton();
+
+            // listen for fullscreen changes to update icon
+            try {
+                document.removeEventListener('fullscreenchange', updateFullscreenButton);
+                document.removeEventListener('webkitfullscreenchange', updateFullscreenButton);
+                document.removeEventListener('msfullscreenchange', updateFullscreenButton);
+            } catch (err) { }
+            document.addEventListener('fullscreenchange', updateFullscreenButton);
+            document.addEventListener('webkitfullscreenchange', updateFullscreenButton);
+            document.addEventListener('msfullscreenchange', updateFullscreenButton);
+
+            // PLAY trigger click handler
+            $$("#sims_list").on('click', '.play_trigger', function (e) {
+                e.preventDefault();
+                e.stopPropagation(); // Prevent triggering the parent li click event  
+
+                const simId = $$(this).closest('.sim-item').data('sim-id');
+                console.log('PLAY trigger clicked for sim:', simId);
+                playSim(simId);
+            });
+
+            // EDIT trigger click handler
+            $$("#sims_list").on('click', 'li', function (e) {
+                console.log('List item clicked', e, $$(this));
+                if ($$(e.target).hasClass('play_trigger')) {
+                    return; // Do nothing if the play trigger was clicked
+                }
+                else if ($$(e.target).hasClass('create')) {
+                    return; // Do nothing if the create trigger was clicked
+                }
+
+                // then it's a regular sim item click
+                else {
+                    const simId = $$(this).closest('.sim-item').data('sim-id');
+                    console.log('EDIT trigger clicked for sim:', simId);
+                    editSim(simId);
+
+                }
+            });
+
+
+            $$("#sims_list").on('click', 'li div.create', function (e) {
+                // console.log("Create new sim clicked", e.target, $$(this).data('type'));
+                const type = $$(this).data('type');
+                console.log('CREATE type:', type);
+                createSim(type);
+            });
+
+            // Fullscreen toggle button
+            $$(document).off('click', '#fullscreen-btn');
+            $$(document).on('click', '#fullscreen-btn', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                if (document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement) {
+                    exitFullscreen();
+                } else {
+                    enterFullscreen();
+                }
+                // UI will be updated by fullscreenchange event, but also update proactively
+                updateFullscreenButton();
+            });
+
+
+        });
+
+
+        $on('pageBeforeIn', function (e, page) {
+            // console.log('Page beforeIn: ', e);
+            console.log('Loading HOME data...');
+            populateHome();
+        });
+
+
+        // $on('pageAfterOut', () => {
+        //     // page has left the view
+        // });
+
+        // component function must return render function
+        return $render;
+    }
 </script>
