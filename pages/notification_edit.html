@@ -1,118 +1,211 @@
-<div data-name="notification_edit" class="page">
-    <div class="navbar">
-        <div class="navbar-inner">
-            <div class="left">
-                <a href="#" class="link back" onclick="navigateTo('/')"><i class="f7-icons">chevron_left</i></a>
+<!-- NOTIFICATION EDIT COMPONENT -->
+<template>
+    <div data-name="notification_edit" class="page">
+        <div class="navbar">
+            <div class="navbar-inner">
+                <div class="left">
+                    <a href="/" class="link back"><i class="f7-icons">chevron_left</i></a>
+                </div>
+                <div class="title">Notification Edit</div>
             </div>
-            <div class="title">Notification</div>
+        </div>
+        <div class="page-content">
+            <div class="block"><button class="button button-fill color-green" onclick="playThisSim()">Play Now</button></div>
+
+            <form class="list list-strong inset list-dividers-ios settings">
+                <ul>
+                    <!-- sim_name -->
+                    <li>
+                        <div class="item-content item-input">
+                            <div class="item-inner">
+                                <div class="item-title item-label">Name</div>
+                                <div class="item-input-wrap">
+                                    <input type="text" name="name" placeholder="Notification Name" />
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+
+                    <!-- sender_name -->
+                    <li>
+                        <div class="item-content item-input">
+                            <div class="item-inner">
+                                <div class="item-title item-label">Sender Name</div>
+                                <div class="item-input-wrap">
+                                    <input type="text" name="sender_name" placeholder="Sender Name" />
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+
+                    <!-- sender_image -->
+                    <li>
+                        <div class="item-content item-input">
+                            <div class="item-media">
+                                <img class="avatar" id="sender_image_preview" />
+                            </div>
+                            <div class="item-inner">
+                                <div class="item-title item-label">Sender Image</div>
+                                <div class="item-input-wrap">
+                                    <input type="file" id="sender_image_upload" name="sender_image_upload" accept="image/*" />
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+
+                    <!-- messsage -->
+                    <li>
+                        <div class="item-content item-input">
+                            <div class="item-inner">
+                                <div class="item-title item-label">Message</div>
+                                <div class="item-input-wrap">
+                                    <input type="text" name="message" placeholder="Message" />
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+
+                    <!-- sent_time -->
+                    <li>
+                        <div class="item-content item-input">
+                            <div class="item-inner">
+                                <div class="item-title item-label">Sent Time</div>
+                                <div class="item-input-wrap">
+                                    <input type="text" name="sent_time" placeholder="Now" value="Now" />
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+
+                    <!-- trigger_type selector timed/remote-->
+                    <li>
+                        <div class="item-content item-input">
+                            <div class="item-inner">
+                                <div class="item-title item-label">Trigger Type</div>
+                                <div class="item-input-wrap">
+                                    <select name="trigger_type">
+                                        <option value="timed">Timed</option>
+                                        <option value="remote">Remote</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+
+                    <!-- delay -->
+                    <li>
+                        <div class="item-content item-input">
+                            <div class="item-inner">
+                                <div class="item-title item-label">Delay (seconds)</div>
+                                <div class="item-input-wrap">
+                                    <input type="number" name="delay" placeholder="3" value="3" />
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+
+
+                </ul>
+            </form>
+
+            <div class="block"><button class="button button-fill color-red" onclick="deleteThisSim()">Delete</button></div>
         </div>
     </div>
-    <div class="page-content">
-        <div class="block"><button class="button button-fill color-green" onclick="playThisSim()">Play Now</button></div>
+</template>
 
-        <form class="list list-strong inset list-dividers-ios settings">
-            <ul>
-                <!-- sim_name -->
-                <li>
-                    <div class="item-content item-input">
-                        <div class="item-inner">
-                            <div class="item-title item-label">Name</div>
-                            <div class="item-input-wrap">
-                                <input type="text" name="name" placeholder="Notification Name" />
-                            </div>
-                        </div>
-                    </div>
-                </li>
+<!-- component styles -->
+<style>
+    /* Add custom styles here if needed */
+</style>
 
-                <!-- sender_name -->
-                <li>
-                    <div class="item-content item-input">
-                        <div class="item-inner">
-                            <div class="item-title item-label">Sender Name</div>
-                            <div class="item-input-wrap">
-                                <input type="text" name="sender_name" placeholder="Sender Name" />
-                            </div>
-                        </div>
-                    </div>
-                </li>
+<!-- component logic -->
+<script>
+    export default (props, { $f7, $on }) => {
+        console.log("notification edit component loaded");
+        const updateNotificationSettings = () => {
+            const $settings = $$('form.list.settings');
+            try {
+                if (appData.currentSim) {
+                    appData.currentSim.name = $settings.find('input[name="name"]').val();
+                    appData.currentSim.sender_name = $settings.find('input[name="sender_name"]').val();
+                    appData.currentSim.message = $settings.find('input[name="message"]').val();
+                    appData.currentSim.sent_time = $settings.find('input[name="sent_time"]').val();
+                    appData.currentSim.trigger_type = $settings.find('select[name="trigger_type"]').val();
+                    appData.currentSim.delay = $settings.find('input[name="delay"]').val();
+                    console.log('Notification settings updated:', appData.currentSim);
+                    appData.sims[appData.currentSim.id] = appData.currentSim;
+                    saveAppData();
+                }
+            } catch (error) {
+                console.log("Error updating notification settings:", error);
+            }
+        };
 
-                <!-- sender_image -->
-                <li>
-                    <div class="item-content item-input">
-                        <div class="item-media">
-                            <img class="avatar" id="sender_image_preview">
-                        </div>
-                        <div class="item-inner">
-                            <div class="item-title item-label">Sender Image</div>
-                            <div class="item-input-wrap">
-                                <input type="file" id="sender_image_upload" name="sender_image_upload" accept="image/*" />
-                            </div>
-                        </div>
-                    </div>
-                </li>
+        const setupSenderImageUpload = () => {
+            const fileInput = $$('#sender_image_upload');
+            const previewImg = $$('#sender_image_preview');
 
-                <!-- messsage -->
-                <li>
-                    <div class="item-content item-input">
-                        <div class="item-inner">
-                            <div class="item-title item-label">Message</div>
-                            <div class="item-input-wrap">
-                                <input type="text" name="message" placeholder="Message" />
-                            </div>
-                        </div>
-                    </div>
-                </li>
+            if (appData.currentSim.sender_image && appData.currentSim.sender_image.startsWith('data:')) {
+                previewImg.attr('src', appData.currentSim.sender_image);
+            }
 
+            fileInput.on('change', function (e) {
+                const file = e.target.files[0];
+                if (file && file.type.startsWith('image/')) {
+                    imageFileToBase64(file)
+                        .then((base64Data) => {
+                            previewImg.attr('src', base64Data);
+                            appData.currentSim.sender_image = base64Data;
+                            console.log('Sender image uploaded and stored successfully');
+                        })
+                        .catch((error) => {
+                            app.notification.create({
+                                title: 'Error',
+                                text: 'Failed to upload image',
+                                closeTimeout: 2000,
+                                closeOnClick: true,
+                            }).open();
+                            console.error('Error uploading image:', error);
+                        });
+                } else {
+                    app.notification.create({
+                        title: 'Invalid File',
+                        text: 'Please select a valid image file',
+                        closeTimeout: 2000,
+                        closeOnClick: true,
+                    }).open();
+                }
+            });
 
+            previewImg.on('click', function (e) {
+                fileInput.val('');
+                appData.currentSim.sender_image = generateRandomAvatar();
+                previewImg.attr('src', appData.currentSim.sender_image);
+                console.log('image reset');
+            });
+        };
 
-                <!-- sent_time -->
-                <li>
-                    <div class="item-content item-input">
-                        <div class="item-inner">
-                            <div class="item-title item-label">Sent Time</div>
-                            <div class="item-input-wrap">
-                                <input type="text" name="sent_time" placeholder="Now" value="Now" />
-                            </div>
-                        </div>
-                    </div>
-                </li>
+        $on('pageInit', function (e, page) {
+            setupSenderImageUpload();
+        });
 
+        $on('pageBeforeIn', function (e, page) {
+            const s = appData.currentSim;
+            console.log('notification edit page displayed...', s);
+            const $settings = $$('form.list.settings');
+            $settings.find('input[name="name"]').val(s.name);
+            $settings.find('input[name="sender_name"]').val(s.sender_name);
+            $settings.find('input[name="message"]').val(s.message);
+            $settings.find('input[name="sent_time"]').val(s.sent_time);
+            $settings.find('input[name="delay"]').val(s.delay);
+            $settings.find('select[name="trigger_type"]').val(s.trigger_type);
+        });
 
-                <!-- trigger_type selector timed/remote-->
-                <li>
-                    <div class="item-content item-input">
-                        <div class="item-inner">
-                            <div class="item-title item-label">Trigger Type</div>
-                            <div class="item-input-wrap">
-                                <select name="trigger_type">
-                                    <option value="timed">Timed</option>
-                                    <option value="remote">Remote</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                </li>
+        $on('pageBeforeOut', function (e, page) {
+            updateNotificationSettings();
+        });
 
-
-
-                <!-- delay -->
-                <li>
-                    <div class="item-content item-input">
-                        <div class="item-inner">
-                            <div class="item-title item-label">Delay (seconds)</div>
-                            <div class="item-input-wrap">
-                                <input type="number" name="delay" placeholder="3" value="3" />
-                            </div>
-                        </div>
-                    </div>
-                </li>
-
-
-
-
-            </ul>
-        </form>
-
-        <div class="block"><button class="button button-fill color-red" onclick="deleteThisSim()">Delete</button></div>
-    </div>
-</div>
+        // component function must return render function
+        return $render;
+    };
+</script>

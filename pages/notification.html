@@ -1,51 +1,63 @@
-<!-- HOME PAGE -->
-<div data-name="notification" class="page">
-  <div class="navbar">
-    <div class="navbar-inner">
-      <div class="left">
-        <a href="#" class="link back" onclick="navigateTo('/')"><i class="f7-icons">chevron_left</i></a>
+<!-- NOTIFICATION COMPONENT -->
+<template>
+  <div data-name="notification" class="page">
+    <div class="navbar">
+      <div class="navbar-inner">
+        <div class="left">
+          <a href="/" class="link back"><i class="f7-icons">chevron_left</i></a>
+        </div>
       </div>
     </div>
+    <div class="page-content">
+      
+    </div>
   </div>
-  <div class="page-content">
-    
-  </div>
-</div>
+</template>
 
+<!-- component styles -->
+<style>
+  /* Add custom styles here if needed */
+</style>
+
+<!-- component logic -->
 <script>
-$$(document).on('page:beforein', '.page[data-name="notification"]', function (e, page) {
-    console.log('Preparing notification page...');
-    const sim = appData.currentSim;
-    if (!sim || sim.type !== 'notification') {
-      console.error('No valid notification sim');
-      return;
-    }
-    if (appData.global.background_img) {
-      $$('.page[data-name="notification"]').css('background-image', `url(${appData.global.background_img})`);
-    } else {
-      $$('.page[data-name="notification"]').css('background-image', 'none');
-    }
-});
+  export default (props, { $f7, $on }) => {
+    $on('pageBeforeIn', function (e, page) {
+      console.log('Preparing notification page...');
+      const sim = appData.currentSim;
+      if (!sim || sim.type !== 'notification') {
+        console.error('No valid notification sim');
+        return;
+      }
+      if (appData.global.background_img) {
+        $$('.page[data-name="notification"]').css('background-image', `url(${appData.global.background_img})`);
+      } else {
+        $$('.page[data-name="notification"]').css('background-image', 'none');
+      }
+    });
 
+    $on('pageAfterIn', function (e, page) {
+      console.log('play page displayed...', appData.currentSim);
+      const sim = appData.currentSim;
+      if (!sim || sim.type !== 'notification') {
+        console.error('No valid notification sim');
+        return;
+      }
 
-$$(document).on('page:afterin', '.page[data-name="notification"]', function (e, page) {
-  console.log('play page displayed...', appData.currentSim);
-  const sim = appData.currentSim;
-  if (!sim || sim.type !== 'notification') {
-    console.error('No valid notification sim');
-    return;
-  }
+      let notification = app.notification.create({
+        icon: `<img src="${sim.sender_image}">`,
+        title: sim.sender_name,
+        titleRightText: sim.sent_time,
+        text: sim.message,
+        closeOnClick: true,
+        swipeToClose: true,
+      });
+      setTimeout(() => {
+        notification.open();
+      }, sim.delay * 1000);
+    });
 
-  let notification = app.notification.create({
-    icon: `<img src="${sim.sender_image}">`,
-    title: sim.sender_name,
-    titleRightText: sim.sent_time,
-    text: sim.message,
-    closeOnClick: true,
-    swipeToClose: true,
-  });
-  setTimeout(() => {
-    notification.open();
-  }, sim.delay * 1000);
-})
+    // component function must return render function
+    return $render;
+  };
 </script>

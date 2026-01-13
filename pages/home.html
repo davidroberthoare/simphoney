@@ -4,7 +4,7 @@
         <div class="navbar">
             <div class="navbar-inner">
                 <div class="left">
-                    <a href="#" class="link" onclick="navigateTo('/global/')"><i class="f7-icons">menu</i></a>
+                    <a href="/global/" class="link"><i class="f7-icons">menu</i></a>
                 </div>
                 <div class="title">SimPhoney</div>
                 <div class="right">
@@ -97,8 +97,9 @@
             console.log('Playing sim:', sim);
             // Store current sim to play in a temporary variable or state
             appData.currentSim = sim;
-
-            navigateTo('/' + sim.type + '/');
+            
+            enterFullscreen();
+            mainView.router.navigate('/' + sim.type + '/');
         }
 
         const editSim = (simId) => {
@@ -110,8 +111,9 @@
             console.log('Editing sim:', sim);
             // Store current sim to edit in a temporary variable or state
             appData.currentSim = sim;
-
-            navigateTo('/' + sim.type + '_edit/');
+            const route = '/' + sim.type + '_edit/';
+            console.log('Navigating to route:', route);
+            mainView.router.navigate(route);
 
         }
 
@@ -128,7 +130,7 @@
             };
             // Store current sim to edit in a temporary variable or state
             appData.currentSim = newSim;
-            navigateTo('/' + newSim.type + '_edit/');
+            mainView.router.navigate('/' + newSim.type + '_edit/');
         }
 
         // Update fullscreen button icon based on current fullscreen state

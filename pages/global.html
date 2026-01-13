@@ -1,153 +1,161 @@
-<!-- HOME PAGE -->
-<div data-name="global" class="page">
-  <div class="navbar">
-    <div class="navbar-inner">
-      <div class="left">
-        <a href="#" class="link" onclick="navigateTo('/')"><i class="f7-icons">chevron_left</i></a>
+<!-- GLOBAL/SETTINGS COMPONENT -->
+<template>
+  <div data-name="global" class="page">
+    <div class="navbar">
+      <div class="navbar-inner">
+        <div class="left">
+          <a href="/" class="link back"><i class="f7-icons">chevron_left</i></a>
+        </div>
+        <div class="title">Settings</div>
       </div>
-      <div class="title">Settings</div>
+    </div>
+    <div class="page-content">
+      <form id="settings_list" class="list list-strong inset list-dividers-ios">
+          <ul>
+            <!-- dark mode toggle -->
+            <li>
+              <div class="item-content">
+                <div class="item-inner">
+                  <div class="item-title">Dark-Mode</div>
+                  <div class="item-after">
+                    <label class="toggle">
+                      <input type="checkbox" id="global-dark_mode" value="true" /><i class="toggle-icon"></i>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </li>
+
+            <!-- os dropdown selector ios/android -->
+            <li>
+              <div class="item-content item-input">
+                <div class="item-inner">
+                  <div class="item-title item-label">OS</div>
+                  <div class="item-input-wrap">
+                    <select id="global-os">
+                      <option value="ios">iOS</option>
+                      <option value="android">Android</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </li>
+
+            <!-- background image selector -->
+            <li>
+              <div class="item-content item-input">
+                <div class="item-inner">
+                  <div class="item-title item-label">Background Image</div>
+                  <div class="item-input-wrap">
+                    <input type="file" id="background_img_upload" name="background_img_upload" accept="image/*" />
+                  </div>
+                </div>
+              </div>
+            </li>
+            <!-- background image preview -->
+            <li>
+              <div class="item-content">
+                <div class="item-inner">
+                  <div id="background_img_preview_container" style="display: none; padding: 10px 0;">
+                    <div style="font-size: 12px; color: #888; margin-bottom: 8px;">Preview:</div>
+                    <img id="background_img_preview" style="width: 100%; max-width: 200px; border-radius: 8px; display: block;" />
+                    <button type="button" id="background_img_clear" class="button button-outline" style="margin-top: 8px; width: 100%;">Clear Image</button>
+                  </div>
+                </div>
+              </div>
+            </li>
+
+          </ul>
+      </form>
     </div>
   </div>
-  <div class="page-content">
-    <form id="settings_list" class="list list-strong inset list-dividers-ios">
-        <ul>
-          <!-- dark mode toggle -->
-          <li>
-            <div class="item-content">
-              <div class="item-inner">
-                <div class="item-title">Dark-Mode</div>
-                <div class="item-after">
-                  <label class="toggle">
-                    <input type="checkbox" id="global-dark_mode" value="true" /><i class="toggle-icon"></i>
-                  </label>
-                </div>
-              </div>
-            </div>
-          </li>
+</template>
 
-          <!-- os dropdown selector ios/android -->
-          <li>
-            <div class="item-content item-input">
-              <div class="item-inner">
-                <div class="item-title item-label">OS</div>
-                <div class="item-input-wrap">
-                  <select id="global-os">
-                    <option value="ios">iOS</option>
-                    <option value="android">Android</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-          </li>
+<!-- component styles -->
+<style>
+  /* Add custom styles here if needed */
+</style>
 
-          <!-- background image selector -->
-          <li>
-            <div class="item-content item-input">
-              <div class="item-inner">
-                <div class="item-title item-label">Background Image</div>
-                <div class="item-input-wrap">
-                  <input type="file" id="background_img_upload" name="background_img_upload" accept="image/*" />
-                </div>
-              </div>
-            </div>
-          </li>
-          <!-- background image preview -->
-          <li>
-            <div class="item-content">
-              <div class="item-inner">
-                <div id="background_img_preview_container" style="display: none; padding: 10px 0;">
-                  <div style="font-size: 12px; color: #888; margin-bottom: 8px;">Preview:</div>
-                  <img id="background_img_preview" style="width: 100%; max-width: 200px; border-radius: 8px; display: block;" />
-                  <button type="button" id="background_img_clear" class="button button-outline" style="margin-top: 8px; width: 100%;">Clear Image</button>
-                </div>
-              </div>
-            </div>
-          </li>
-
-        </ul>
-    </form>
-  </div>
-</div>
+<!-- component logic -->
 <script>
-function populateGlobalSettings() {
-  console.log("Populating global settings:", appData.global);
-  $$('#global-background')?.val(appData.global.background);
-  $$('#global-os').val(appData.global.os);
-  $$('#global-dark_mode').prop('checked', appData.global.dark_mode ? 'checked' : '');
-}
+  export default (props, { $f7, $on }) => {
+    const populateGlobalSettings = () => {
+      console.log("Populating global settings:", appData.global);
+      $$('#global-background')?.val(appData.global.background);
+      $$('#global-os').val(appData.global.os);
+      $$('#global-dark_mode').prop('checked', appData.global.dark_mode ? 'checked' : '');
+    };
 
+    const updateGlobalSettings = () => {
+      appData.global.os = $$('#global-os').val();
+      appData.global.dark_mode = $$('#global-dark_mode').prop('checked');
+      console.log('Global settings updated:', appData.global);
+      saveAppData();
+    };
 
-function updateGlobalSettings() {
-    appData.global.os = $$("#global-os").val();
-    appData.global.dark_mode = $$("#global-dark_mode").prop('checked');
-    console.log('Global settings updated:', appData.global);
-    saveAppData();
-}
+    const setupBackgroundImageUpload = () => {
+      const fileInput = $$('#background_img_upload');
+      const previewContainer = $$('#background_img_preview_container');
+      const previewImg = $$('#background_img_preview');
+      const clearBtn = $$('#background_img_clear');
 
+      if (appData.global.background_img && appData.global.background_img.startsWith('data:')) {
+        previewImg.attr('src', appData.global.background_img);
+        previewContainer.css('display', 'block');
+      }
 
-function setupBackgroundImageUpload() {
-  const fileInput = $$('#background_img_upload');
-  const previewContainer = $$('#background_img_preview_container');
-  const previewImg = $$('#background_img_preview');
-  const clearBtn = $$('#background_img_clear');
-
-  if (appData.global.background_img && appData.global.background_img.startsWith('data:')) {
-    previewImg.attr('src', appData.global.background_img);
-    previewContainer.css('display', 'block');
-  }
-
-  fileInput.off('change');
-  fileInput.on('change', function (e) {
-    const file = e.target.files[0];
-    if (file && file.type.startsWith('image/')) {
-      imageFileToBase64(file)
-        .then((base64Data) => {
-          previewImg.attr('src', base64Data);
-          previewContainer.css('display', 'block');
-          appData.global.background_img = base64Data;
-          saveAppData();
-          console.log('Background image uploaded and stored successfully');
-        })
-        .catch((error) => {
+      fileInput.off('change');
+      fileInput.on('change', function (e) {
+        const file = e.target.files[0];
+        if (file && file.type.startsWith('image/')) {
+          imageFileToBase64(file)
+            .then((base64Data) => {
+              previewImg.attr('src', base64Data);
+              previewContainer.css('display', 'block');
+              appData.global.background_img = base64Data;
+              saveAppData();
+              console.log('Background image uploaded and stored successfully');
+            })
+            .catch((error) => {
+              app.notification.create({
+                title: 'Error',
+                text: 'Failed to upload image',
+                closeTimeout: 2000,
+                closeOnClick: true,
+              }).open();
+              console.error('Error uploading image:', error);
+            });
+        } else {
           app.notification.create({
-            title: 'Error',
-            text: 'Failed to upload image',
+            title: 'Invalid File',
+            text: 'Please select a valid image file',
             closeTimeout: 2000,
             closeOnClick: true,
           }).open();
-          console.error('Error uploading image:', error);
-        });
-    } else {
-      app.notification.create({
-        title: 'Invalid File',
-        text: 'Please select a valid image file',
-        closeTimeout: 2000,
-        closeOnClick: true,
-      }).open();
-    }
-  });
+        }
+      });
 
-  clearBtn.off('click');
-  clearBtn.on('click', function (e) {
-    e.preventDefault();
-    fileInput.val('');
-    previewContainer.css('display', 'none');
-    appData.global.background_img = generateRandomBackground();
-    saveAppData();
-    console.log('Background image cleared');
-  });
-}
+      clearBtn.off('click');
+      clearBtn.on('click', function (e) {
+        e.preventDefault();
+        fileInput.val('');
+        previewContainer.css('display', 'none');
+        appData.global.background_img = generateRandomBackground();
+        saveAppData();
+        console.log('Background image cleared');
+      });
+    };
 
+    $on('pageBeforeOut', function (e, page) {
+      updateGlobalSettings();
+    });
 
-$$(document).on('page:beforeout', '.page[data-name="global"]', function (e, page) {
-  updateGlobalSettings();
-});
+    $on('pageBeforeIn', function (e, page) {
+      populateGlobalSettings();
+      setupBackgroundImageUpload();
+    });
 
-$$(document).on('page:beforein', '.page[data-name="global"]', function (e, page) {
-});
-
-$$(document).on('page:afterin', '.page[data-name="global"]', function (e, page) {
-  populateGlobalSettings();
-  setupBackgroundImageUpload();
-});
+    // component function must return render function
+    return $render;
+  };
 </script>

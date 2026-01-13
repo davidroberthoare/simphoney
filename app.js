@@ -11,7 +11,7 @@ var app = new Framework7({
     { path: '/', name: 'home', componentUrl: './pages/home.html' },
     { path: '/global/', name: 'global', componentUrl: './pages/global.html' },
     { path: '/notification/', name: 'notification', componentUrl: './pages/notification.html' },
-    { path: '/notification_edit/', name: 'notification_edit', url: './pages/notification_edit.html' },
+    { path: '/notification_edit/', name: 'notification_edit', componentUrl: './pages/notification_edit.html' },
   ]
 });
 
@@ -110,22 +110,18 @@ loadAppData();
 
 
 // global page navigation function
-function navigateTo(route) {
-  if (route == "/") {
-    // console.log("going Back to:", route);
-    mainView.router.back(route);
-  } else {
-    // console.log("Navigating to:", route);
-    if (route !== "/global/") {
-      // enter fullscreen mode for other pages
-      enterFullscreen();
-    } else {
-      // ensure we exit fullscreen when going to global
-      exitFullscreen();
-    }
-    mainView.router.navigate(route);
-  }
-}
+// function navigateTo(route) {
+  // console.log("navigateTo called with route:", route);
+    // // console.log("Navigating to:", route);
+    // if (route !== "/global/") {
+    //   // enter fullscreen mode for other pages
+    //   enterFullscreen();
+    // } else {
+    //   // ensure we exit fullscreen when going to global
+    //   exitFullscreen();
+    // }
+    // mainView.router.navigate(route);
+// }
 
 // Fullscreen helpers using standard browser Fullscreen API
 function enterFullscreen() {
