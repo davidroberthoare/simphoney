@@ -11,6 +11,7 @@ function updateGlobalSettings() {
     appData.global.os = $$("#global-os").val();
     appData.global.dark_mode = $$("#global-dark_mode").prop('checked');
     console.log('Global settings updated:', appData.global);
+    saveAppData();
 }
 
 

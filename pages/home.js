@@ -76,6 +76,17 @@ function createSim(type) {
   navigateTo('/' + newSim.type + '_edit/');
 }
 
+// Update fullscreen button icon based on current fullscreen state
+function updateFullscreenButton() {
+  const $icon = $$('#fullscreen-btn .f7-icons');
+  if ($icon.length === 0) return;
+  if (document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement) {
+    $icon.text('arrow_down_right_arrow_up_left');
+  } else {
+    $icon.text('expand');
+  }
+}
+
 
 $$(document).on('page:beforein', '.page[data-name="home"]', function (e, page) {
   // console.log('Page beforeIn: ', e);
@@ -88,6 +99,19 @@ $$(document).on('page:beforein', '.page[data-name="home"]', function (e, page) {
 // code will run on page INIT
 $$(document).on('page:init', '.page[data-name="home"]', (e, page) => {
   console.log("Page init: ", page.name);
+
+  // ensure icon reflects current fullscreen state when the page loads
+  updateFullscreenButton();
+
+  // listen for fullscreen changes to update icon
+  try {
+    document.removeEventListener('fullscreenchange', updateFullscreenButton);
+    document.removeEventListener('webkitfullscreenchange', updateFullscreenButton);
+    document.removeEventListener('msfullscreenchange', updateFullscreenButton);
+  } catch (err) {}
+  document.addEventListener('fullscreenchange', updateFullscreenButton);
+  document.addEventListener('webkitfullscreenchange', updateFullscreenButton);
+  document.addEventListener('msfullscreenchange', updateFullscreenButton);
 
   // PLAY trigger click handler
   $$("#sims_list").on('click', '.play_trigger', function (e) {
@@ -124,6 +148,20 @@ $$(document).on('page:init', '.page[data-name="home"]', (e, page) => {
     const type = $$(this).data('type');
     console.log('CREATE type:', type);
     createSim(type);
+  });
+
+  // Fullscreen toggle button
+  $$(document).off('click', '#fullscreen-btn');
+  $$(document).on('click', '#fullscreen-btn', function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+    if (document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement) {
+      exitFullscreen();
+    } else {
+      enterFullscreen();
+    }
+    // UI will be updated by fullscreenchange event, but also update proactively
+    updateFullscreenButton();
   });
 
 });

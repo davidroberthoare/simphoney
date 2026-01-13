@@ -34,6 +34,7 @@ $$(document).on('page:afterin', '.page[data-name="notification"]', function (e, 
     // subtitle: appData.currentSim.sender_name,
     text: sim.message,
     closeOnClick: true,
+    swipeToClose: true,
   });
   // Open it
   setTimeout(() => {

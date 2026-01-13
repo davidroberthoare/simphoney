@@ -116,7 +116,38 @@ function navigateTo(route) {
     mainView.router.back(route);
   } else {
     // console.log("Navigating to:", route);
+    if (route !== "/global/") {
+      // enter fullscreen mode for other pages
+      enterFullscreen();
+    } else {
+      // ensure we exit fullscreen when going to global
+      exitFullscreen();
+    }
     mainView.router.navigate(route);
+  }
+}
+
+// Fullscreen helpers using standard browser Fullscreen API
+function enterFullscreen() {
+  const docEl = document.documentElement;
+  if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement) {
+    if (docEl.requestFullscreen) {
+      docEl.requestFullscreen().catch((err) => console.warn('Failed to enter fullscreen:', err));
+    } else if (docEl.webkitRequestFullscreen) {
+      docEl.webkitRequestFullscreen();
+    } else if (docEl.msRequestFullscreen) {
+      docEl.msRequestFullscreen();
+    }
+  }
+}
+
+function exitFullscreen() {
+  if (document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement) {
+    if (document.exitFullscreen) {
+      document.exitFullscreen().catch((err) => console.warn('Failed to exit fullscreen:', err));
+    } else if (document.webkitExitFullscreen) {
+      document.webkitExitFullscreen();
+    }
   }
 }
 
@@ -175,4 +206,45 @@ function imageFileToBase64(file) {
     reader.readAsDataURL(file);
   });
 }
+
+// // Resize and compress image to base64
+// async function resizeImageToBase64(file, maxWidth = 150, maxHeight = 150, quality = 0.7) {
+//   return new Promise((resolve, reject) => {
+//     const reader = new FileReader();
+//     reader.onload = function (e) {
+//       const img = new Image();
+//       img.onload = function () {
+//         const canvas = document.createElement('canvas');
+//         let width = img.width;
+//         let height = img.height;
+        
+//         // Calculate new dimensions maintaining aspect ratio
+//         if (width > height) {
+//           if (width > maxWidth) {
+//             height = Math.round((height * maxWidth) / width);
+//             width = maxWidth;
+//           }
+//         } else {
+//           if (height > maxHeight) {
+//             width = Math.round((width * maxHeight) / height);
+//             height = maxHeight;
+//           }
+//         }
+        
+//         canvas.width = width;
+//         canvas.height = height;
+//         const ctx = canvas.getContext('2d');
+//         ctx.drawImage(img, 0, 0, width, height);
+        
+//         // Convert to base64 with compression
+//         const base64Data = canvas.toDataURL('image/jpeg', quality);
+//         resolve(base64Data);
+//       };
+//       img.onerror = () => reject(new Error('Failed to load image'));
+//       img.src = e.target.result;
+//     };
+//     reader.onerror = () => reject(new Error('Error reading file'));
+//     reader.readAsDataURL(file);
+//   });
+// }
 
