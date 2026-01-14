@@ -10,7 +10,7 @@
             </div>
         </div>
         <div class="page-content">
-            <div class="block"><button class="button button-fill color-green" onclick="playThisSim()">Play Now</button></div>
+            <div class="block"><button id="play_now_button" class="button button-fill color-green">Play Now</button></div>
 
             <form class="list list-strong inset list-dividers-ios settings">
                 <ul>
@@ -42,7 +42,7 @@
                     <li>
                         <div class="item-content item-input">
                             <div class="item-media">
-                                <img class="avatar" id="sender_image_preview" />
+                                <div class="avatar" id="sender_image_preview" ></div>
                             </div>
                             <div class="item-inner">
                                 <div class="item-title item-label">Sender Image</div>
@@ -105,6 +105,46 @@
                     </li>
 
 
+                    <!-- clock_time -->
+                    <li>
+                        <div class="item-content item-input">
+                            <div class="item-inner">
+                                <div class="item-title item-label">Clock Time (blank if not shown)</div>
+                                <div class="item-input-wrap">
+                                    <input type="text" name="clock_time" placeholder="Clock Time" />
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+
+
+                    <!-- background type -->
+                    <li>
+                        <div class="item-content item-input">
+                            <div class="item-inner">
+                                <div class="item-title item-label">Background Type</div>
+                                <div class="item-input-wrap">
+                                    <select name="background_type">
+                                        <option value="lockscreen">Lock-Screen</option>
+                                        <option value="website">Website</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+
+                    <!-- website_url -->
+                    <li>
+                        <div class="item-content item-input">
+                            <div class="item-inner">
+                                <div class="item-title item-label">Website URL</div>
+                                <div class="item-input-wrap">
+                                    <input type="text" name="website_url" placeholder="Website URL" />
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+
                 </ul>
             </form>
 
@@ -116,6 +156,14 @@
 <!-- component styles -->
 <style>
     /* Add custom styles here if needed */
+    #sender_image_preview {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-size: cover;
+        background-position: center;
+        cursor: pointer;
+    }
 </style>
 
 <!-- component logic -->
@@ -132,6 +180,9 @@
                     appData.currentSim.sent_time = $settings.find('input[name="sent_time"]').val();
                     appData.currentSim.trigger_type = $settings.find('select[name="trigger_type"]').val();
                     appData.currentSim.delay = $settings.find('input[name="delay"]').val();
+                    appData.currentSim.clock_time = $settings.find('input[name="clock_time"]').val();
+                    appData.currentSim.background_type = $settings.find('select[name="background_type"]').val();
+                    appData.currentSim.website_url = $settings.find('input[name="website_url"]').val();
                     console.log('Notification settings updated:', appData.currentSim);
                     appData.sims[appData.currentSim.id] = appData.currentSim;
                     saveAppData();
@@ -141,20 +192,28 @@
             }
         };
 
+        const playThisSim = () => {
+            updateNotificationSettings();
+            console.log("Playing this sim now:", appData.currentSim);
+            enterFullscreen();
+            mainView.router.navigate('/' + appData.currentSim.type + '/');
+        }
+
         const setupSenderImageUpload = () => {
             const fileInput = $$('#sender_image_upload');
             const previewImg = $$('#sender_image_preview');
 
             if (appData.currentSim.sender_image && appData.currentSim.sender_image.startsWith('data:')) {
-                previewImg.attr('src', appData.currentSim.sender_image);
+                previewImg.css('background-image', `url(${appData.currentSim.sender_image})`);
             }
 
             fileInput.on('change', function (e) {
                 const file = e.target.files[0];
                 if (file && file.type.startsWith('image/')) {
-                    imageFileToBase64(file)
+                    // imageFileToBase64(file)
+                    resizeImageToBase64(file)
                         .then((base64Data) => {
-                            previewImg.attr('src', base64Data);
+                            previewImg.css('background-image', `url(${base64Data})`);
                             appData.currentSim.sender_image = base64Data;
                             console.log('Sender image uploaded and stored successfully');
                         })
@@ -180,13 +239,33 @@
             previewImg.on('click', function (e) {
                 fileInput.val('');
                 appData.currentSim.sender_image = generateRandomAvatar();
-                previewImg.attr('src', appData.currentSim.sender_image);
+                previewImg.css('background-image', `url(${appData.currentSim.sender_image})`);
                 console.log('image reset');
             });
         };
 
+        const show_hide_website_url_field = () => {
+            console.log('Checking background type for website URL field display');
+            const backgroundType = $$('select[name="background_type"]').val();
+            if (backgroundType === 'website') {
+                $$('input[name="website_url"]').closest('li').show();
+            } else {
+                $$('input[name="website_url"]').closest('li').hide();
+            }
+        };
+
         $on('pageInit', function (e, page) {
             setupSenderImageUpload();
+
+            $$("#play_now_button").on('click', function (e) {
+                e.preventDefault();
+                playThisSim();
+            });
+
+            $$('select[name="background_type"]').on('change', function () {
+                show_hide_website_url_field();
+            });
+
         });
 
         $on('pageBeforeIn', function (e, page) {
@@ -197,8 +276,14 @@
             $settings.find('input[name="sender_name"]').val(s.sender_name);
             $settings.find('input[name="message"]').val(s.message);
             $settings.find('input[name="sent_time"]').val(s.sent_time);
+            $settings.find('input[name="clock_time"]').val(s.clock_time);
             $settings.find('input[name="delay"]').val(s.delay);
             $settings.find('select[name="trigger_type"]').val(s.trigger_type);
+            $settings.find('select[name="background_type"]').val(s.background_type);
+            $settings.find('input[name="website_url"]').val(s.website_url);
+
+            $$("#sender_image_preview").css('background-image', `url(${s.sender_image})`);
+            show_hide_website_url_field();
         });
 
         $on('pageBeforeOut', function (e, page) {

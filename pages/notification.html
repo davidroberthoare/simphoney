@@ -9,7 +9,8 @@
       </div>
     </div>
     <div class="page-content">
-      
+      <div id="clock">${sim.clock_time}</div>
+      <iframe id="website" src="${sim.website_url}"></iframe>
     </div>
   </div>
 </template>
@@ -17,14 +18,35 @@
 <!-- component styles -->
 <style>
   /* Add custom styles here if needed */
+  #clock {
+    width: 100%;
+    text-align: center;
+    font-size: 4em;
+    color: white;
+    text-shadow: 4px 2px 5px #00000052;
+    margin-top: 10vh;
+    display: none;
+  }
+
+  #website {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    left: 0;
+    height: 100%;
+    overflow: hidden;
+    border: 0px;
+    display: none;
+  }
 </style>
 
 <!-- component logic -->
 <script>
   export default (props, { $f7, $on }) => {
+    const sim = appData.currentSim;
+
     $on('pageBeforeIn', function (e, page) {
       console.log('Preparing notification page...');
-      const sim = appData.currentSim;
       if (!sim || sim.type !== 'notification') {
         console.error('No valid notification sim');
         return;
@@ -38,14 +60,34 @@
 
     $on('pageAfterIn', function (e, page) {
       console.log('play page displayed...', appData.currentSim);
-      const sim = appData.currentSim;
       if (!sim || sim.type !== 'notification') {
         console.error('No valid notification sim');
         return;
       }
 
+      // hide/show various elements based on SIM settings
+      // show the website if it's set
+      if (sim.background_type === 'website' && sim.website_url.trim() !== '') {
+        $$('#website').attr('src', sim.website_url);
+        $$('#website').show();
+      } 
+      else if(sim.background_type === 'lockscreen') {
+        //  if it's the lock screen, hide the website
+        $$('#website').hide();
+     
+        // show the clock if it's set
+        if (sim.clock_time && sim.clock_time.trim() !== '') {
+          $$('#clock').show();
+  
+        } else {
+          $$('#clock').hide();
+        }
+      }
+      
+
+
       let notification = app.notification.create({
-        icon: `<img src="${sim.sender_image}">`,
+        icon: `<div class="avatar" style="background-image: url('${sim.sender_image}');"></div>`,
         title: sim.sender_name,
         titleRightText: sim.sent_time,
         text: sim.message,
