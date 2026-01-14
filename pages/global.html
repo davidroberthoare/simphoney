@@ -108,7 +108,7 @@
       fileInput.on('change', function (e) {
         const file = e.target.files[0];
         if (file && file.type.startsWith('image/')) {
-          imageFileToBase64(file)
+          resizeImageToBase64(file, 1080, 1920, 0.5)
             .then((base64Data) => {
               previewImg.attr('src', base64Data);
               previewContainer.css('display', 'block');
