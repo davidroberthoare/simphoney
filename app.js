@@ -12,6 +12,7 @@ var app = new Framework7({
     { path: '/global/', name: 'global', componentUrl: './pages/global.html' },
     { path: '/notification/', name: 'notification', componentUrl: './pages/notification.html' },
     { path: '/notification_edit/', name: 'notification_edit', componentUrl: './pages/notification_edit.html' },
+    { path: '/sms/', name: 'sms', componentUrl: './pages/sms.html' },
   ]
 });
 
@@ -75,14 +76,23 @@ function initializeDefaultAppData() {
         name: 'Sample SMS',
         delay: 5,
         trigger_type: 'timed',
-        sender_name: 'Your Friend',
-        sender_image: generateRandomAvatar(),
-        receiver_name: 'My Name',
-        receiver_image: generateRandomAvatar(),
+        start_date: '2024-01-01 10:00 AM',
+        senders: [
+          { name: 'Bob Bobson', image: generateRandomAvatar(1) },  
+          { name: 'Sally Sallyson', image: generateRandomAvatar(2) },
+        ],
+        prefilled: [
+          //already on the page when it loads
+          { from: 0, text: 'Hey, how are you?', delay: 0 },
+          { from: 'me', text: 'I am good, thanks! How about you?', delay: 2 },
+          { from: 1, text: 'Doing well, just wanted to check in.', delay: 4 },
+        ],
         messages: [
-          { from: 'sender', text: 'Hey, how are you?' },
-          { from: 'receiver', text: 'I am good, thanks! How about you?' },
-          { from: 'sender', text: 'Doing well, just wanted to check in.' },
+          //to be added during the simulation
+          { from: 0, text: 'When are you coming home?', delay: 1 },
+          { from: 1, text: 'Are you sure?', delay: 1 },
+          { from: 1, text: 'Tell me more about that...', delay: 1 },
+          { from: 0, text: 'No way ;)', delay: 1 },
         ],
       }
     },
@@ -109,42 +119,29 @@ loadAppData();
 
 
 
-// global page navigation function
-// function navigateTo(route) {
-  // console.log("navigateTo called with route:", route);
-    // // console.log("Navigating to:", route);
-    // if (route !== "/global/") {
-    //   // enter fullscreen mode for other pages
-    //   enterFullscreen();
-    // } else {
-    //   // ensure we exit fullscreen when going to global
-    //   exitFullscreen();
-    // }
-    // mainView.router.navigate(route);
-// }
 
 // Fullscreen helpers using standard browser Fullscreen API
 function enterFullscreen() {
-  const docEl = document.documentElement;
-  if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement) {
-    if (docEl.requestFullscreen) {
-      docEl.requestFullscreen().catch((err) => console.warn('Failed to enter fullscreen:', err));
-    } else if (docEl.webkitRequestFullscreen) {
-      docEl.webkitRequestFullscreen();
-    } else if (docEl.msRequestFullscreen) {
-      docEl.msRequestFullscreen();
-    }
-  }
+  // const docEl = document.documentElement;
+  // if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement) {
+  //   if (docEl.requestFullscreen) {
+  //     docEl.requestFullscreen().catch((err) => console.warn('Failed to enter fullscreen:', err));
+  //   } else if (docEl.webkitRequestFullscreen) {
+  //     docEl.webkitRequestFullscreen();
+  //   } else if (docEl.msRequestFullscreen) {
+  //     docEl.msRequestFullscreen();
+  //   }
+  // }
 }
 
 function exitFullscreen() {
-  if (document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement) {
-    if (document.exitFullscreen) {
-      document.exitFullscreen().catch((err) => console.warn('Failed to exit fullscreen:', err));
-    } else if (document.webkitExitFullscreen) {
-      document.webkitExitFullscreen();
-    }
-  }
+  // if (document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement) {
+  //   if (document.exitFullscreen) {
+  //     document.exitFullscreen().catch((err) => console.warn('Failed to exit fullscreen:', err));
+  //   } else if (document.webkitExitFullscreen) {
+  //     document.webkitExitFullscreen();
+  //   }
+  // }
 }
 
 

@@ -70,20 +70,20 @@
       if (sim.background_type === 'website' && sim.website_url.trim() !== '') {
         $$('#website').attr('src', sim.website_url);
         $$('#website').show();
-      } 
-      else if(sim.background_type === 'lockscreen') {
+      }
+      else if (sim.background_type === 'lockscreen') {
         //  if it's the lock screen, hide the website
         $$('#website').hide();
-     
+
         // show the clock if it's set
         if (sim.clock_time && sim.clock_time.trim() !== '') {
           $$('#clock').show();
-  
+
         } else {
           $$('#clock').hide();
         }
       }
-      
+
 
 
       let notification = app.notification.create({
