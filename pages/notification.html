@@ -9,8 +9,8 @@
       </div>
     </div>
     <div class="page-content">
-      <div id="clock">${sim.clock_time}</div>
-      <iframe id="website" src="${sim.website_url}"></iframe>
+      <div id="clock">${currentSim.clock_time}</div>
+      <iframe id="website" src=""></iframe>
     </div>
   </div>
 </template>
@@ -43,11 +43,10 @@
 <!-- component logic -->
 <script>
   export default (props, { $f7, $on }) => {
-    const sim = appData.currentSim;
 
     $on('pageBeforeIn', function (e, page) {
       console.log('Preparing notification page...');
-      if (!sim || sim.type !== 'notification') {
+      if (!currentSim || currentSim.type !== 'notification') {
         console.error('No valid notification sim');
         return;
       }
@@ -59,24 +58,24 @@
     });
 
     $on('pageAfterIn', function (e, page) {
-      console.log('play page displayed...', appData.currentSim);
-      if (!sim || sim.type !== 'notification') {
+      console.log('play page displayed...', currentSim);
+      if (!currentSim || currentSim.type !== 'notification') {
         console.error('No valid notification sim');
         return;
       }
 
       // hide/show various elements based on SIM settings
       // show the website if it's set
-      if (sim.background_type === 'website' && sim.website_url.trim() !== '') {
-        $$('#website').attr('src', sim.website_url);
+      if (currentSim.background_type === 'website' && currentSim.website_url.trim() !== '') {
+        $$('#website').attr('src', currentSim.website_url);
         $$('#website').show();
       }
-      else if (sim.background_type === 'lockscreen') {
+      else if (currentSim.background_type === 'lockscreen') {
         //  if it's the lock screen, hide the website
         $$('#website').hide();
 
         // show the clock if it's set
-        if (sim.clock_time && sim.clock_time.trim() !== '') {
+        if (currentSim.clock_time && currentSim.clock_time.trim() !== '') {
           $$('#clock').show();
 
         } else {
@@ -87,16 +86,16 @@
 
 
       let notification = app.notification.create({
-        icon: `<div class="avatar" style="background-image: url('${sim.sender_image}');"></div>`,
-        title: sim.sender_name,
-        titleRightText: sim.sent_time,
-        text: sim.message,
+        icon: `<div class="avatar" style="background-image: url('${currentSim.sender_image}');"></div>`,
+        title: currentSim.sender_name,
+        titleRightText: currentSim.sent_time,
+        text: currentSim.message,
         closeOnClick: true,
         swipeToClose: true,
       });
       setTimeout(() => {
         notification.open();
-      }, sim.delay * 1000);
+      }, currentSim.delay * 1000);
     });
 
     // component function must return render function

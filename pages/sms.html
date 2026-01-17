@@ -161,8 +161,7 @@
 <!-- component logic -->
 <script>
   export default (props, { $f7, $el, $on, $ }) => {
-    const sim = appData.currentSim;
-    console.log("sim", sim);
+    console.log("sim", currentSim);
 
     let responseInProgress = false;
     let messagebar;
@@ -224,7 +223,7 @@
     $on('pageInit', () => {
       
       //setup all messages based on the prefilled sim data
-      sim.prefilled.forEach(m => {
+      currentSim.prefilled.forEach(m => {
         let $$m = $$($$(".template.message")[0].cloneNode(true));
         console.log("message", m);
         $$m.find(".message-text").text(m.text);
@@ -234,8 +233,8 @@
           $$m.find(".message-name").remove();
         } else {
           $$m.addClass("message-received");
-          $$m.find(".message-name").text(sim.senders[m.from].name);
-          $$m.find(".message-avatar").css("background-image", "url(" + sim.senders[m.from].image + ")");
+          $$m.find(".message-name").text(currentSim.senders[m.from].name);
+          $$m.find(".message-avatar").css("background-image", "url(" + currentSim.senders[m.from].image + ")");
         }
         $$(".messages").append($$m);
       });
@@ -293,7 +292,7 @@
     });
 
     $on('pageAfterIn', function (e, page) {
-      console.log('page displayed...', sim);
+      console.log('page displayed...', currentSim);
       // hide/show various elements based on SIM settings
 
     });

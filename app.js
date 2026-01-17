@@ -22,7 +22,8 @@ var mainView = app.views.create('.view-main');
 var $$ = Dom7;  //for Dom7 usage
 
 // MAIN DATA FOR APP
-var appData = {};
+var appData = {}; //holds all app data including sims and global settings
+var currentSim = {};  //used to hold the currently edited sim object
 
 // Load appData from localStorage, initialize with default structure if not found
 function loadAppData() {

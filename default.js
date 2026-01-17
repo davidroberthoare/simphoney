@@ -7,15 +7,18 @@ const defaultAppData = {
     },
     sims: {
         s_1: {
-            id: 's_1',
-            type: 'notification',
-            name: 'Sample Notification',
-            delay: 1,
-            trigger_type: 'timed',
-            sent_time: 'now',
-            sender_name: 'Sender Name',
-            sender_image: generateRandomAvatar(),
-            message: 'This is an example notification message.',
+            id: "s_1",
+            type: "notification",
+            name: "Sample Notification",
+            delay: "1",
+            trigger_type: "timed",
+            sent_time: "now",
+            sender_name: "Sender Name",
+            sender_image: "https://testingbot.com/free-online-tools/random-avatar/150?u=1768663665999",
+            message: "This is an example notification message.",
+            clock_time: "12:34pm",
+            background_type: "lockscreen",
+            website_url: ""
         },
         s_2: {
             id: 's_2',
@@ -27,6 +30,9 @@ const defaultAppData = {
             sender_name: 'Your Friend',
             sender_image: generateRandomAvatar(),
             message: 'Here is the message.',
+            clock_time: "",
+            background_type: "website",
+            website_url: "https://davidhoare.net"
         },
         s_3: {
             id: 's_3',
