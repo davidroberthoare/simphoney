@@ -1,0 +1,722 @@
+<!-- SMS EDIT COMPONENT -->
+<template>
+    <div data-name="sms_edit" class="page">
+        <div class="navbar">
+            <div class="navbar-inner">
+                <div class="left">
+                    <a href="/" class="link back"><i class="f7-icons">chevron_left</i></a>
+                </div>
+                <div class="title">SMS Edit</div>
+            </div>
+        </div>
+        <div class="page-content">
+            <div class="block"><button id="play_now_button" class="button button-fill color-green">Play Now</button></div>
+
+            <form class="list list-strong inset list-dividers-ios settings">
+                <ul>
+                    <!-- name -->
+                    <li>
+                        <div class="item-content item-input">
+                            <div class="item-inner">
+                                <div class="item-title item-label">Name</div>
+                                <div class="item-input-wrap">
+                                    <input type="text" name="name" placeholder="SMS Conversation Name" />
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+
+                    <!-- trigger_type -->
+                    <li>
+                        <div class="item-content item-input">
+                            <div class="item-inner">
+                                <div class="item-title item-label">Trigger Type</div>
+                                <div class="item-input-wrap">
+                                    <select name="trigger_type">
+                                        <option value="timed">Timed</option>
+                                        <option value="remote">Remote</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+
+                    <!-- delay -->
+                    <li>
+                        <div class="item-content item-input">
+                            <div class="item-inner">
+                                <div class="item-title item-label">Delay (seconds)</div>
+                                <div class="item-input-wrap">
+                                    <input type="number" name="delay" placeholder="5" value="5" />
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+
+                    <!-- start_date -->
+                    <li>
+                        <div class="item-content item-input">
+                            <div class="item-inner">
+                                <div class="item-title item-label">Start Date</div>
+                                <div class="item-input-wrap">
+                                    <input type="text" name="start_date" placeholder="2025-01-01 12:00" />
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </form>
+
+            <!-- SENDERS SECTION -->
+            <div class="block-title">Senders
+                <a href="#" class="button button-small button-fill" id="add_sender_button">Add Sender</a>
+            </div>
+            <div class="list simple-list senders-list" id="senders_list">
+                <ul></ul>
+            </div>
+
+            <!-- PREFILLED MESSAGES SECTION -->
+            <div class="block-title">Prefilled Messages (shown on load)
+                <a href="#" class="button button-small button-fill" id="add_prefilled_button">Add Message</a>
+            </div>
+            <div class="list simple-list sortable sortable-enabled" id="prefilled_list">
+                <ul></ul>
+            </div>
+
+            <!-- MESSAGES SECTION -->
+            <div class="block-title">Messages (added during simulation)
+                <a href="#" class="button button-small button-fill" id="add_message_button">Add Message</a>
+            </div>
+            <div class="list simple-list sortable sortable-enabled" id="messages_list">
+                <ul></ul>
+            </div>
+
+            <div class="block"><button class="button button-fill color-red" onclick="deleteThisSim()">Delete</button></div>
+        </div>
+
+        <!-- SENDER EDIT POPUP -->
+        <div class="popup" id="sender_popup">
+            <div class="view">
+                <div class="page">
+                    <div class="navbar">
+                        <div class="navbar-inner">
+                            <div class="title">Edit Sender</div>
+                            <div class="right">
+                                <a href="#" class="link popup-close">Done</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="page-content">
+                        <form class="list list-strong inset list-dividers-ios" id="sender_form">
+                            <ul>
+                                <li>
+                                    <div class="item-content item-input">
+                                        <div class="item-inner">
+                                            <div class="item-title item-label">Name</div>
+                                            <div class="item-input-wrap">
+                                                <input type="text" name="sender_name" placeholder="Sender Name" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="item-content item-input">
+                                        <div class="item-media">
+                                            <div class="avatar" id="sender_avatar_preview"></div>
+                                        </div>
+                                        <div class="item-inner">
+                                            <div class="item-title item-label">Avatar</div>
+                                            <div class="item-input-wrap">
+                                                <input type="file" id="sender_avatar_upload" name="sender_avatar_upload" accept="image/*" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </form>
+                        <div class="block">
+                            <button class="button button-fill" id="save_sender_button">Save Sender</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MESSAGE EDIT POPUP -->
+        <div class="popup" id="message_popup">
+            <div class="view">
+                <div class="page">
+                    <div class="navbar">
+                        <div class="navbar-inner">
+                            <div class="title">Edit Message</div>
+                            <div class="right">
+                                <a href="#" class="link popup-close">Done</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="page-content">
+                        <form class="list list-strong inset list-dividers-ios" id="message_form">
+                            <ul>
+                                <li>
+                                    <div class="item-content item-input">
+                                        <div class="item-inner">
+                                            <div class="item-title item-label">From</div>
+                                            <div class="item-input-wrap">
+                                                <select name="message_from">
+                                                    <option value="me">Me</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="item-content item-input">
+                                        <div class="item-inner">
+                                            <div class="item-title item-label">Text</div>
+                                            <div class="item-input-wrap">
+                                                <textarea name="message_text" placeholder="Message text"></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="item-content item-input">
+                                        <div class="item-inner">
+                                            <div class="item-title item-label">Delay (seconds)</div>
+                                            <div class="item-input-wrap">
+                                                <input type="number" name="message_delay" placeholder="2" value="2" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li id="autofollow_field">
+                                    <label class="item-content item-checkbox">
+                                        <input type="checkbox" name="message_autofollow" />
+                                        <i class="icon icon-checkbox"></i>
+                                        <div class="item-inner">
+                                            <div class="item-title">Auto-follow (requires user response)</div>
+                                        </div>
+                                    </label>
+                                </li>
+                            </ul>
+                        </form>
+                        <div class="block">
+                            <button class="button button-fill" id="save_message_button">Save Message</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<!-- component styles -->
+<style>
+    #sender_avatar_preview {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-size: cover;
+        background-position: center;
+        cursor: pointer;
+    }
+
+    .block-title {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .senders-list li, 
+    .sortable li {
+        display: flex;
+        align-items: center;
+        padding: 10px 15px;
+        background: var(--f7-list-item-bg-color);
+        margin-bottom: 5px;
+        border-radius: 8px;
+    }
+
+    .sortable li {
+        cursor: move;
+    }
+
+    .sender-item, .message-item {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        gap: 10px;
+    }
+
+    .sender-avatar, .message-sender-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-size: cover;
+        background-position: center;
+        flex-shrink: 0;
+    }
+
+    .sender-info, .message-info {
+        flex: 1;
+        overflow: hidden;
+    }
+
+    .sender-name {
+        font-weight: 600;
+    }
+
+    .message-text {
+        font-size: 14px;
+        color: var(--f7-list-item-text-color);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .message-meta {
+        font-size: 12px;
+        color: var(--f7-list-item-after-text-color);
+        margin-top: 2px;
+    }
+
+    .sender-actions, .message-actions {
+        display: flex;
+        gap: 5px;
+        flex-shrink: 0;
+    }
+
+    .sortable-handler {
+        cursor: move;
+        padding: 5px;
+        margin-right: 5px;
+        flex-shrink: 0;
+    }
+
+    .action-button {
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-size: 12px;
+        cursor: pointer;
+    }
+</style>
+
+<!-- component logic -->
+<script>
+    export default (props, { $f7, $on }) => {
+        console.log("sms edit component loaded");
+
+        let editingSenderIndex = null;
+        let editingMessageType = null; // 'prefilled' or 'messages'
+        let editingMessageIndex = null;
+
+        const updateSmsSettings = () => {
+            const $settings = $$('form.list.settings');
+            try {
+                if (currentSim) {
+                    currentSim.name = $settings.find('input[name="name"]').val();
+                    currentSim.trigger_type = $settings.find('select[name="trigger_type"]').val();
+                    currentSim.delay = $settings.find('input[name="delay"]').val();
+                    currentSim.start_date = $settings.find('input[name="start_date"]').val();
+                    console.log('SMS settings updated:', currentSim);
+                    appData.sims[currentSim.id] = currentSim;
+                    saveAppData();
+                }
+            } catch (error) {
+                console.log("Error updating SMS settings:", error);
+            }
+        };
+
+        const playThisSim = () => {
+            updateSmsSettings();
+            console.log("Playing this sim now:", currentSim);
+            enterFullscreen();
+            mainView.router.navigate('/' + currentSim.type + '/');
+        };
+
+        // === SENDERS MANAGEMENT ===
+        const renderSendersList = () => {
+            const $list = $$('#senders_list ul');
+            $list.html('');
+            
+            if (!currentSim.senders || currentSim.senders.length === 0) {
+                $list.html('<li style="text-align: center; color: #999;">No senders yet</li>');
+                return;
+            }
+
+            currentSim.senders.forEach((sender, index) => {
+                const liHtml = `
+                    <li>
+                        <div class="sender-item">
+                            <div class="sender-avatar" style="background-image: url(${sender.avatar})"></div>
+                            <div class="sender-info">
+                                <div class="sender-name">${sender.name}</div>
+                                <div class="message-meta">Sender ${index}</div>
+                            </div>
+                            <div class="sender-actions">
+                                <a href="#" class="button button-small button-fill action-button edit-sender" data-index="${index}">Edit</a>
+                                <a href="#" class="button button-small button-fill color-red action-button delete-sender" data-index="${index}">Delete</a>
+                            </div>
+                        </div>
+                    </li>
+                `;
+                $list.append(liHtml);
+            });
+
+            // Attach event handlers
+            $$('.edit-sender').on('click', function(e) {
+                e.preventDefault();
+                const index = parseInt($$(this).attr('data-index'));
+                openSenderPopup(index);
+            });
+
+            $$('.delete-sender').on('click', function(e) {
+                e.preventDefault();
+                const index = parseInt($$(this).attr('data-index'));
+                deleteSender(index);
+            });
+        };
+
+        const openSenderPopup = (index = null) => {
+            editingSenderIndex = index;
+            const popup = app.popup.create({
+                el: '#sender_popup',
+            });
+
+            if (index !== null && currentSim.senders[index]) {
+                const sender = currentSim.senders[index];
+                $$('#sender_form input[name="sender_name"]').val(sender.name);
+                $$('#sender_avatar_preview').css('background-image', `url(${sender.avatar})`);
+            } else {
+                $$('#sender_form input[name="sender_name"]').val('');
+                const newAvatar = generateRandomAvatar();
+                $$('#sender_avatar_preview').css('background-image', `url(${newAvatar})`);
+            }
+
+            popup.open();
+        };
+
+        const saveSender = () => {
+            const name = $$('#sender_form input[name="sender_name"]').val();
+            const avatar = $$('#sender_avatar_preview').css('background-image').slice(4, -1).replace(/"/g, "");
+
+            if (!name.trim()) {
+                app.notification.create({
+                    title: 'Error',
+                    text: 'Sender name is required',
+                    closeTimeout: 2000,
+                    closeOnClick: true,
+                }).open();
+                return;
+            }
+
+            const senderData = { name: name.trim(), avatar };
+
+            if (!currentSim.senders) {
+                currentSim.senders = [];
+            }
+
+            if (editingSenderIndex !== null) {
+                currentSim.senders[editingSenderIndex] = senderData;
+            } else {
+                currentSim.senders.push(senderData);
+            }
+
+            saveAppData();
+            renderSendersList();
+            updateMessageFromOptions();
+            app.popup.close('#sender_popup');
+        };
+
+        const deleteSender = (index) => {
+            app.dialog.confirm('Delete this sender?', () => {
+                currentSim.senders.splice(index, 1);
+                saveAppData();
+                renderSendersList();
+                updateMessageFromOptions();
+            });
+        };
+
+        const setupSenderImageUpload = () => {
+            const fileInput = $$('#sender_avatar_upload');
+            const previewImg = $$('#sender_avatar_preview');
+
+            fileInput.on('change', function (e) {
+                const file = e.target.files[0];
+                if (file && file.type.startsWith('image/')) {
+                    resizeImageToBase64(file)
+                        .then((base64Data) => {
+                            previewImg.css('background-image', `url(${base64Data})`);
+                        })
+                        .catch((error) => {
+                            app.notification.create({
+                                title: 'Error',
+                                text: 'Failed to upload image',
+                                closeTimeout: 2000,
+                                closeOnClick: true,
+                            }).open();
+                            console.error('Error uploading image:', error);
+                        });
+                } else {
+                    app.notification.create({
+                        title: 'Invalid File',
+                        text: 'Please select a valid image file',
+                        closeTimeout: 2000,
+                        closeOnClick: true,
+                    }).open();
+                }
+            });
+
+            previewImg.on('click', function (e) {
+                fileInput.val('');
+                const newAvatar = generateRandomAvatar();
+                previewImg.css('background-image', `url(${newAvatar})`);
+            });
+        };
+
+        // === MESSAGES MANAGEMENT ===
+        const updateMessageFromOptions = () => {
+            const $select = $$('#message_form select[name="message_from"]');
+            $select.html('<option value="me">Me</option>');
+            
+            if (currentSim.senders) {
+                currentSim.senders.forEach((sender, index) => {
+                    $select.append(`<option value="${index}">${sender.name}</option>`);
+                });
+            }
+        };
+
+        const renderMessagesList = (type) => {
+            const listId = type === 'prefilled' ? '#prefilled_list' : '#messages_list';
+            const $list = $$(listId + ' ul');
+            $list.html('');
+
+            const messages = currentSim[type] || [];
+            
+            if (messages.length === 0) {
+                $list.html('<li style="text-align: center; color: #999;">No messages yet</li>');
+                return;
+            }
+
+            messages.forEach((message, index) => {
+                const isMe = message.from === 'me';
+                const senderName = isMe ? 'Me' : (currentSim.senders[message.from]?.name || `Sender ${message.from}`);
+                const senderAvatar = isMe ? '' : (currentSim.senders[message.from]?.avatar || '');
+                
+                const autoFollowText = type === 'messages' && message.autofollow ? ' • Auto-follow' : '';
+                const metaText = `From: ${senderName} • Delay: ${message.delay}s${autoFollowText}`;
+
+                const avatarHtml = isMe ? '' : `<div class="message-sender-avatar" style="background-image: url(${senderAvatar})"></div>`;
+
+                const liHtml = `
+                    <li>
+                        <div class="sortable-handler">
+                            <i class="f7-icons">line_horizontal_3</i>
+                        </div>
+                        <div class="message-item">
+                            ${avatarHtml}
+                            <div class="message-info">
+                                <div class="message-text">${message.text}</div>
+                                <div class="message-meta">${metaText}</div>
+                            </div>
+                            <div class="message-actions">
+                                <a href="#" class="button button-small button-fill action-button edit-message" data-type="${type}" data-index="${index}">Edit</a>
+                                <a href="#" class="button button-small button-fill color-red action-button delete-message" data-type="${type}" data-index="${index}">Delete</a>
+                            </div>
+                        </div>
+                    </li>
+                `;
+                $list.append(liHtml);
+            });
+
+            // Attach event handlers
+            $$('.edit-message').on('click', function(e) {
+                e.preventDefault();
+                const type = $$(this).attr('data-type');
+                const index = parseInt($$(this).attr('data-index'));
+                openMessagePopup(type, index);
+            });
+
+            $$('.delete-message').on('click', function(e) {
+                e.preventDefault();
+                const type = $$(this).attr('data-type');
+                const index = parseInt($$(this).attr('data-index'));
+                deleteMessage(type, index);
+            });
+        };
+
+        const openMessagePopup = (type, index = null) => {
+            editingMessageType = type;
+            editingMessageIndex = index;
+
+            updateMessageFromOptions();
+
+            // Show/hide autofollow field based on message type
+            if (type === 'messages') {
+                $$('#autofollow_field').show();
+            } else {
+                $$('#autofollow_field').hide();
+            }
+
+            const popup = app.popup.create({
+                el: '#message_popup',
+            });
+
+            if (index !== null && currentSim[type][index]) {
+                const message = currentSim[type][index];
+                $$('#message_form select[name="message_from"]').val(message.from);
+                $$('#message_form textarea[name="message_text"]').val(message.text);
+                $$('#message_form input[name="message_delay"]').val(message.delay);
+                
+                if (type === 'messages') {
+                    $$('#message_form input[name="message_autofollow"]').prop('checked', message.autofollow || false);
+                }
+            } else {
+                $$('#message_form select[name="message_from"]').val('me');
+                $$('#message_form textarea[name="message_text"]').val('');
+                $$('#message_form input[name="message_delay"]').val(2);
+                $$('#message_form input[name="message_autofollow"]').prop('checked', false);
+            }
+
+            popup.open();
+        };
+
+        const saveMessage = () => {
+            const from = $$('#message_form select[name="message_from"]').val();
+            const text = $$('#message_form textarea[name="message_text"]').val();
+            const delay = parseInt($$('#message_form input[name="message_delay"]').val()) || 0;
+
+            if (!text.trim()) {
+                app.notification.create({
+                    title: 'Error',
+                    text: 'Message text is required',
+                    closeTimeout: 2000,
+                    closeOnClick: true,
+                }).open();
+                return;
+            }
+
+            const messageData = {
+                from: from === 'me' ? 'me' : parseInt(from),
+                text: text.trim(),
+                delay
+            };
+
+            if (editingMessageType === 'messages') {
+                messageData.autofollow = $$('#message_form input[name="message_autofollow"]').prop('checked');
+            }
+
+            if (!currentSim[editingMessageType]) {
+                currentSim[editingMessageType] = [];
+            }
+
+            if (editingMessageIndex !== null) {
+                currentSim[editingMessageType][editingMessageIndex] = messageData;
+            } else {
+                currentSim[editingMessageType].push(messageData);
+            }
+
+            saveAppData();
+            renderMessagesList(editingMessageType);
+            app.popup.close('#message_popup');
+        };
+
+        const deleteMessage = (type, index) => {
+            app.dialog.confirm('Delete this message?', () => {
+                currentSim[type].splice(index, 1);
+                saveAppData();
+                renderMessagesList(type);
+            });
+        };
+
+        const setupSortable = () => {
+            // Prefilled messages sortable
+            app.sortable.enable('#prefilled_list');
+            $$('#prefilled_list').on('sortable:sort', function (el, listIndex) {
+                const movedItem = currentSim.prefilled.splice(listIndex.from, 1)[0];
+                currentSim.prefilled.splice(listIndex.to, 0, movedItem);
+                saveAppData();
+                console.log('Prefilled messages reordered');
+            });
+
+            // Messages sortable
+            app.sortable.enable('#messages_list');
+            $$('#messages_list').on('sortable:sort', function (el, listIndex) {
+                const movedItem = currentSim.messages.splice(listIndex.from, 1)[0];
+                currentSim.messages.splice(listIndex.to, 0, movedItem);
+                saveAppData();
+                console.log('Messages reordered');
+            });
+        };
+
+        $on('pageInit', function (e, page) {
+            console.log('SMS edit page initialized');
+
+            // Initialize arrays if they don't exist
+            if (!currentSim.senders) currentSim.senders = [];
+            if (!currentSim.prefilled) currentSim.prefilled = [];
+            if (!currentSim.messages) currentSim.messages = [];
+
+            setupSenderImageUpload();
+            setupSortable();
+
+            // Play button
+            $$('#play_now_button').on('click', function (e) {
+                e.preventDefault();
+                playThisSim();
+            });
+
+            // Add buttons
+            $$('#add_sender_button').on('click', function (e) {
+                e.preventDefault();
+                openSenderPopup();
+            });
+
+            $$('#add_prefilled_button').on('click', function (e) {
+                e.preventDefault();
+                openMessagePopup('prefilled');
+            });
+
+            $$('#add_message_button').on('click', function (e) {
+                e.preventDefault();
+                openMessagePopup('messages');
+            });
+
+            // Save buttons in popups
+            $$('#save_sender_button').on('click', function (e) {
+                e.preventDefault();
+                saveSender();
+            });
+
+            $$('#save_message_button').on('click', function (e) {
+                e.preventDefault();
+                saveMessage();
+            });
+        });
+
+        $on('pageBeforeIn', function (e, page) {
+            const s = currentSim;
+            console.log('SMS edit page displayed...', s);
+
+            // Populate form fields
+            const $settings = $$('form.list.settings');
+            $settings.find('input[name="name"]').val(s.name);
+            $settings.find('select[name="trigger_type"]').val(s.trigger_type);
+            $settings.find('input[name="delay"]').val(s.delay);
+            $settings.find('input[name="start_date"]').val(s.start_date);
+
+            // Render lists
+            renderSendersList();
+            renderMessagesList('prefilled');
+            renderMessagesList('messages');
+            updateMessageFromOptions();
+        });
+
+        $on('pageBeforeOut', function (e, page) {
+            updateSmsSettings();
+        });
+
+        // component function must return render function
+        return $render;
+    };
+</script>
