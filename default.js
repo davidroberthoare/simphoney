@@ -14,7 +14,7 @@ const defaultAppData = {
             trigger_type: "timed",
             sent_time: "now",
             sender_name: "Sender Name",
-            sender_image: "https://testingbot.com/free-online-tools/random-avatar/150?u=1768663665999",
+            sender_avatar: "https://testingbot.com/free-online-tools/random-avatar/150?u=1768663665999",
             message: "This is an example notification message.",
             clock_time: "12:34pm",
             background_type: "lockscreen",
@@ -28,7 +28,7 @@ const defaultAppData = {
             trigger_type: 'timed',
             sent_time: '12:30pm',
             sender_name: 'Your Friend',
-            sender_image: generateRandomAvatar(),
+            sender_avatar: generateRandomAvatar(),
             message: 'Here is the message.',
             clock_time: "",
             background_type: "website",
@@ -40,10 +40,10 @@ const defaultAppData = {
             name: 'Sample SMS',
             delay: 5,
             trigger_type: 'timed',
-            start_date: '2024-01-01 10:00 AM',
+            start_date: new Date().toISOString().slice(0, 16).replace('T', ' '),
             senders: [
-                { name: 'Bob Bobson', image: generateRandomAvatar(1) },
-                { name: 'Sally Sallyson', image: generateRandomAvatar(2) },
+                { name: 'Bob Bobson', avatar: generateRandomAvatar(1) },
+                { name: 'Sally Sallyson', avatar: generateRandomAvatar(2) },
             ],
             prefilled: [
                 //already on the page when it loads
@@ -53,10 +53,10 @@ const defaultAppData = {
             ],
             messages: [
                 //to be added during the simulation
-                { from: 0, text: 'When are you coming home?', autofollow: true, delay: 1 },
-                { from: 1, text: 'Are you sure?', autofollow: false, delay: 1 },
-                { from: 1, text: 'Tell me more about that...', autofollow: true, delay: 1 },
-                { from: 0, text: 'No way ;)', autofollow: true, delay: 1 },
+                { from: 0, text: 'When are you coming home?', autofollow: false, delay: 2 },
+                { from: 1, text: 'Are you sure?', autofollow: true, delay: 2 },
+                { from: 1, text: 'Tell me more about that...', autofollow: false, delay: 2 },
+                { from: 0, text: 'No way ;)', autofollow: false, delay: 3 },
             ],
         }
     },

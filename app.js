@@ -7,6 +7,17 @@ var app = new Framework7({
   theme: 'auto',
   panel: { swipe: true },
   touch: { tapHold: true },
+  // keyboard: {
+  //   enabled: true,
+  //   resize: true,
+  //   resizePage: true,
+  //   resizeDelay: 200,
+  // },
+  input: {
+    scrollIntoViewOnFocus: true,
+    scrollIntoViewCentered: true,
+    scrollIntoViewAlways: true,
+  },
   routes: [
     { path: '/', name: 'home', componentUrl: './pages/home.html' },
     { path: '/global/', name: 'global', componentUrl: './pages/global.html' },

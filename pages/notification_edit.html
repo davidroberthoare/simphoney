@@ -38,16 +38,16 @@
                         </div>
                     </li>
 
-                    <!-- sender_image -->
+                    <!-- sender_avatar -->
                     <li>
                         <div class="item-content item-input">
                             <div class="item-media">
-                                <div class="avatar" id="sender_image_preview" ></div>
+                                <div class="avatar" id="sender_avatar_preview" ></div>
                             </div>
                             <div class="item-inner">
                                 <div class="item-title item-label">Sender Image</div>
                                 <div class="item-input-wrap">
-                                    <input type="file" id="sender_image_upload" name="sender_image_upload" accept="image/*" />
+                                    <input type="file" id="sender_avatar_upload" name="sender_avatar_upload" accept="image/*" />
                                 </div>
                             </div>
                         </div>
@@ -156,7 +156,7 @@
 <!-- component styles -->
 <style>
     /* Add custom styles here if needed */
-    #sender_image_preview {
+    #sender_avatar_preview {
         width: 40px;
         height: 40px;
         border-radius: 50%;
@@ -200,11 +200,11 @@
         }
 
         const setupSenderImageUpload = () => {
-            const fileInput = $$('#sender_image_upload');
-            const previewImg = $$('#sender_image_preview');
+            const fileInput = $$('#sender_avatar_upload');
+            const previewImg = $$('#sender_avatar_preview');
 
-            if (currentSim.sender_image && currentSim.sender_image.startsWith('data:')) {
-                previewImg.css('background-image', `url(${currentSim.sender_image})`);
+            if (currentSim.sender_avatar && currentSim.sender_avatar.startsWith('data:')) {
+                previewImg.css('background-image', `url(${currentSim.sender_avatar})`);
             }
 
             fileInput.on('change', function (e) {
@@ -214,7 +214,7 @@
                     resizeImageToBase64(file)
                         .then((base64Data) => {
                             previewImg.css('background-image', `url(${base64Data})`);
-                            currentSim.sender_image = base64Data;
+                            currentSim.sender_avatar = base64Data;
                             console.log('Sender image uploaded and stored successfully');
                         })
                         .catch((error) => {
@@ -238,8 +238,8 @@
 
             previewImg.on('click', function (e) {
                 fileInput.val('');
-                currentSim.sender_image = generateRandomAvatar();
-                previewImg.css('background-image', `url(${currentSim.sender_image})`);
+                currentSim.sender_avatar = generateRandomAvatar();
+                previewImg.css('background-image', `url(${currentSim.sender_avatar})`);
                 console.log('image reset');
             });
         };
@@ -282,7 +282,7 @@
             $settings.find('select[name="background_type"]').val(s.background_type);
             $settings.find('input[name="website_url"]').val(s.website_url);
 
-            $$("#sender_image_preview").css('background-image', `url(${s.sender_image})`);
+            $$("#sender_avatar_preview").css('background-image', `url(${s.sender_avatar})`);
             show_hide_website_url_field();
         });
 
