@@ -102,3 +102,5 @@ Open source and free to use for any purpose. No warranty provided.
 ## Credits
 
 Created for filmmakers, by a film teacher, David Hoare.
+
+"Using phone" icons created by kornkun (https://www.flaticon.com/free-icons/using-phone)

@@ -83,18 +83,28 @@ function saveAppData() {
 // Load data on app initialization
 loadAppData();
 
+// Apply dark mode on initial load if enabled
+if (appData.global.dark_mode) {
+  document.documentElement.classList.add('dark');
+}
+
 // Theme switching functions
 function applyTheme(theme) {
   if (theme === 'ios' || theme === 'md') {
-    app.setTheme(theme);
+    // Framework7 requires a page reload to change themes
+    // Save the preference and reload
+    appData.global.os = theme;
+    saveAppData();
+    window.location.reload();
   }
 }
 
 function applyDarkMode(isDark) {
+  const htmlEl = document.documentElement;
   if (isDark) {
-    app.enableDarkMode();
+    htmlEl.classList.add('dark');
   } else {
-    app.disableDarkMode();
+    htmlEl.classList.remove('dark');
   }
 }
 

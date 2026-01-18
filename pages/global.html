@@ -34,7 +34,7 @@
                   <div class="item-input-wrap">
                     <select id="global-os">
                       <option value="ios">iOS</option>
-                      <option value="android">Android</option>
+                      <option value="md">Android</option>
                     </select>
                   </div>
                 </div>
@@ -125,7 +125,7 @@
       // Apply theme changes immediately
       if (newOS !== appData.global.os) {
         appData.global.os = newOS;
-        applyTheme(newOS === 'android' ? 'md' : 'ios');
+        applyTheme(newOS);
       }
       
       if (newDarkMode !== appData.global.dark_mode) {
