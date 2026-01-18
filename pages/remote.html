@@ -1,0 +1,211 @@
+<!-- REMOTE CONTROLLER COMPONENT -->
+<template>
+  <div data-name="remote" class="page">
+    <div class="navbar">
+      <div class="navbar-inner">
+        <div class="left">
+          <a href="/" class="link back"><i class="f7-icons">chevron_left</i></a>
+        </div>
+        <div class="title">Remote Control</div>
+      </div>
+    </div>
+    <div class="page-content">
+      <div class="block-title">Channel: <strong id="room-name-display">default</strong></div>
+      
+      <div class="block-title">Connected Devices</div>
+      <div class="list inset list-strong-ios list-dividers-ios" id="device-list">
+        <ul></ul>
+      </div>
+      <div class="block" id="no-devices">
+        <p>Searching for devices in channel...</p>
+      </div>
+    </div>
+  </div>
+</template>
+
+<!-- component styles -->
+<style>
+  #device-list .item-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  #device-list .device-info {
+    flex: 1;
+  }
+
+  #device-list .device-id {
+    font-size: 0.9em;
+    color: #666;
+  }
+
+  #device-list .play-button {
+    /* margin-left: 10px;
+    padding: 4px 12px;
+    font-size: 13px;
+    min-height: 28px; */
+  }
+
+  .connection-status {
+    padding: 10px 15px;
+    text-align: center;
+    font-size: 0.9em;
+    color: #666;
+  }
+</style>
+
+<!-- component logic -->
+<script>
+  export default (props, { $f7, $on }) => {
+    let peer = null;
+    let connections = {};
+    let pollInterval = null;
+    const remoteChannel = appData.global.remote_channel || 'default';
+    const knownDevices = ['player1', 'player2', 'player3', 'player4', 'player5']; // Try connecting to these device slots
+
+    function updateDeviceList() {
+      const deviceList = $$('#device-list ul');
+      const noDevices = $$('#no-devices');
+      
+      const connectedDevices = Object.keys(connections);
+      
+      if (connectedDevices.length === 0) {
+        deviceList.html('');
+        noDevices.show();
+      } else {
+        noDevices.hide();
+        let html = '';
+        connectedDevices.forEach((peerId) => {
+          const conn = connections[peerId];
+          html += `
+            <li>
+              <div class="item-content">
+                <div class="item-inner">
+                  <div class="item-title-row">
+                    <div class="item-title device-id">${peerId}</div>
+                  </div>
+                </div>
+                <div class="item-after">
+                  <button class="button play-button" data-peer-id="${peerId}">
+                    <i class="f7-icons">play_fill</i>
+                  </button>
+                </div>
+              </div>
+            </li>
+          `;
+        });
+        deviceList.html(html);
+        
+        // Attach click handlers to play buttons
+        $$('.play-button').on('click', function() {
+          const peerId = $$(this).attr('data-peer-id');
+          sendTrigger(peerId);
+        });
+      }
+    }
+
+    function sendTrigger(peerId) {
+      const conn = connections[peerId];
+      if (conn && conn.open) {
+        conn.send('go');
+        console.log('Sent "go" trigger to:', peerId);
+        $f7.toast.create({
+          text: 'Trigger sent!',
+          closeTimeout: 2000,
+        }).open();
+      } else {
+        console.error('Connection not open for peer:', peerId);
+        $f7.toast.create({
+          text: 'Connection not available',
+          closeTimeout: 2000,
+        }).open();
+      }
+    }
+
+    function connectToPeer(peerId) {
+      if (connections[peerId]) {
+        return;
+      }
+
+      const conn = peer.connect(peerId);
+      
+      conn.on('open', () => {
+        console.log('Connected to device:', peerId);
+        connections[peerId] = conn;
+        updateDeviceList();
+      });
+
+      conn.on('close', () => {
+        console.log('Disconnected from:', peerId);
+        delete connections[peerId];
+        updateDeviceList();
+      });
+
+      conn.on('error', (err) => {
+        // Silently handle connection errors
+        delete connections[peerId];
+      });
+    }
+
+    function pollForDevices() {
+      // Try connecting to predictable peer IDs based on remote channel
+      knownDevices.forEach((deviceSlot) => {
+        const targetPeerId = `simphoney-${remoteChannel}-${deviceSlot}`;
+        if (!connections[targetPeerId] && targetPeerId !== peer.id) {
+          connectToPeer(targetPeerId);
+        }
+      });
+    }
+
+    $on('pageAfterIn', function (e, page) {
+      console.log('Remote control page displayed for channel:', remoteChannel);
+      $$('#room-name-display').text(remoteChannel);
+
+      // Initialize PeerJS with random ID
+      peer = new Peer();
+
+      peer.on('open', (id) => {
+        console.log('Remote controller PeerJS ID:', id);
+        
+        // Start polling for devices every 2 seconds
+        pollInterval = setInterval(pollForDevices, 2000);
+        
+        // Do an immediate poll
+        pollForDevices();
+      });
+
+      peer.on('error', (err) => {
+        // Quietly log connection errors, suppress "Could not connect" messages
+        if (err.type !== 'peer-unavailable') {
+          console.error('PeerJS error:', err);
+        }
+      });
+    });
+
+    $on('pageBeforeOut', function (e, page) {
+      // Clean up when leaving the page
+      if (pollInterval) {
+        clearInterval(pollInterval);
+        pollInterval = null;
+      }
+
+      // Close all connections
+      Object.keys(connections).forEach((peerId) => {
+        connections[peerId].close();
+      });
+      connections = {};
+
+      // Destroy peer
+      if (peer) {
+        peer.destroy();
+        peer = null;
+      }
+
+      console.log('Remote control disconnected');
+    });
+
+    // component function must return render function
+    return $render;
+  };
+</script>

@@ -4,6 +4,8 @@ const defaultAppData = {
         dark_mode: false,
         os: 'ios',
         background_img: 'img/bg_default.jpg',
+        remote_channel: 'default',
+        player_slot: 'player1',
     },
     sims: {
         s_1: {

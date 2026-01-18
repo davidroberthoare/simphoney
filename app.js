@@ -25,6 +25,7 @@ var app = new Framework7({
     { path: '/notification_edit/', name: 'notification_edit', componentUrl: './pages/notification_edit.html' },
     { path: '/sms/', name: 'sms', componentUrl: './pages/sms.html' },
     { path: '/sms_edit/', name: 'sms_edit', componentUrl: './pages/sms_edit.html' },
+    { path: '/remote/', name: 'remote', componentUrl: './pages/remote.html' },
   ]
 });
 

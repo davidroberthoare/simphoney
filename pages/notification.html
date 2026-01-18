@@ -43,6 +43,22 @@
 <!-- component logic -->
 <script>
   export default (props, { $f7, $on }) => {
+    let peer = null;
+    let peerId = null;
+    const remoteChannel = appData.global.remote_channel || 'default';
+
+    // Function to trigger the notification
+    function triggerNotification() {
+      let notification = app.notification.create({
+        icon: `<div class="avatar" style="background-image: url('${currentSim.sender_avatar}');"></div>`,
+        title: currentSim.sender_name,
+        titleRightText: currentSim.sent_time,
+        text: currentSim.message,
+        closeOnClick: true,
+        swipeToClose: true,
+      });
+      notification.open();
+    }
 
     $on('pageBeforeIn', function (e, page) {
       console.log('Preparing notification page...');
@@ -84,18 +100,55 @@
       }
 
 
+      // Original timed trigger, only if type == 'delay'
+      if (currentSim.trigger_type === 'timed') {
+        setTimeout(() => {
+          triggerNotification();
+        }, currentSim.delay * 1000);
+      }
+      else {  //for 'remote' trigger type
 
-      let notification = app.notification.create({
-        icon: `<div class="avatar" style="background-image: url('${currentSim.sender_avatar}');"></div>`,
-        title: currentSim.sender_name,
-        titleRightText: currentSim.sent_time,
-        text: currentSim.message,
-        closeOnClick: true,
-        swipeToClose: true,
-      });
-      setTimeout(() => {
-        notification.open();
-      }, currentSim.delay * 1000);
+        // Get player slot from global settings
+        let playerSlot = appData.global.player_slot || 'player1';
+
+        // Initialize PeerJS with predictable ID for auto-discovery
+        peerId = `simphoney-${remoteChannel}-${playerSlot}`;
+        peer = new Peer(peerId);
+
+        peer.on('open', (id) => {
+          console.log(`PeerJS connected - Channel: ${remoteChannel}, Slot: ${playerSlot}, ID: ${id}`);
+        });
+
+        peer.on('connection', (conn) => {
+          console.log('Remote connection established');
+          conn.on('data', (data) => {
+            console.log('Received data from remote:', data);
+            if (data === 'go') {
+              triggerNotification();
+            }
+          });
+        });
+
+        peer.on('error', (err) => {
+          console.error('PeerJS error:', err);
+        });
+
+      }
+
+
+
+
+    });
+
+    $on('pageBeforeOut', function (e, page) {
+      // Clean up PeerJS connection when leaving the page
+      if (peer) {
+        peer.destroy();
+        peer = null;
+        peerId = null;
+        localStorage.removeItem('simphoney_peer_id');
+        console.log('PeerJS connection closed');
+      }
     });
 
     // component function must return render function

@@ -65,6 +65,36 @@
               </div>
             </li>
 
+            <!-- remote channel input -->
+            <li>
+              <div class="item-content item-input">
+                <div class="item-inner">
+                  <div class="item-title item-label">Remote Channel</div>
+                  <div class="item-input-wrap">
+                    <input type="text" id="global-remote_channel" placeholder="default" />
+                  </div>
+                </div>
+              </div>
+            </li>
+
+            <!-- player slot selector -->
+            <li>
+              <div class="item-content item-input">
+                <div class="item-inner">
+                  <div class="item-title item-label">Player Slot</div>
+                  <div class="item-input-wrap">
+                    <select id="global-player_slot">
+                      <option value="player1">Player 1</option>
+                      <option value="player2">Player 2</option>
+                      <option value="player3">Player 3</option>
+                      <option value="player4">Player 4</option>
+                      <option value="player5">Player 5</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </li>
+
           </ul>
       </form>
     </div>
@@ -84,11 +114,15 @@
       $$('#global-background')?.val(appData.global.background);
       $$('#global-os').val(appData.global.os);
       $$('#global-dark_mode').prop('checked', appData.global.dark_mode ? 'checked' : '');
+      $$('#global-remote_channel').val(appData.global.remote_channel || 'default');
+      $$('#global-player_slot').val(appData.global.player_slot || 'player1');
     };
 
     const updateGlobalSettings = () => {
       appData.global.os = $$('#global-os').val();
       appData.global.dark_mode = $$('#global-dark_mode').prop('checked');
+      appData.global.remote_channel = $$('#global-remote_channel').val() || 'default';
+      appData.global.player_slot = $$('#global-player_slot').val() || 'player1';
       console.log('Global settings updated:', appData.global);
       saveAppData();
     };
