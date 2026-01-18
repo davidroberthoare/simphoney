@@ -41,6 +41,18 @@
                         </div>
                     </li>
 
+                    <!-- delay -->
+                    <li id="delay_field">
+                        <div class="item-content item-input">
+                            <div class="item-inner">
+                                <div class="item-title item-label">Delay (seconds)</div>
+                                <div class="item-input-wrap">
+                                    <input type="number" name="delay" placeholder="3" value="3" />
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+
                 </ul>
             </form>
 
@@ -249,6 +261,7 @@
                 if (currentSim) {
                     currentSim.name = $settings.find('input[name="name"]').val();
                     currentSim.trigger_type = $settings.find('select[name="trigger_type"]').val();
+                    currentSim.delay = $settings.find('input[name="delay"]').val();
                     console.log('SMS settings updated:', currentSim);
                     appData.sims[currentSim.id] = currentSim;
                     saveAppData();
@@ -569,6 +582,16 @@
             });
         };
 
+        const show_hide_delay_field = () => {
+            console.log('Checking trigger type for delay field display');
+            const triggerType = $$('select[name="trigger_type"]').val();
+            if (triggerType === 'remote') {
+                $$('#delay_field').hide();
+            } else {
+                $$('#delay_field').show();
+            }
+        };
+
         const setupSortable = () => {
             // Prefilled messages sortable
             app.sortable.enable('#prefilled_list');
@@ -622,6 +645,10 @@
                 openMessagePopup('messages');
             });
 
+            $$('select[name="trigger_type"]').on('change', function () {
+                show_hide_delay_field();
+            });
+
             // Save buttons in popups
             $$('#save_sender_button').on('click', function (e) {
                 e.preventDefault();
@@ -658,13 +685,15 @@
             // Populate form fields
             const $settings = $$('form.list.settings');
             $settings.find('input[name="name"]').val(s.name);
-            $settings.find('select[name="trigger_type"]').val(s.trigger_type);
+            $settings.find('select[name="trigger_type"]').val(s.trigger_type || 'timed');
+            $settings.find('input[name="delay"]').val(s.delay || 3);
 
             // Render lists
             renderSendersList();
             renderMessagesList('prefilled');
             renderMessagesList('messages');
             updateMessageFromOptions();
+            show_hide_delay_field();
         });
 
         $on('pageBeforeOut', function (e, page) {

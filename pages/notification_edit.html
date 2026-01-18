@@ -93,7 +93,7 @@
                     </li>
 
                     <!-- delay -->
-                    <li>
+                    <li id="delay_field">
                         <div class="item-content item-input">
                             <div class="item-inner">
                                 <div class="item-title item-label">Delay (seconds)</div>
@@ -254,6 +254,16 @@
             }
         };
 
+        const show_hide_delay_field = () => {
+            console.log('Checking trigger type for delay field display');
+            const triggerType = $$('select[name="trigger_type"]').val();
+            if (triggerType === 'remote') {
+                $$('#delay_field').hide();
+            } else {
+                $$('#delay_field').show();
+            }
+        };
+
         $on('pageInit', function (e, page) {
             setupSenderImageUpload();
 
@@ -264,6 +274,10 @@
 
             $$('select[name="background_type"]').on('change', function () {
                 show_hide_website_url_field();
+            });
+
+            $$('select[name="trigger_type"]').on('change', function () {
+                show_hide_delay_field();
             });
 
         });
@@ -284,6 +298,7 @@
 
             $$("#sender_avatar_preview").css('background-image', `url(${s.sender_avatar})`);
             show_hide_website_url_field();
+            show_hide_delay_field();
         });
 
         $on('pageBeforeOut', function (e, page) {
