@@ -92,3 +92,62 @@ async function resizeImageToBase64(file, maxWidth = 150, maxHeight = 150, qualit
     });
 }
 
+
+// SOUND AND VIBRATION UTILITIES **********************
+// SOUND AND VIBRATION UTILITIES **********************
+// SOUND AND VIBRATION UTILITIES **********************
+
+// Play notification sound
+function playNotificationSound() {
+    // Try to use native notification API
+    if ('Notification' in window && Notification.permission === 'granted') {
+        // Native notification will use system sound
+        // This is already handled by the notification itself
+    }
+    
+    // Fallback to built-in sound using Web Audio API
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+    
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+    
+    // Create a pleasant notification sound (two-tone)
+    oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+    oscillator.frequency.setValueAtTime(600, audioContext.currentTime + 0.1);
+    
+    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+    
+    oscillator.start(audioContext.currentTime);
+    oscillator.stop(audioContext.currentTime + 0.3);
+}
+
+// Play SMS sound
+function playSMSSound() {
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+    
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+    
+    // Create a quick SMS notification sound (tri-tone)
+    oscillator.frequency.setValueAtTime(660, audioContext.currentTime);
+    oscillator.frequency.setValueAtTime(770, audioContext.currentTime + 0.08);
+    oscillator.frequency.setValueAtTime(880, audioContext.currentTime + 0.16);
+    
+    gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.25);
+    
+    oscillator.start(audioContext.currentTime);
+    oscillator.stop(audioContext.currentTime + 0.25);
+}
+
+// Trigger vibration
+function triggerVibration(pattern = [200, 100, 200]) {
+    if ('vibrate' in navigator) {
+        navigator.vibrate(pattern);
+    }
+}

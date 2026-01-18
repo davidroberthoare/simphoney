@@ -119,8 +119,20 @@
     };
 
     const updateGlobalSettings = () => {
-      appData.global.os = $$('#global-os').val();
-      appData.global.dark_mode = $$('#global-dark_mode').prop('checked');
+      const newOS = $$('#global-os').val();
+      const newDarkMode = $$('#global-dark_mode').prop('checked');
+      
+      // Apply theme changes immediately
+      if (newOS !== appData.global.os) {
+        appData.global.os = newOS;
+        applyTheme(newOS === 'android' ? 'md' : 'ios');
+      }
+      
+      if (newDarkMode !== appData.global.dark_mode) {
+        appData.global.dark_mode = newDarkMode;
+        applyDarkMode(newDarkMode);
+      }
+      
       appData.global.remote_channel = $$('#global-remote_channel').val() || 'default';
       appData.global.player_slot = $$('#global-player_slot').val() || 'player1';
       console.log('Global settings updated:', appData.global);
@@ -187,6 +199,10 @@
     $on('pageBeforeIn', function (e, page) {
       populateGlobalSettings();
       setupBackgroundImageUpload();
+      
+      // Add event listeners for immediate theme/mode changes
+      $$('#global-os').off('change').on('change', updateGlobalSettings);
+      $$('#global-dark_mode').off('change').on('change', updateGlobalSettings);
     });
 
     // component function must return render function

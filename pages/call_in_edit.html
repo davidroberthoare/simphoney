@@ -1,12 +1,12 @@
-<!-- NOTIFICATION EDIT COMPONENT -->
+<!-- INCOMING CALL EDIT COMPONENT -->
 <template>
-    <div data-name="notification_edit" class="page">
+    <div data-name="call_in_edit" class="page">
         <div class="navbar">
             <div class="navbar-inner">
                 <div class="left">
                     <a href="/" class="link back"><i class="f7-icons">chevron_left</i></a>
                 </div>
-                <div class="title">Notification Edit</div>
+                <div class="title">Incoming Call Edit</div>
             </div>
         </div>
         <div class="page-content">
@@ -20,58 +20,46 @@
                             <div class="item-inner">
                                 <div class="item-title item-label">Name</div>
                                 <div class="item-input-wrap">
-                                    <input type="text" name="name" placeholder="Notification Name" />
+                                    <input type="text" name="name" placeholder="Incoming Call Name" />
                                 </div>
                             </div>
                         </div>
                     </li>
 
-                    <!-- sender_name -->
+                    <!-- caller_name -->
                     <li>
                         <div class="item-content item-input">
                             <div class="item-inner">
-                                <div class="item-title item-label">Sender Name</div>
+                                <div class="item-title item-label">Caller Name</div>
                                 <div class="item-input-wrap">
-                                    <input type="text" name="sender_name" placeholder="Sender Name" />
+                                    <input type="text" name="caller_name" placeholder="Caller Name" />
                                 </div>
                             </div>
                         </div>
                     </li>
 
-                    <!-- sender_avatar -->
+                    <!-- caller_number -->
+                    <li>
+                        <div class="item-content item-input">
+                            <div class="item-inner">
+                                <div class="item-title item-label">Caller Number</div>
+                                <div class="item-input-wrap">
+                                    <input type="text" name="caller_number" placeholder="+1 (555) 123-4567" />
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+
+                    <!-- caller_avatar -->
                     <li>
                         <div class="item-content item-input">
                             <div class="item-media">
-                                <div class="avatar" id="sender_avatar_preview" ></div>
+                                <div class="avatar" id="caller_avatar_preview"></div>
                             </div>
                             <div class="item-inner">
-                                <div class="item-title item-label">Sender Image</div>
+                                <div class="item-title item-label">Caller Avatar</div>
                                 <div class="item-input-wrap">
-                                    <input type="file" id="sender_avatar_upload" name="sender_avatar_upload" accept="image/*" />
-                                </div>
-                            </div>
-                        </div>
-                    </li>
-
-                    <!-- messsage -->
-                    <li>
-                        <div class="item-content item-input">
-                            <div class="item-inner">
-                                <div class="item-title item-label">Message</div>
-                                <div class="item-input-wrap">
-                                    <input type="text" name="message" placeholder="Message" />
-                                </div>
-                            </div>
-                        </div>
-                    </li>
-
-                    <!-- sent_time -->
-                    <li>
-                        <div class="item-content item-input">
-                            <div class="item-inner">
-                                <div class="item-title item-label">Sent Time</div>
-                                <div class="item-input-wrap">
-                                    <input type="text" name="sent_time" placeholder="Now" value="Now" />
+                                    <input type="file" id="caller_avatar_upload" name="caller_avatar_upload" accept="image/*" />
                                 </div>
                             </div>
                         </div>
@@ -104,7 +92,6 @@
                         </div>
                     </li>
 
-
                     <!-- clock_time -->
                     <li>
                         <div class="item-content item-input">
@@ -116,7 +103,6 @@
                             </div>
                         </div>
                     </li>
-
 
                     <!-- background type -->
                     <li>
@@ -145,30 +131,24 @@
                         </div>
                     </li>
 
-                    <!-- sound effect toggle -->
+                    <!-- custom ringtone -->
                     <li>
-                        <div class="item-content">
+                        <div class="item-content item-input">
                             <div class="item-inner">
-                                <div class="item-title">Sound Effect</div>
-                                <div class="item-after">
-                                    <label class="toggle">
-                                        <input type="checkbox" name="sound_enabled" value="true" /><i class="toggle-icon"></i>
-                                    </label>
+                                <div class="item-title item-label">Custom Ringtone (optional)</div>
+                                <div class="item-input-wrap">
+                                    <input type="file" id="ringtone_upload" name="ringtone_upload" accept="audio/*" />
                                 </div>
                             </div>
                         </div>
                     </li>
 
-                    <!-- vibration toggle -->
-                    <li>
+                    <!-- ringtone preview/clear -->
+                    <li id="ringtone_preview_container" style="display: none;">
                         <div class="item-content">
                             <div class="item-inner">
-                                <div class="item-title">Vibration</div>
-                                <div class="item-after">
-                                    <label class="toggle">
-                                        <input type="checkbox" name="vibration_enabled" value="true" /><i class="toggle-icon"></i>
-                                    </label>
-                                </div>
+                                <button type="button" id="ringtone_play" class="button button-outline">Play Ringtone</button>
+                                <button type="button" id="ringtone_clear" class="button button-outline" style="margin-left: 8px;">Clear Ringtone</button>
                             </div>
                         </div>
                     </li>
@@ -183,8 +163,7 @@
 
 <!-- component styles -->
 <style>
-    /* Add custom styles here if needed */
-    #sender_avatar_preview {
+    #caller_avatar_preview {
         width: 40px;
         height: 40px;
         border-radius: 50%;
@@ -197,55 +176,53 @@
 <!-- component logic -->
 <script>
     export default (props, { $f7, $on }) => {
-        console.log("notification edit component loaded");
-        const updateNotificationSettings = () => {
+        console.log("incoming call edit component loaded");
+        let ringtoneAudio = null;
+        
+        const updateCallSettings = () => {
             const $settings = $$('form.list.settings');
             try {
                 if (currentSim) {
                     currentSim.name = $settings.find('input[name="name"]').val();
-                    currentSim.sender_name = $settings.find('input[name="sender_name"]').val();
-                    currentSim.message = $settings.find('input[name="message"]').val();
-                    currentSim.sent_time = $settings.find('input[name="sent_time"]').val();
+                    currentSim.caller_name = $settings.find('input[name="caller_name"]').val();
+                    currentSim.caller_number = $settings.find('input[name="caller_number"]').val();
                     currentSim.trigger_type = $settings.find('select[name="trigger_type"]').val();
                     currentSim.delay = $settings.find('input[name="delay"]').val();
                     currentSim.clock_time = $settings.find('input[name="clock_time"]').val();
                     currentSim.background_type = $settings.find('select[name="background_type"]').val();
                     currentSim.website_url = $settings.find('input[name="website_url"]').val();
-                    currentSim.sound_enabled = $settings.find('input[name="sound_enabled"]').prop('checked');
-                    currentSim.vibration_enabled = $settings.find('input[name="vibration_enabled"]').prop('checked');
-                    console.log('Notification settings updated:', currentSim);
+                    console.log('Incoming call settings updated:', currentSim);
                     appData.sims[currentSim.id] = currentSim;
                     saveAppData();
                 }
             } catch (error) {
-                console.log("Error updating notification settings:", error);
+                console.log("Error updating incoming call settings:", error);
             }
         };
 
         const playThisSim = () => {
-            updateNotificationSettings();
+            updateCallSettings();
             console.log("Playing this sim now:", currentSim);
             enterFullscreen();
             mainView.router.navigate('/' + currentSim.type + '/');
-        }
+        };
 
-        const setupSenderImageUpload = () => {
-            const fileInput = $$('#sender_avatar_upload');
-            const previewImg = $$('#sender_avatar_preview');
+        const setupCallerImageUpload = () => {
+            const fileInput = $$('#caller_avatar_upload');
+            const previewImg = $$('#caller_avatar_preview');
 
-            if (currentSim.sender_avatar && currentSim.sender_avatar.startsWith('data:')) {
-                previewImg.css('background-image', `url(${currentSim.sender_avatar})`);
+            if (currentSim.caller_avatar && currentSim.caller_avatar.startsWith('data:')) {
+                previewImg.css('background-image', `url(${currentSim.caller_avatar})`);
             }
 
             fileInput.on('change', function (e) {
                 const file = e.target.files[0];
                 if (file && file.type.startsWith('image/')) {
-                    // imageFileToBase64(file)
                     resizeImageToBase64(file)
                         .then((base64Data) => {
                             previewImg.css('background-image', `url(${base64Data})`);
-                            currentSim.sender_avatar = base64Data;
-                            console.log('Sender image uploaded and stored successfully');
+                            currentSim.caller_avatar = base64Data;
+                            console.log('Caller avatar uploaded and stored successfully');
                         })
                         .catch((error) => {
                             app.notification.create({
@@ -268,9 +245,80 @@
 
             previewImg.on('click', function (e) {
                 fileInput.val('');
-                currentSim.sender_avatar = generateRandomAvatar();
-                previewImg.css('background-image', `url(${currentSim.sender_avatar})`);
-                console.log('image reset');
+                currentSim.caller_avatar = generateRandomAvatar();
+                previewImg.css('background-image', `url(${currentSim.caller_avatar})`);
+                console.log('Avatar reset');
+            });
+        };
+
+        const setupRingtoneUpload = () => {
+            const fileInput = $$('#ringtone_upload');
+            const previewContainer = $$('#ringtone_preview_container');
+            const playBtn = $$('#ringtone_play');
+            const clearBtn = $$('#ringtone_clear');
+
+            if (currentSim.custom_ringtone && currentSim.custom_ringtone.startsWith('data:')) {
+                previewContainer.show();
+            }
+
+            fileInput.on('change', function (e) {
+                const file = e.target.files[0];
+                if (file && file.type.startsWith('audio/')) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        currentSim.custom_ringtone = e.target.result;
+                        previewContainer.show();
+                        saveAppData();
+                        console.log('Ringtone uploaded successfully');
+                    };
+                    reader.onerror = function () {
+                        app.notification.create({
+                            title: 'Error',
+                            text: 'Failed to upload ringtone',
+                            closeTimeout: 2000,
+                            closeOnClick: true,
+                        }).open();
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    app.notification.create({
+                        title: 'Invalid File',
+                        text: 'Please select a valid audio file',
+                        closeTimeout: 2000,
+                        closeOnClick: true,
+                    }).open();
+                }
+            });
+
+            playBtn.off('click').on('click', function (e) {
+                e.preventDefault();
+                if (ringtoneAudio) {
+                    ringtoneAudio.pause();
+                    ringtoneAudio = null;
+                    playBtn.text('Play Ringtone');
+                } else if (currentSim.custom_ringtone) {
+                    ringtoneAudio = new Audio(currentSim.custom_ringtone);
+                    ringtoneAudio.play();
+                    playBtn.text('Stop Ringtone');
+                    ringtoneAudio.onended = () => {
+                        ringtoneAudio = null;
+                        playBtn.text('Play Ringtone');
+                    };
+                }
+            });
+
+            clearBtn.off('click').on('click', function (e) {
+                e.preventDefault();
+                if (ringtoneAudio) {
+                    ringtoneAudio.pause();
+                    ringtoneAudio = null;
+                }
+                fileInput.val('');
+                previewContainer.hide();
+                currentSim.custom_ringtone = '';
+                saveAppData();
+                playBtn.text('Play Ringtone');
+                console.log('Ringtone cleared');
             });
         };
 
@@ -295,7 +343,8 @@
         };
 
         $on('pageInit', function (e, page) {
-            setupSenderImageUpload();
+            setupCallerImageUpload();
+            setupRingtoneUpload();
 
             $$("#play_now_button").on('click', function (e) {
                 e.preventDefault();
@@ -309,32 +358,40 @@
             $$('select[name="trigger_type"]').on('change', function () {
                 show_hide_delay_field();
             });
-
         });
 
         $on('pageBeforeIn', function (e, page) {
             const s = currentSim;
-            console.log('notification edit page displayed...', s);
+            console.log('Incoming call edit page displayed...', s);
             const $settings = $$('form.list.settings');
             $settings.find('input[name="name"]').val(s.name);
-            $settings.find('input[name="sender_name"]').val(s.sender_name);
-            $settings.find('input[name="message"]').val(s.message);
-            $settings.find('input[name="sent_time"]').val(s.sent_time);
+            $settings.find('input[name="caller_name"]').val(s.caller_name);
+            $settings.find('input[name="caller_number"]').val(s.caller_number);
             $settings.find('input[name="clock_time"]').val(s.clock_time);
             $settings.find('input[name="delay"]').val(s.delay);
             $settings.find('select[name="trigger_type"]').val(s.trigger_type);
             $settings.find('select[name="background_type"]').val(s.background_type);
             $settings.find('input[name="website_url"]').val(s.website_url);
-            $settings.find('input[name="sound_enabled"]').prop('checked', s.sound_enabled || false);
-            $settings.find('input[name="vibration_enabled"]').prop('checked', s.vibration_enabled || false);
 
-            $$("#sender_avatar_preview").css('background-image', `url(${s.sender_avatar})`);
+            $$("#caller_avatar_preview").css('background-image', `url(${s.caller_avatar})`);
+            
+            if (s.custom_ringtone && s.custom_ringtone.startsWith('data:')) {
+                $$('#ringtone_preview_container').show();
+            } else {
+                $$('#ringtone_preview_container').hide();
+            }
+            
             show_hide_website_url_field();
             show_hide_delay_field();
         });
 
         $on('pageBeforeOut', function (e, page) {
-            updateNotificationSettings();
+            // Stop any playing ringtone
+            if (ringtoneAudio) {
+                ringtoneAudio.pause();
+                ringtoneAudio = null;
+            }
+            updateCallSettings();
         });
 
         // component function must return render function

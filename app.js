@@ -2,9 +2,14 @@
 // Initialize app -------------------------------------
 // Initialize app -------------------------------------
 
+// Load saved settings before initializing app
+let savedData = localStorage.getItem('simphoneyAppData');
+let savedSettings = savedData ? JSON.parse(savedData).global : { os: 'ios', dark_mode: false };
+
 var app = new Framework7({
   el: '#app',
-  theme: 'auto',
+  theme: savedSettings.os || 'ios',
+  dark: savedSettings.dark_mode || false,
   panel: { swipe: true },
   touch: { tapHold: true },
   // keyboard: {
@@ -25,6 +30,8 @@ var app = new Framework7({
     { path: '/notification_edit/', name: 'notification_edit', componentUrl: './pages/notification_edit.html' },
     { path: '/sms/', name: 'sms', componentUrl: './pages/sms.html' },
     { path: '/sms_edit/', name: 'sms_edit', componentUrl: './pages/sms_edit.html' },
+    { path: '/call_in/', name: 'call_in', componentUrl: './pages/call_in.html' },
+    { path: '/call_in_edit/', name: 'call_in_edit', componentUrl: './pages/call_in_edit.html' },
     { path: '/remote/', name: 'remote', componentUrl: './pages/remote.html' },
   ]
 });
@@ -76,7 +83,20 @@ function saveAppData() {
 // Load data on app initialization
 loadAppData();
 
+// Theme switching functions
+function applyTheme(theme) {
+  if (theme === 'ios' || theme === 'md') {
+    app.setTheme(theme);
+  }
+}
 
+function applyDarkMode(isDark) {
+  if (isDark) {
+    app.enableDarkMode();
+  } else {
+    app.disableDarkMode();
+  }
+}
 
 
 // Fullscreen helpers using standard browser Fullscreen API

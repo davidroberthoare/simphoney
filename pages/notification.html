@@ -49,6 +49,16 @@
 
     // Function to trigger the notification
     function triggerNotification() {
+      // Play sound effect if enabled
+      if (currentSim.sound_enabled) {
+        playNotificationSound();
+      }
+      
+      // Trigger vibration if enabled
+      if (currentSim.vibration_enabled) {
+        triggerVibration();
+      }
+      
       let notification = app.notification.create({
         icon: `<div class="avatar" style="background-image: url('${currentSim.sender_avatar}');"></div>`,
         title: currentSim.sender_name,

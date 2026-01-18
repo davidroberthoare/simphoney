@@ -53,6 +53,34 @@
                         </div>
                     </li>
 
+                    <!-- sound effect toggle -->
+                    <li>
+                        <div class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title">Sound Effect</div>
+                                <div class="item-after">
+                                    <label class="toggle">
+                                        <input type="checkbox" name="sound_enabled" value="true" /><i class="toggle-icon"></i>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+
+                    <!-- vibration toggle -->
+                    <li>
+                        <div class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title">Vibration</div>
+                                <div class="item-after">
+                                    <label class="toggle">
+                                        <input type="checkbox" name="vibration_enabled" value="true" /><i class="toggle-icon"></i>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+
                 </ul>
             </form>
 
@@ -262,6 +290,8 @@
                     currentSim.name = $settings.find('input[name="name"]').val();
                     currentSim.trigger_type = $settings.find('select[name="trigger_type"]').val();
                     currentSim.delay = $settings.find('input[name="delay"]').val();
+                    currentSim.sound_enabled = $settings.find('input[name="sound_enabled"]').prop('checked');
+                    currentSim.vibration_enabled = $settings.find('input[name="vibration_enabled"]').prop('checked');
                     console.log('SMS settings updated:', currentSim);
                     appData.sims[currentSim.id] = currentSim;
                     saveAppData();
@@ -687,6 +717,8 @@
             $settings.find('input[name="name"]').val(s.name);
             $settings.find('select[name="trigger_type"]').val(s.trigger_type || 'timed');
             $settings.find('input[name="delay"]').val(s.delay || 3);
+            $settings.find('input[name="sound_enabled"]').prop('checked', s.sound_enabled || false);
+            $settings.find('input[name="vibration_enabled"]').prop('checked', s.vibration_enabled || false);
 
             // Render lists
             renderSendersList();

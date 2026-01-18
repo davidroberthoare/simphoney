@@ -20,7 +20,9 @@ const defaultAppData = {
             message: "This is an example notification message.",
             clock_time: "12:34pm",
             background_type: "lockscreen",
-            website_url: ""
+            website_url: "",
+            sound_enabled: false,
+            vibration_enabled: false
         },
         s_2: {
             id: 's_2',
@@ -34,13 +36,17 @@ const defaultAppData = {
             message: 'Here is the message.',
             clock_time: "",
             background_type: "website",
-            website_url: "https://davidhoare.net"
+            website_url: "https://davidhoare.net",
+            sound_enabled: false,
+            vibration_enabled: false
         },
         s_3: {
             id: 's_3',
             type: 'sms',
             name: 'Sample SMS',
             trigger_type: 'timed',
+            sound_enabled: false,
+            vibration_enabled: false,
             senders: [
                 { name: 'Bob Bobson', avatar: generateRandomAvatar(1) },
                 { name: 'Sally Sallyson', avatar: generateRandomAvatar(2) },
@@ -58,6 +64,20 @@ const defaultAppData = {
                 { from: 1, text: 'Tell me more about that...', autofollow: false, delay: 2 },
                 { from: 0, text: 'No way ;)', autofollow: false, delay: 3 },
             ],
+        },
+        s_4: {
+            id: 's_4',
+            type: 'call_in',
+            name: 'Sample Incoming Call',
+            trigger_type: 'timed',
+            delay: 2,
+            caller_name: 'John Doe',
+            caller_number: '+1 (555) 123-4567',
+            caller_avatar: generateRandomAvatar(100),
+            clock_time: '12:34pm',
+            background_type: 'lockscreen',
+            website_url: '',
+            custom_ringtone: ''
         }
     },
 };

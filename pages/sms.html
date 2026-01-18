@@ -158,6 +158,14 @@
 
         //then start the delay timer for sending their message
         setTimeout(function () {
+          // Play sound and vibration when message arrives
+          if (currentSim.sound_enabled) {
+            playSMSSound();
+          }
+          if (currentSim.vibration_enabled) {
+            triggerVibration();
+          }
+          
           messages.addMessage({
             text: msg.text,
             type: 'received',

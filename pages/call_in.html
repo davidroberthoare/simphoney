@@ -1,0 +1,373 @@
+<!-- INCOMING CALL COMPONENT -->
+<template>
+  <div data-name="call_in" class="page">
+    <div class="navbar">
+      <div class="navbar-inner">
+        <div class="left">
+          <a href="/" class="link back"><i class="f7-icons">chevron_left</i></a>
+        </div>
+      </div>
+    </div>
+    <div class="page-content">
+      <div id="clock">${currentSim.clock_time}</div>
+      <iframe id="website" src=""></iframe>
+      
+      <!-- Incoming Call Overlay -->
+      <div id="call_overlay">
+        <div class="call_header">
+          <div class="call_label">incoming call</div>
+        </div>
+        
+        <div class="caller_info">
+          <div class="caller_avatar" style="background-image: url('${currentSim.caller_avatar}');"></div>
+          <div class="caller_name">${currentSim.caller_name}</div>
+          <div class="caller_number">${currentSim.caller_number}</div>
+        </div>
+        
+        <div class="call_actions">
+          <div class="call_button decline" id="decline_button">
+            <i class="f7-icons">phone_down_fill</i>
+            <span>Decline</span>
+          </div>
+          <div class="call_button accept" id="accept_button">
+            <i class="f7-icons">phone_fill</i>
+            <span>Accept</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<!-- component styles -->
+<style>
+  .page[data-name="call_in"] {
+    background: #000;
+  }
+  
+  #clock {
+    width: 100%;
+    text-align: center;
+    font-size: 4em;
+    color: white;
+    text-shadow: 4px 2px 5px #00000052;
+    margin-top: 10vh;
+    display: none;
+  }
+
+  #website {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    left: 0;
+    height: 100%;
+    overflow: hidden;
+    border: 0px;
+    display: none;
+  }
+  
+  #call_overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.95);
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 60px 20px 40px;
+    z-index: 1000;
+  }
+  
+  .call_header {
+    text-align: center;
+  }
+  
+  .call_label {
+    color: #888;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+  
+  .caller_info {
+    text-align: center;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .caller_avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background-size: cover;
+    background-position: center;
+    margin-bottom: 20px;
+    border: 3px solid #fff;
+  }
+  
+  .caller_name {
+    color: #fff;
+    font-size: 32px;
+    font-weight: 500;
+    margin-bottom: 8px;
+  }
+  
+  .caller_number {
+    color: #888;
+    font-size: 18px;
+  }
+  
+  .call_actions {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    max-width: 300px;
+  }
+  
+  .call_button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+  }
+  
+  .call_button i {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+  }
+  
+  .call_button span {
+    font-size: 14px;
+    color: #fff;
+  }
+  
+  .call_button.decline i {
+    background: #ff3b30;
+    color: #fff;
+  }
+  
+  .call_button.accept i {
+    background: #34c759;
+    color: #fff;
+  }
+  
+  .call_button:active i {
+    transform: scale(0.95);
+  }
+</style>
+
+<!-- component logic -->
+<script>
+  export default (props, { $f7, $on }) => {
+    let peer = null;
+    let peerId = null;
+    const remoteChannel = appData.global.remote_channel || 'default';
+    let ringtoneAudio = null;
+
+    // Function to play ringtone
+    function playRingtone() {
+      // Try to play custom ringtone if provided
+      if (currentSim.custom_ringtone && currentSim.custom_ringtone.startsWith('data:')) {
+        ringtoneAudio = new Audio(currentSim.custom_ringtone);
+        ringtoneAudio.loop = true;
+        ringtoneAudio.play().catch(err => {
+          console.warn('Failed to play custom ringtone:', err);
+          playDefaultRingtone();
+        });
+      } else {
+        playDefaultRingtone();
+      }
+    }
+    
+    function playDefaultRingtone() {
+      // Create a simple ringtone using Web Audio API
+      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+      
+      oscillator.frequency.setValueAtTime(523, audioContext.currentTime); // C5
+      gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+      
+      oscillator.start();
+      
+      // Store reference for cleanup
+      ringtoneAudio = { 
+        stop: () => {
+          oscillator.stop();
+          audioContext.close();
+        }
+      };
+      
+      // Loop the ringtone
+      setTimeout(() => {
+        if (ringtoneAudio) {
+          playDefaultRingtone();
+        }
+      }, 2000);
+    }
+    
+    function stopRingtone() {
+      if (ringtoneAudio) {
+        if (ringtoneAudio.pause) {
+          ringtoneAudio.pause();
+          ringtoneAudio.currentTime = 0;
+        } else if (ringtoneAudio.stop) {
+          ringtoneAudio.stop();
+        }
+        ringtoneAudio = null;
+      }
+    }
+    
+    function triggerVibrationPattern() {
+      if ('vibrate' in navigator) {
+        // Repeated vibration pattern for incoming call
+        const vibrate = () => {
+          navigator.vibrate([1000, 500, 1000, 500]);
+          if ($$('#call_overlay').is(':visible')) {
+            setTimeout(vibrate, 3000);
+          }
+        };
+        vibrate();
+      }
+    }
+
+    // Function to trigger the call overlay
+    function triggerCall() {
+      $$('#call_overlay').css('display', 'flex');
+      playRingtone();
+      triggerVibrationPattern();
+    }
+    
+    function answerCall() {
+      stopRingtone();
+      navigator.vibrate && navigator.vibrate(0); // Stop vibration
+      $$('#call_overlay').fadeOut();
+      
+      // Show a notification that call was answered
+      app.notification.create({
+        title: 'Call Connected',
+        text: `Connected to ${currentSim.caller_name}`,
+        closeTimeout: 2000,
+        closeOnClick: true,
+      }).open();
+    }
+    
+    function declineCall() {
+      stopRingtone();
+      navigator.vibrate && navigator.vibrate(0); // Stop vibration
+      $$('#call_overlay').fadeOut();
+      
+      // Show a notification that call was declined
+      app.notification.create({
+        title: 'Call Declined',
+        text: `Declined call from ${currentSim.caller_name}`,
+        closeTimeout: 2000,
+        closeOnClick: true,
+      }).open();
+    }
+
+    $on('pageBeforeIn', function (e, page) {
+      console.log('Preparing incoming call page...');
+      if (!currentSim || currentSim.type !== 'call_in') {
+        console.error('No valid incoming call sim');
+        return;
+      }
+      
+      // Set background
+      if (appData.global.background_img) {
+        $$('.page[data-name="call_in"]').css('background-image', `url(${appData.global.background_img})`);
+      } else {
+        $$('.page[data-name="call_in"]').css('background-image', 'none');
+      }
+      
+      // Hide/show elements based on settings
+      if (currentSim.background_type === 'website' && currentSim.website_url.trim() !== '') {
+        $$('#website').attr('src', currentSim.website_url);
+        $$('#website').show();
+        $$('#call_overlay').css('background', 'rgba(0, 0, 0, 0.85)');
+      } else if (currentSim.background_type === 'lockscreen') {
+        $$('#website').hide();
+        $$('#call_overlay').css('background', 'rgba(0, 0, 0, 0.95)');
+        
+        if (currentSim.clock_time && currentSim.clock_time.trim() !== '') {
+          $$('#clock').show();
+        } else {
+          $$('#clock').hide();
+        }
+      }
+    });
+
+    $on('pageAfterIn', function (e, page) {
+      console.log('Incoming call page displayed...', currentSim);
+      if (!currentSim || currentSim.type !== 'call_in') {
+        console.error('No valid incoming call sim');
+        return;
+      }
+
+      // Set up button handlers
+      $$('#accept_button').off('click').on('click', answerCall);
+      $$('#decline_button').off('click').on('click', declineCall);
+
+      // Trigger call based on type
+      if (currentSim.trigger_type === 'timed') {
+        setTimeout(() => {
+          triggerCall();
+        }, currentSim.delay * 1000);
+      } else {
+        // Remote trigger
+        let playerSlot = appData.global.player_slot || 'player1';
+        peerId = `simphoney-${remoteChannel}-${playerSlot}`;
+        peer = new Peer(peerId);
+
+        peer.on('open', (id) => {
+          console.log(`PeerJS connected - Channel: ${remoteChannel}, Slot: ${playerSlot}, ID: ${id}`);
+        });
+
+        peer.on('connection', (conn) => {
+          console.log('Remote connection established');
+          conn.on('data', (data) => {
+            console.log('Received data from remote:', data);
+            if (data === 'go') {
+              triggerCall();
+            }
+          });
+        });
+
+        peer.on('error', (err) => {
+          console.error('PeerJS error:', err);
+        });
+      }
+    });
+
+    $on('pageBeforeOut', function (e, page) {
+      // Clean up
+      stopRingtone();
+      navigator.vibrate && navigator.vibrate(0);
+      
+      if (peer) {
+        peer.destroy();
+        peer = null;
+        peerId = null;
+        console.log('PeerJS connection closed');
+      }
+    });
+
+    // component function must return render function
+    return $render;
+  };
+</script>
