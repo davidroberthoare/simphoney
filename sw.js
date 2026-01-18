@@ -6,7 +6,8 @@ const CACHE_ENABLED = false; // Set to true when ready for offline support
 const EXTERNAL_LIBS = [
   'https://unpkg.com/framework7@9.0.2/framework7-bundle.min.css',
   'https://unpkg.com/framework7@9.0.2/framework7-bundle.min.js',
-  'https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js'
+  'https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js',
+  'https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js'
 ];
 
 const LOCAL_ASSETS = [

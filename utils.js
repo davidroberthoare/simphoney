@@ -97,52 +97,77 @@ async function resizeImageToBase64(file, maxWidth = 150, maxHeight = 150, qualit
 // SOUND AND VIBRATION UTILITIES **********************
 // SOUND AND VIBRATION UTILITIES **********************
 
-// Play notification sound
-function playNotificationSound() {
-    // Try to use native notification API
-    if ('Notification' in window && Notification.permission === 'granted') {
-        // Native notification will use system sound
-        // This is already handled by the notification itself
+// Sound cache for Howler instances
+const soundCache = {};
+
+// Preload a sound file
+function preloadSound(soundPath, soundKey) {
+    if (!soundCache[soundKey] && typeof Howl !== 'undefined') {
+        soundCache[soundKey] = new Howl({
+            src: [soundPath],
+            preload: true,
+            volume: 0.7
+        });
     }
-    
-    // Fallback to built-in sound using Web Audio API
-    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    const oscillator = audioContext.createOscillator();
-    const gainNode = audioContext.createGain();
-    
-    oscillator.connect(gainNode);
-    gainNode.connect(audioContext.destination);
-    
-    // Create a pleasant notification sound (two-tone)
-    oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
-    oscillator.frequency.setValueAtTime(600, audioContext.currentTime + 0.1);
-    
-    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
-    
-    oscillator.start(audioContext.currentTime);
-    oscillator.stop(audioContext.currentTime + 0.3);
+    return soundCache[soundKey];
 }
 
-// Play SMS sound
+// Play notification/alert sound
+function playNotificationSound() {
+    const alertSound = appData.global.alert_sound || 'alert1';
+    const soundPath = `sounds/${alertSound}.mp3`;
+    
+    if (typeof Howl !== 'undefined') {
+        const sound = soundCache[alertSound] || preloadSound(soundPath, alertSound);
+        if (sound) {
+            sound.play();
+        }
+    } else {
+        // Fallback to basic Audio API
+        const audio = new Audio(soundPath);
+        audio.volume = 0.7;
+        audio.play().catch(err => console.warn('Failed to play notification sound:', err));
+    }
+}
+
+// Play SMS sound (uses same alert sounds as notifications)
 function playSMSSound() {
-    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    const oscillator = audioContext.createOscillator();
-    const gainNode = audioContext.createGain();
+    playNotificationSound();
+}
+
+// Play ringtone
+function playRingtone() {
+    const ringtone = appData.global.ringtone_sound || 'ringtone_1';
+    const soundPath = `sounds/${ringtone}.mp3`;
     
-    oscillator.connect(gainNode);
-    gainNode.connect(audioContext.destination);
-    
-    // Create a quick SMS notification sound (tri-tone)
-    oscillator.frequency.setValueAtTime(660, audioContext.currentTime);
-    oscillator.frequency.setValueAtTime(770, audioContext.currentTime + 0.08);
-    oscillator.frequency.setValueAtTime(880, audioContext.currentTime + 0.16);
-    
-    gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
-    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.25);
-    
-    oscillator.start(audioContext.currentTime);
-    oscillator.stop(audioContext.currentTime + 0.25);
+    if (typeof Howl !== 'undefined') {
+        const sound = soundCache[ringtone] || preloadSound(soundPath, ringtone);
+        if (sound) {
+            sound.loop(true);
+            sound.play();
+            return sound;
+        }
+    } else {
+        // Fallback to basic Audio API
+        const audio = new Audio(soundPath);
+        audio.loop = true;
+        audio.volume = 0.7;
+        audio.play().catch(err => console.warn('Failed to play ringtone:', err));
+        return audio;
+    }
+    return null;
+}
+
+// Stop a playing sound
+function stopSound(sound) {
+    if (sound) {
+        if (sound.stop) {
+            sound.stop();
+        } else if (sound.pause) {
+            sound.pause();
+            sound.currentTime = 0;
+        }
+    }
 }
 
 // Trigger vibration

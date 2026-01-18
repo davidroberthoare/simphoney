@@ -95,6 +95,55 @@
               </div>
             </li>
 
+            <!-- alert sound selector -->
+            <li>
+              <div class="item-content item-input">
+                <div class="item-inner">
+                  <div class="item-title item-label">Notification/SMS Sound</div>
+                  <div class="item-input-wrap">
+                    <select id="global-alert_sound">
+                      <option value="alert1">Alert 1</option>
+                      <option value="alert2">Alert 2</option>
+                      <option value="alert3">Alert 3</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </li>
+
+            <!-- ringtone sound selector -->
+            <li>
+              <div class="item-content item-input">
+                <div class="item-inner">
+                  <div class="item-title item-label">Ringtone</div>
+                  <div class="item-input-wrap">
+                    <select id="global-ringtone_sound">
+                      <option value="ringtone_1">Ringtone 1</option>
+                      <option value="ringtone_2">Ringtone 2</option>
+                      <option value="ringtone_3">Ringtone 3</option>
+                      <option value="ringtone_4">Ringtone 4</option>
+                      <option value="ringtone_5">Ringtone 5</option>
+                      <option value="ringtone_6">Ringtone 6</option>
+                      <option value="ringtone_7">Ringtone 7</option>
+                      <option value="ringtone_8">Ringtone 8</option>
+                      <option value="ringtone_9">Ringtone 9</option>
+                      <option value="ringtone_10">Ringtone 10</option>
+                      <option value="ringtone_11">Ringtone 11</option>
+                      <option value="ringtone_12">Ringtone 12</option>
+                      <option value="ringtone_13">Ringtone 13</option>
+                      <option value="ringtone_14">Ringtone 14</option>
+                      <option value="ringtone_15">Ringtone 15</option>
+                      <option value="ringtone_16">Ringtone 16</option>
+                      <option value="ringtone_17">Ringtone 17</option>
+                      <option value="ringtone_18">Ringtone 18</option>
+                      <option value="ringtone_19">Ringtone 19</option>
+                      <option value="ringtone_20">Ringtone 20</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </li>
+
           </ul>
       </form>
     </div>
@@ -116,6 +165,8 @@
       $$('#global-dark_mode').prop('checked', appData.global.dark_mode ? 'checked' : '');
       $$('#global-remote_channel').val(appData.global.remote_channel || 'default');
       $$('#global-player_slot').val(appData.global.player_slot || 'player1');
+      $$('#global-alert_sound').val(appData.global.alert_sound || 'alert1');
+      $$('#global-ringtone_sound').val(appData.global.ringtone_sound || 'ringtone_1');
     };
 
     const updateGlobalSettings = () => {
@@ -134,8 +185,8 @@
       }
       
       appData.global.remote_channel = $$('#global-remote_channel').val() || 'default';
-      appData.global.player_slot = $$('#global-player_slot').val() || 'player1';
-      console.log('Global settings updated:', appData.global);
+      appData.global.player_slot = $$('#global-player_slot').val() || 'player1';      appData.global.alert_sound = $$('#global-alert_sound').val() || 'alert1';
+      appData.global.ringtone_sound = $$('#global-ringtone_sound').val() || 'ringtone_1';      console.log('Global settings updated:', appData.global);
       saveAppData();
     };
 
@@ -203,6 +254,21 @@
       // Add event listeners for immediate theme/mode changes
       $$('#global-os').off('change').on('change', updateGlobalSettings);
       $$('#global-dark_mode').off('change').on('change', updateGlobalSettings);
+      
+      // Add event listeners to preview sounds when changed
+      $$('#global-alert_sound').off('change').on('change', function() {
+        updateGlobalSettings();
+        playNotificationSound();
+      });
+      
+      $$('#global-ringtone_sound').off('change').on('change', function() {
+        updateGlobalSettings();
+        // Play ringtone preview for 2 seconds
+        const sound = playRingtone();
+        setTimeout(() => {
+          if (sound) stopSound(sound);
+        }, 2000);
+      });
     });
 
     // component function must return render function

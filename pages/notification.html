@@ -76,6 +76,13 @@
         console.error('No valid notification sim');
         return;
       }
+      
+      // Preload alert sound if enabled
+      if (currentSim.sound_enabled) {
+        const alertSound = appData.global.alert_sound || 'alert1';
+        preloadSound(`sounds/${alertSound}.mp3`, alertSound);
+      }
+      
       if (appData.global.background_img) {
         $$('.page[data-name="notification"]').css('background-image', `url(${appData.global.background_img})`);
       } else {

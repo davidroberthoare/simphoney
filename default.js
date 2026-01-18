@@ -6,6 +6,8 @@ const defaultAppData = {
         background_img: 'img/bg_default.jpg',
         remote_channel: 'default',
         player_slot: 'player1',
+        alert_sound: 'alert_1',
+        ringtone_sound: 'ringtone_1',
     },
     sims: {
         s_1: {
@@ -21,8 +23,8 @@ const defaultAppData = {
             clock_time: "12:34pm",
             background_type: "lockscreen",
             website_url: "",
-            sound_enabled: false,
-            vibration_enabled: false
+            sound_enabled: true,
+            vibration_enabled: true
         },
         s_2: {
             id: 's_2',
@@ -37,16 +39,16 @@ const defaultAppData = {
             clock_time: "",
             background_type: "website",
             website_url: "https://davidhoare.net",
-            sound_enabled: false,
-            vibration_enabled: false
-        },
-        s_3: {
+            sound_enabled: true,
+            vibration_enabled: true
+            },
+            s_3: {
             id: 's_3',
             type: 'sms',
             name: 'Sample SMS',
             trigger_type: 'timed',
-            sound_enabled: false,
-            vibration_enabled: false,
+            sound_enabled: true,
+            vibration_enabled: true,
             senders: [
                 { name: 'Bob Bobson', avatar: generateRandomAvatar(1) },
                 { name: 'Sally Sallyson', avatar: generateRandomAvatar(2) },

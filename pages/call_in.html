@@ -174,62 +174,34 @@
     let peer = null;
     let peerId = null;
     const remoteChannel = appData.global.remote_channel || 'default';
-    let ringtoneAudio = null;
+    let ringtoneSound = null;
 
     // Function to play ringtone
-    function playRingtone() {
+    function playCallRingtone() {
       // Try to play custom ringtone if provided
       if (currentSim.custom_ringtone && currentSim.custom_ringtone.startsWith('data:')) {
-        ringtoneAudio = new Audio(currentSim.custom_ringtone);
-        ringtoneAudio.loop = true;
-        ringtoneAudio.play().catch(err => {
-          console.warn('Failed to play custom ringtone:', err);
-          playDefaultRingtone();
-        });
+        if (typeof Howl !== 'undefined') {
+          ringtoneSound = new Howl({
+            src: [currentSim.custom_ringtone],
+            loop: true,
+            volume: 0.7
+          });
+          ringtoneSound.play();
+        } else {
+          ringtoneSound = new Audio(currentSim.custom_ringtone);
+          ringtoneSound.loop = true;
+          ringtoneSound.play().catch(err => console.warn('Failed to play custom ringtone:', err));
+        }
       } else {
-        playDefaultRingtone();
+        // Use global ringtone setting
+        ringtoneSound = playRingtone();
       }
     }
     
-    function playDefaultRingtone() {
-      // Create a simple ringtone using Web Audio API
-      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-      const oscillator = audioContext.createOscillator();
-      const gainNode = audioContext.createGain();
-      
-      oscillator.connect(gainNode);
-      gainNode.connect(audioContext.destination);
-      
-      oscillator.frequency.setValueAtTime(523, audioContext.currentTime); // C5
-      gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-      
-      oscillator.start();
-      
-      // Store reference for cleanup
-      ringtoneAudio = { 
-        stop: () => {
-          oscillator.stop();
-          audioContext.close();
-        }
-      };
-      
-      // Loop the ringtone
-      setTimeout(() => {
-        if (ringtoneAudio) {
-          playDefaultRingtone();
-        }
-      }, 2000);
-    }
-    
-    function stopRingtone() {
-      if (ringtoneAudio) {
-        if (ringtoneAudio.pause) {
-          ringtoneAudio.pause();
-          ringtoneAudio.currentTime = 0;
-        } else if (ringtoneAudio.stop) {
-          ringtoneAudio.stop();
-        }
-        ringtoneAudio = null;
+    function stopCallRingtone() {
+      if (ringtoneSound) {
+        stopSound(ringtoneSound);
+        ringtoneSound = null;
       }
     }
     
@@ -249,12 +221,12 @@
     // Function to trigger the call overlay
     function triggerCall() {
       $$('#call_overlay').css('display', 'flex');
-      playRingtone();
+      playCallRingtone();
       triggerVibrationPattern();
     }
     
     function answerCall() {
-      stopRingtone();
+      stopCallRingtone();
       navigator.vibrate && navigator.vibrate(0); // Stop vibration
       $$('#call_overlay').fadeOut();
       
@@ -268,7 +240,7 @@
     }
     
     function declineCall() {
-      stopRingtone();
+      stopCallRingtone();
       navigator.vibrate && navigator.vibrate(0); // Stop vibration
       $$('#call_overlay').fadeOut();
       
@@ -286,6 +258,12 @@
       if (!currentSim || currentSim.type !== 'call_in') {
         console.error('No valid incoming call sim');
         return;
+      }
+      
+      // Preload ringtone
+      if (!currentSim.custom_ringtone || !currentSim.custom_ringtone.startsWith('data:')) {
+        const ringtone = appData.global.ringtone_sound || 'ringtone_1';
+        preloadSound(`sounds/${ringtone}.mp3`, ringtone);
       }
       
       // Set background
@@ -356,7 +334,7 @@
 
     $on('pageBeforeOut', function (e, page) {
       // Clean up
-      stopRingtone();
+      stopCallRingtone();
       navigator.vibrate && navigator.vibrate(0);
       
       if (peer) {
