@@ -41,53 +41,30 @@
                         </div>
                     </li>
 
-                    <!-- delay -->
-                    <li>
-                        <div class="item-content item-input">
-                            <div class="item-inner">
-                                <div class="item-title item-label">Delay (seconds)</div>
-                                <div class="item-input-wrap">
-                                    <input type="number" name="delay" placeholder="5" value="5" />
-                                </div>
-                            </div>
-                        </div>
-                    </li>
-
-                    <!-- start_date -->
-                    <li>
-                        <div class="item-content item-input">
-                            <div class="item-inner">
-                                <div class="item-title item-label">Start Date</div>
-                                <div class="item-input-wrap">
-                                    <input type="text" name="start_date" placeholder="2025-01-01 12:00" />
-                                </div>
-                            </div>
-                        </div>
-                    </li>
                 </ul>
             </form>
 
             <!-- SENDERS SECTION -->
             <div class="block-title">Senders
-                <a href="#" class="button button-small button-fill" id="add_sender_button">Add Sender</a>
+                <a href="#" id="add_sender_button"><i class="f7-icons">plus_circle_fill</i></a>
             </div>
-            <div class="list simple-list senders-list" id="senders_list">
+            <div class="list list-strong inset list-dividers-ios" id="senders_list">
                 <ul></ul>
             </div>
 
             <!-- PREFILLED MESSAGES SECTION -->
             <div class="block-title">Prefilled Messages (shown on load)
-                <a href="#" class="button button-small button-fill" id="add_prefilled_button">Add Message</a>
+                <a href="#" id="add_prefilled_button"><i class="f7-icons">plus_circle_fill</i></a>
             </div>
-            <div class="list simple-list sortable sortable-enabled" id="prefilled_list">
+            <div class="list list-strong inset list-dividers-ios sortable sortable-enabled" id="prefilled_list">
                 <ul></ul>
             </div>
 
             <!-- MESSAGES SECTION -->
             <div class="block-title">Messages (added during simulation)
-                <a href="#" class="button button-small button-fill" id="add_message_button">Add Message</a>
+                <a href="#" id="add_message_button"><i class="f7-icons">plus_circle_fill</i></a>
             </div>
-            <div class="list simple-list sortable sortable-enabled" id="messages_list">
+            <div class="list list-strong inset list-dividers-ios sortable sortable-enabled" id="messages_list">
                 <ul></ul>
             </div>
 
@@ -102,7 +79,7 @@
                         <div class="navbar-inner">
                             <div class="title">Edit Sender</div>
                             <div class="right">
-                                <a href="#" class="link popup-close">Done</a>
+                                <a href="#" class="link popup-close"><div class="f7-icons">chevron_down</div></a>
                             </div>
                         </div>
                     </div>
@@ -137,6 +114,9 @@
                         <div class="block">
                             <button class="button button-fill" id="save_sender_button">Save Sender</button>
                         </div>
+                        <div class="block" id="delete_sender_block" style="display: none;">
+                            <button class="button button-fill color-red" id="delete_sender_button">Delete Sender</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -150,7 +130,7 @@
                         <div class="navbar-inner">
                             <div class="title">Edit Message</div>
                             <div class="right">
-                                <a href="#" class="link popup-close">Done</a>
+                                <a href="#" class="link popup-close"><div class="f7-icons">chevron_down</div></a>
                             </div>
                         </div>
                     </div>
@@ -179,7 +159,7 @@
                                         </div>
                                     </div>
                                 </li>
-                                <li>
+                                <li id="message_delay_field">
                                     <div class="item-content item-input">
                                         <div class="item-inner">
                                             <div class="item-title item-label">Delay (seconds)</div>
@@ -189,12 +169,22 @@
                                         </div>
                                     </div>
                                 </li>
+                                <li id="message_time_field" style="display: none;">
+                                    <div class="item-content item-input">
+                                        <div class="item-inner">
+                                            <div class="item-title item-label">Time</div>
+                                            <div class="item-input-wrap">
+                                                <input type="text" name="message_time" placeholder="12:34pm" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
                                 <li id="autofollow_field">
                                     <label class="item-content item-checkbox">
                                         <input type="checkbox" name="message_autofollow" />
                                         <i class="icon icon-checkbox"></i>
                                         <div class="item-inner">
-                                            <div class="item-title">Auto-follow (requires user response)</div>
+                                            <div class="item-title">Auto-Play Next Message</div>
                                         </div>
                                     </label>
                                 </li>
@@ -202,6 +192,9 @@
                         </form>
                         <div class="block">
                             <button class="button button-fill" id="save_message_button">Save Message</button>
+                        </div>
+                        <div class="block" id="delete_message_block" style="display: none;">
+                            <button class="button button-fill color-red" id="delete_message_button">Delete Message</button>
                         </div>
                     </div>
                 </div>
@@ -227,25 +220,9 @@
         align-items: center;
     }
 
-    .senders-list li, 
-    .sortable li {
-        display: flex;
-        align-items: center;
-        padding: 10px 15px;
-        background: var(--f7-list-item-bg-color);
-        margin-bottom: 5px;
-        border-radius: 8px;
-    }
-
-    .sortable li {
-        cursor: move;
-    }
-
-    .sender-item, .message-item {
-        display: flex;
-        align-items: center;
-        width: 100%;
-        gap: 10px;
+    .block-title a {
+        font-size: 28px;
+        line-height: 1;
     }
 
     .sender-avatar, .message-sender-avatar {
@@ -254,50 +231,6 @@
         border-radius: 50%;
         background-size: cover;
         background-position: center;
-        flex-shrink: 0;
-    }
-
-    .sender-info, .message-info {
-        flex: 1;
-        overflow: hidden;
-    }
-
-    .sender-name {
-        font-weight: 600;
-    }
-
-    .message-text {
-        font-size: 14px;
-        color: var(--f7-list-item-text-color);
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
-    .message-meta {
-        font-size: 12px;
-        color: var(--f7-list-item-after-text-color);
-        margin-top: 2px;
-    }
-
-    .sender-actions, .message-actions {
-        display: flex;
-        gap: 5px;
-        flex-shrink: 0;
-    }
-
-    .sortable-handler {
-        cursor: move;
-        padding: 5px;
-        margin-right: 5px;
-        flex-shrink: 0;
-    }
-
-    .action-button {
-        padding: 5px 10px;
-        border-radius: 4px;
-        font-size: 12px;
-        cursor: pointer;
     }
 </style>
 
@@ -316,8 +249,6 @@
                 if (currentSim) {
                     currentSim.name = $settings.find('input[name="name"]').val();
                     currentSim.trigger_type = $settings.find('select[name="trigger_type"]').val();
-                    currentSim.delay = $settings.find('input[name="delay"]').val();
-                    currentSim.start_date = $settings.find('input[name="start_date"]').val();
                     console.log('SMS settings updated:', currentSim);
                     appData.sims[currentSim.id] = currentSim;
                     saveAppData();
@@ -347,17 +278,16 @@
             currentSim.senders.forEach((sender, index) => {
                 const liHtml = `
                     <li>
-                        <div class="sender-item">
-                            <div class="sender-avatar" style="background-image: url(${sender.avatar})"></div>
-                            <div class="sender-info">
-                                <div class="sender-name">${sender.name}</div>
-                                <div class="message-meta">Sender ${index}</div>
+                        <a class="item-link item-content edit-sender" data-index="${index}">
+                            <div class="item-media">
+                                <div class="sender-avatar" style="background-image: url(${sender.avatar})"></div>
                             </div>
-                            <div class="sender-actions">
-                                <a href="#" class="button button-small button-fill action-button edit-sender" data-index="${index}">Edit</a>
-                                <a href="#" class="button button-small button-fill color-red action-button delete-sender" data-index="${index}">Delete</a>
+                            <div class="item-inner">
+                                <div class="item-title">
+                                    ${sender.name}
+                                </div>
                             </div>
-                        </div>
+                        </a>
                     </li>
                 `;
                 $list.append(liHtml);
@@ -368,12 +298,6 @@
                 e.preventDefault();
                 const index = parseInt($$(this).attr('data-index'));
                 openSenderPopup(index);
-            });
-
-            $$('.delete-sender').on('click', function(e) {
-                e.preventDefault();
-                const index = parseInt($$(this).attr('data-index'));
-                deleteSender(index);
             });
         };
 
@@ -387,10 +311,12 @@
                 const sender = currentSim.senders[index];
                 $$('#sender_form input[name="sender_name"]').val(sender.name);
                 $$('#sender_avatar_preview').css('background-image', `url(${sender.avatar})`);
+                $$('#delete_sender_block').show();
             } else {
                 $$('#sender_form input[name="sender_name"]').val('');
                 const newAvatar = generateRandomAvatar();
                 $$('#sender_avatar_preview').css('background-image', `url(${newAvatar})`);
+                $$('#delete_sender_block').hide();
             }
 
             popup.open();
@@ -475,15 +401,21 @@
         };
 
         // === MESSAGES MANAGEMENT ===
-        const updateMessageFromOptions = () => {
+        const updateMessageFromOptions = (type) => {
             const $select = $$('#message_form select[name="message_from"]');
-            $select.html('<option value="me">Me</option>');
+            console.log("message edit type:", type);
+            if(type=='prefilled'){
+                $select.html('<option value="me">Me</option>');
+            }else{
+                $select.html('');   //no 'me' options for normal messages
+            }
             
             if (currentSim.senders) {
                 currentSim.senders.forEach((sender, index) => {
                     $select.append(`<option value="${index}">${sender.name}</option>`);
                 });
             }
+
         };
 
         const renderMessagesList = (type) => {
@@ -503,27 +435,31 @@
                 const senderName = isMe ? 'Me' : (currentSim.senders[message.from]?.name || `Sender ${message.from}`);
                 const senderAvatar = isMe ? '' : (currentSim.senders[message.from]?.avatar || '');
                 
-                const autoFollowText = type === 'messages' && message.autofollow ? ' • Auto-follow' : '';
-                const metaText = `From: ${senderName} • Delay: ${message.delay}s${autoFollowText}`;
+                let footerText;
+                if (type === 'prefilled') {
+                    footerText = `Time: ${message.time || ''}`;
+                } else {
+                    const autoFollowText = message.autofollow ? ' • Auto-follow' : '';
+                    footerText = `Delay: ${message.delay}s${autoFollowText}`;
+                }
 
-                const avatarHtml = isMe ? '' : `<div class="message-sender-avatar" style="background-image: url(${senderAvatar})"></div>`;
+                const avatarHtml = senderAvatar ? `<div class="message-sender-avatar" style="background-image: url(${senderAvatar})"></div>` : '<i class="f7-icons">person_fill</i>';
 
                 const liHtml = `
                     <li>
-                        <div class="sortable-handler">
-                            <i class="f7-icons">line_horizontal_3</i>
-                        </div>
-                        <div class="message-item">
-                            ${avatarHtml}
-                            <div class="message-info">
-                                <div class="message-text">${message.text}</div>
-                                <div class="message-meta">${metaText}</div>
+                        <div class="sortable-handler"></div>
+                        <a class="item-link item-content edit-message" data-type="${type}" data-index="${index}">
+                            <div class="item-media">
+                                ${avatarHtml}
                             </div>
-                            <div class="message-actions">
-                                <a href="#" class="button button-small button-fill action-button edit-message" data-type="${type}" data-index="${index}">Edit</a>
-                                <a href="#" class="button button-small button-fill color-red action-button delete-message" data-type="${type}" data-index="${index}">Delete</a>
+                            <div class="item-inner">
+                                <div class="item-title">
+                                    <div class="item-header">From: ${senderName}</div>
+                                    ${message.text}
+                                    <div class="item-footer">${footerText}</div>
+                                </div>
                             </div>
-                        </div>
+                        </a>
                     </li>
                 `;
                 $list.append(liHtml);
@@ -536,26 +472,24 @@
                 const index = parseInt($$(this).attr('data-index'));
                 openMessagePopup(type, index);
             });
-
-            $$('.delete-message').on('click', function(e) {
-                e.preventDefault();
-                const type = $$(this).attr('data-type');
-                const index = parseInt($$(this).attr('data-index'));
-                deleteMessage(type, index);
-            });
         };
 
         const openMessagePopup = (type, index = null) => {
             editingMessageType = type;
             editingMessageIndex = index;
 
-            updateMessageFromOptions();
+            updateMessageFromOptions(type);
 
-            // Show/hide autofollow field based on message type
+            // Show/hide fields based on message type
             if (type === 'messages') {
                 $$('#autofollow_field').show();
+                $$('#message_delay_field').show();
+                $$('#message_time_field').hide();
+                // $$('select[name="message_from"] option[value="me"]').remove();    //can't create a message from yourself here...
             } else {
                 $$('#autofollow_field').hide();
+                $$('#message_delay_field').hide();
+                $$('#message_time_field').show();
             }
 
             const popup = app.popup.create({
@@ -566,16 +500,21 @@
                 const message = currentSim[type][index];
                 $$('#message_form select[name="message_from"]').val(message.from);
                 $$('#message_form textarea[name="message_text"]').val(message.text);
-                $$('#message_form input[name="message_delay"]').val(message.delay);
                 
                 if (type === 'messages') {
+                    $$('#message_form input[name="message_delay"]').val(message.delay);
                     $$('#message_form input[name="message_autofollow"]').prop('checked', message.autofollow || false);
+                } else {
+                    $$('#message_form input[name="message_time"]').val(message.time || '');
                 }
+                $$('#delete_message_block').show();
             } else {
                 $$('#message_form select[name="message_from"]').val('me');
                 $$('#message_form textarea[name="message_text"]').val('');
                 $$('#message_form input[name="message_delay"]').val(2);
+                $$('#message_form input[name="message_time"]').val('');
                 $$('#message_form input[name="message_autofollow"]').prop('checked', false);
+                $$('#delete_message_block').hide();
             }
 
             popup.open();
@@ -584,7 +523,6 @@
         const saveMessage = () => {
             const from = $$('#message_form select[name="message_from"]').val();
             const text = $$('#message_form textarea[name="message_text"]').val();
-            const delay = parseInt($$('#message_form input[name="message_delay"]').val()) || 0;
 
             if (!text.trim()) {
                 app.notification.create({
@@ -598,12 +536,14 @@
 
             const messageData = {
                 from: from === 'me' ? 'me' : parseInt(from),
-                text: text.trim(),
-                delay
+                text: text.trim()
             };
 
             if (editingMessageType === 'messages') {
+                messageData.delay = parseInt($$('#message_form input[name="message_delay"]').val()) || 0;
                 messageData.autofollow = $$('#message_form input[name="message_autofollow"]').prop('checked');
+            } else {
+                messageData.time = $$('#message_form input[name="message_time"]').val();
             }
 
             if (!currentSim[editingMessageType]) {
@@ -692,6 +632,23 @@
                 e.preventDefault();
                 saveMessage();
             });
+
+            // Delete buttons in popups
+            $$('#delete_sender_button').on('click', function (e) {
+                e.preventDefault();
+                if (editingSenderIndex !== null) {
+                    deleteSender(editingSenderIndex);
+                    app.popup.close('#sender_popup');
+                }
+            });
+
+            $$('#delete_message_button').on('click', function (e) {
+                e.preventDefault();
+                if (editingMessageIndex !== null && editingMessageType) {
+                    deleteMessage(editingMessageType, editingMessageIndex);
+                    app.popup.close('#message_popup');
+                }
+            });
         });
 
         $on('pageBeforeIn', function (e, page) {
@@ -702,8 +659,6 @@
             const $settings = $$('form.list.settings');
             $settings.find('input[name="name"]').val(s.name);
             $settings.find('select[name="trigger_type"]').val(s.trigger_type);
-            $settings.find('input[name="delay"]').val(s.delay);
-            $settings.find('input[name="start_date"]').val(s.start_date);
 
             // Render lists
             renderSendersList();
