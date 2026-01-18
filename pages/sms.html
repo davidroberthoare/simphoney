@@ -94,6 +94,9 @@
     let messagebar;
     let messages;
     let messageCounter = 0;
+    let peer = null;
+    let peerId = null;
+    const remoteChannel = appData.global.remote_channel || 'default';
 
 
 
@@ -127,12 +130,15 @@
         responseInProgress = false;
         return;
       }
-      doResponses();
+      // only if this is a 'timed' trigger type
+      if (currentSim.trigger_type === 'timed'){
+        doResponses();
+      }
     }
 
 
     //process any responses and reset for next sent message
-    const doResponses = () => {
+    const doResponses = (initialDelay=1) => {
       if (messageCounter >= currentSim.messages.length) {
         responseInProgress = false;
         return;
@@ -168,7 +174,7 @@
 
         }, msg.delay * 1000); //after their delay time
 
-      }, 1000); //they don't start typing straight away
+      }, 1000 * initialDelay); //they don't start typing straight away
 
 
 
@@ -279,6 +285,14 @@
           visualViewport.removeEventListener('scroll', updateKeyboardState);
         }
         setKeyboardHeight(0);
+        
+        // Clean up PeerJS connection
+        if (peer) {
+          peer.destroy();
+          peer = null;
+          peerId = null;
+          console.log('PeerJS connection closed');
+        }
       });
 
 
@@ -296,7 +310,34 @@
 
     $on('pageAfterIn', function (e, page) {
       console.log('page displayed...', currentSim);
-      // hide/show various elements based on SIM settings
+      
+      // if trigger type is 'remote', set up PeerJS to wait for triggers for each response...
+      if (currentSim.trigger_type === 'remote') {
+        // Remote mode: set up PeerJS and wait for trigger
+        let playerSlot = appData.global.player_slot || 'player1';
+        
+        peerId = `simphoney-${remoteChannel}-${playerSlot}`;
+        peer = new Peer(peerId);
+        
+        peer.on('open', (id) => {
+          console.log(`PeerJS connected - Channel: ${remoteChannel}, Slot: ${playerSlot}, ID: ${id}`);
+        });
+
+        peer.on('connection', (conn) => {
+          console.log('Remote connection established');
+          conn.on('data', (data) => {
+            console.log('Received data from remote:', data);
+            if (data === 'go') {
+              // Trigger the first message response
+              doResponses(0);
+            }
+          });
+        });
+
+        peer.on('error', (err) => {
+          console.error('PeerJS error:', err);
+        });
+      }
 
     });
 
