@@ -35,6 +35,39 @@
           </div>
         </div>
       </div>
+      
+      <!-- In-Call Screen -->
+      <div id="in_call_screen">
+        <div class="incall_header">
+          <div class="incall_caller_avatar" style="background-image: url('${currentSim.caller_avatar}');"></div>
+          <div class="incall_caller_name">${currentSim.caller_name}</div>
+          <div class="incall_duration" id="call_duration">00:00</div>
+        </div>
+        
+        <div class="incall_actions">
+          <div class="incall_button_row">
+            <div class="incall_button" id="mute_button">
+              <i class="f7-icons">mic_fill</i>
+              <span>Mute</span>
+            </div>
+            <div class="incall_button" id="keypad_button">
+              <i class="f7-icons">circle_grid_3x3_fill</i>
+              <span>Keypad</span>
+            </div>
+            <div class="incall_button" id="speaker_button">
+              <i class="f7-icons">speaker_fill</i>
+              <span>Speaker</span>
+            </div>
+          </div>
+          
+          <div class="incall_button_row">
+            <div class="incall_button hangup" id="hangup_button">
+              <i class="f7-icons">phone_down_fill</i>
+              <span>Hang Up</span>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -71,13 +104,13 @@
     top: 0;
     left: 0;
     width: 100%;
-    height: 100%;
+    height: calc(100% - 120px);
     background: rgba(0, 0, 0, 0.95);
     display: none;
     flex-direction: column;
     align-items: center;
     justify-content: space-between;
-    padding: 60px 20px 40px;
+    padding: 60px 0px;
     z-index: 1000;
   }
   
@@ -166,6 +199,111 @@
   .call_button:active i {
     transform: scale(0.95);
   }
+  
+  /* In-Call Screen Styles */
+  #in_call_screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: calc(100% - 120px);;
+    background: linear-gradient(to bottom, #1c1c1e 0%, #000 100%);
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 60px 0px;
+    z-index: 1001;
+  }
+  
+  .incall_header {
+    text-align: center;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .incall_caller_avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background-size: cover;
+    background-position: center;
+    margin-bottom: 20px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+  }
+  
+  .incall_caller_name {
+    color: #fff;
+    font-size: 28px;
+    font-weight: 400;
+    margin-bottom: 8px;
+  }
+  
+  .incall_duration {
+    color: #8e8e93;
+    font-size: 16px;
+  }
+  
+  .incall_actions {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+  }
+  
+  .incall_button_row {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    width: 100%;
+  }
+  
+  .incall_button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    user-select: none;
+  }
+  
+  .incall_button i {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+    transition: transform 0.1s, background 0.2s;
+  }
+  
+  .incall_button span {
+    font-size: 13px;
+    color: #fff;
+  }
+  
+  .incall_button.active i {
+    background: #fff;
+    color: #000;
+  }
+  
+  .incall_button.hangup i {
+    width: 64px;
+    height: 64px;
+    background: #ff3b30;
+    color: #fff;
+    font-size: 32px;
+  }
+  
+  .incall_button:active i {
+    transform: scale(0.95);
+  }
 </style>
 
 <!-- component logic -->
@@ -210,7 +348,7 @@
         // Repeated vibration pattern for incoming call
         const vibrate = () => {
           navigator.vibrate([1000, 500, 1000, 500]);
-          if ($$('#call_overlay').is(':visible')) {
+          if ($$('#call_overlay').css('display') !== 'none') {
             setTimeout(vibrate, 3000);
           }
         };
@@ -225,24 +363,35 @@
       triggerVibrationPattern();
     }
     
+    let callTimer = null;
+    let callSeconds = 0;
+    
     function answerCall() {
       stopCallRingtone();
       navigator.vibrate && navigator.vibrate(0); // Stop vibration
-      $$('#call_overlay').fadeOut();
+      $$('#call_overlay').hide();
+      $$('#in_call_screen').css('display', 'flex');
       
-      // Show a notification that call was answered
-      app.notification.create({
-        title: 'Call Connected',
-        text: `Connected to ${currentSim.caller_name}`,
-        closeTimeout: 2000,
-        closeOnClick: true,
-      }).open();
+      // Start call duration timer
+      callSeconds = 0;
+      updateCallDuration();
+      callTimer = setInterval(() => {
+        callSeconds++;
+        updateCallDuration();
+      }, 1000);
+    }
+    
+    function updateCallDuration() {
+      const minutes = Math.floor(callSeconds / 60);
+      const seconds = callSeconds % 60;
+      const formatted = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+      $$('#call_duration').text(formatted);
     }
     
     function declineCall() {
       stopCallRingtone();
       navigator.vibrate && navigator.vibrate(0); // Stop vibration
-      $$('#call_overlay').fadeOut();
+      $$('#call_overlay').hide();
       
       // Show a notification that call was declined
       app.notification.create({
@@ -251,6 +400,30 @@
         closeTimeout: 2000,
         closeOnClick: true,
       }).open();
+    }
+    
+    function hangupCall() {
+      // Stop call timer
+      if (callTimer) {
+        clearInterval(callTimer);
+        callTimer = null;
+      }
+      
+      $$('#in_call_screen').hide();
+      
+      // Show call ended notification
+      const minutes = Math.floor(callSeconds / 60);
+      const seconds = callSeconds % 60;
+      const duration = minutes > 0 ? `${minutes}m ${seconds}s` : `${seconds}s`;
+      
+      app.notification.create({
+        title: 'Call Ended',
+        text: `Call duration: ${duration}`,
+        closeTimeout: 2000,
+        closeOnClick: true,
+      }).open();
+      
+      callSeconds = 0;
     }
 
     $on('pageBeforeIn', function (e, page) {
@@ -300,6 +473,31 @@
       // Set up button handlers
       $$('#accept_button').off('click').on('click', answerCall);
       $$('#decline_button').off('click').on('click', declineCall);
+      
+      // In-call screen button handlers
+      $$('#hangup_button').off('click').on('click', hangupCall);
+      
+      $$('#mute_button').off('click').on('click', function() {
+        $$(this).toggleClass('active');
+        const isMuted = $$(this).hasClass('active');
+        $$(this).find('span').text(isMuted ? 'Unmute' : 'Mute');
+      });
+      
+      $$('#speaker_button').off('click').on('click', function() {
+        $$(this).toggleClass('active');
+        const isOn = $$(this).hasClass('active');
+        $$(this).find('span').text(isOn ? 'Speaker On' : 'Speaker Off');
+      });
+      
+      $$('#keypad_button').off('click').on('click', function() {
+        // Keypad functionality could be added here
+        app.notification.create({
+          title: 'Keypad',
+          text: 'Keypad feature coming soon',
+          closeTimeout: 1500,
+          closeOnClick: true,
+        }).open();
+      });
 
       // Trigger call based on type
       if (currentSim.trigger_type === 'timed') {
@@ -336,6 +534,12 @@
       // Clean up
       stopCallRingtone();
       navigator.vibrate && navigator.vibrate(0);
+      
+      // Clean up call timer
+      if (callTimer) {
+        clearInterval(callTimer);
+        callTimer = null;
+      }
       
       if (peer) {
         peer.destroy();
