@@ -83,6 +83,24 @@
   .page[data-name="sms"] .toolbar.messagebar {
     transform: translate3d(0, calc(-1 * var(--sms-keyboard-height)), 0);
   }
+
+  /* Dark mode fix for received message bubbles */
+  .dark .message-received .message-bubble {
+    background-color: #2c2c2e;
+    color: #ffffff;
+  }
+
+  .dark .message-received .message-text {
+    color: #ffffff;
+  }
+
+  .dark .message-name {
+    color: #e5e5e7;
+  }
+
+  .dark .message-name .time {
+    color: #98989d;
+  }
 </style>
 
 <!-- component logic -->
