@@ -7,147 +7,204 @@
           <a href="/" class="link back"><i class="f7-icons">chevron_left</i></a>
         </div>
         <div class="title">Settings</div>
+        <div class="right">
+          <a href="#" class="link popup-open" data-popup="#help-popup"><i class="f7-icons">questionmark</i></a>
+        </div>
       </div>
     </div>
     <div class="page-content">
       <form id="settings_list" class="list list-strong inset list-dividers-ios">
-          <ul>
-            <!-- dark mode toggle -->
-            <li>
-              <div class="item-content">
-                <div class="item-inner">
-                  <div class="item-title">Dark-Mode</div>
-                  <div class="item-after">
-                    <label class="toggle">
-                      <input type="checkbox" id="global-dark_mode" value="true" /><i class="toggle-icon"></i>
-                    </label>
-                  </div>
+        <ul>
+          <!-- dark mode toggle -->
+          <li>
+            <div class="item-content">
+              <div class="item-inner">
+                <div class="item-title">Dark-Mode</div>
+                <div class="item-after">
+                  <label class="toggle">
+                    <input type="checkbox" id="global-dark_mode" value="true" /><i class="toggle-icon"></i>
+                  </label>
                 </div>
               </div>
-            </li>
+            </div>
+          </li>
 
-            <!-- os dropdown selector ios/android -->
-            <li>
-              <div class="item-content item-input">
-                <div class="item-inner">
-                  <div class="item-title item-label">OS</div>
-                  <div class="item-input-wrap">
-                    <select id="global-os">
-                      <option value="ios">iOS</option>
-                      <option value="md">Android</option>
-                    </select>
-                  </div>
+          <!-- os dropdown selector ios/android -->
+          <li>
+            <div class="item-content item-input">
+              <div class="item-inner">
+                <div class="item-title item-label">OS</div>
+                <div class="item-input-wrap">
+                  <select id="global-os">
+                    <option value="ios">iOS</option>
+                    <option value="md">Android</option>
+                  </select>
                 </div>
               </div>
-            </li>
+            </div>
+          </li>
 
-            <!-- background image selector -->
-            <li>
-              <div class="item-content item-input">
-                <div class="item-inner">
-                  <div class="item-title item-label">Background Image</div>
-                  <div class="item-input-wrap">
-                    <input type="file" id="background_img_upload" name="background_img_upload" accept="image/*" />
-                  </div>
+          <!-- background image selector -->
+          <li>
+            <div class="item-content item-input">
+              <div class="item-inner">
+                <div class="item-title item-label">Background Image</div>
+                <div class="item-input-wrap">
+                  <input type="file" id="background_img_upload" name="background_img_upload" accept="image/*" />
                 </div>
               </div>
-            </li>
-            <!-- background image preview -->
-            <li>
-              <div class="item-content">
-                <div class="item-inner">
-                  <div id="background_img_preview_container" style="display: none; padding: 10px 0;">
-                    <div style="font-size: 12px; color: #888; margin-bottom: 8px;">Preview:</div>
-                    <img id="background_img_preview" style="width: 100%; max-width: 200px; border-radius: 8px; display: block;" />
-                    <button type="button" id="background_img_clear" class="button button-outline" style="margin-top: 8px; width: 100%;">Clear Image</button>
-                  </div>
+            </div>
+          </li>
+          <!-- background image preview -->
+          <li>
+            <div class="item-content">
+              <div class="item-inner">
+                <div id="background_img_preview_container" style="display: none; padding: 10px 0;">
+                  <div style="font-size: 12px; color: #888; margin-bottom: 8px;">Preview:</div>
+                  <img id="background_img_preview" style="width: 100%; max-width: 200px; border-radius: 8px; display: block;" />
+                  <button type="button" id="background_img_clear" class="button button-outline" style="margin-top: 8px; width: 100%;">Clear Image</button>
                 </div>
               </div>
-            </li>
+            </div>
+          </li>
 
-            <!-- remote channel input -->
-            <li>
-              <div class="item-content item-input">
-                <div class="item-inner">
-                  <div class="item-title item-label">Remote Channel</div>
-                  <div class="item-input-wrap">
-                    <input type="text" id="global-remote_channel" placeholder="default" />
-                  </div>
+          <!-- remote channel input -->
+          <li>
+            <div class="item-content item-input">
+              <div class="item-inner">
+                <div class="item-title item-label">Remote Channel</div>
+                <div class="item-input-wrap">
+                  <input type="text" id="global-remote_channel" placeholder="default" />
                 </div>
               </div>
-            </li>
+            </div>
+          </li>
 
-            <!-- player slot selector -->
-            <li>
-              <div class="item-content item-input">
-                <div class="item-inner">
-                  <div class="item-title item-label">Player Slot</div>
-                  <div class="item-input-wrap">
-                    <select id="global-player_slot">
-                      <option value="player1">Player 1</option>
-                      <option value="player2">Player 2</option>
-                      <option value="player3">Player 3</option>
-                      <option value="player4">Player 4</option>
-                      <option value="player5">Player 5</option>
-                    </select>
-                  </div>
+          <!-- player slot selector -->
+          <li>
+            <div class="item-content item-input">
+              <div class="item-inner">
+                <div class="item-title item-label">Player Slot</div>
+                <div class="item-input-wrap">
+                  <select id="global-player_slot">
+                    <option value="player1">Player 1</option>
+                    <option value="player2">Player 2</option>
+                    <option value="player3">Player 3</option>
+                    <option value="player4">Player 4</option>
+                    <option value="player5">Player 5</option>
+                  </select>
                 </div>
               </div>
-            </li>
+            </div>
+          </li>
 
-            <!-- alert sound selector -->
-            <li>
-              <div class="item-content item-input">
-                <div class="item-inner">
-                  <div class="item-title item-label">Notification/SMS Sound</div>
-                  <div class="item-input-wrap">
-                    <select id="global-alert_sound">
-                      <option value="alert_1">Alert 1</option>
-                      <option value="alert_2">Alert 2</option>
-                      <option value="alert_3">Alert 3</option>
-                    </select>
-                  </div>
+          <!-- alert sound selector -->
+          <li>
+            <div class="item-content item-input">
+              <div class="item-inner">
+                <div class="item-title item-label">Notification/SMS Sound</div>
+                <div class="item-input-wrap">
+                  <select id="global-alert_sound">
+                    <option value="alert_1">Alert 1</option>
+                    <option value="alert_2">Alert 2</option>
+                    <option value="alert_3">Alert 3</option>
+                  </select>
                 </div>
               </div>
-            </li>
+            </div>
+          </li>
 
-            <!-- ringtone sound selector -->
-            <li>
-              <div class="item-content item-input">
-                <div class="item-inner">
-                  <div class="item-title item-label">Ringtone</div>
-                  <div class="item-input-wrap">
-                    <select id="global-ringtone_sound">
-                      <option value="ringtone_1">Ringtone 1</option>
-                      <option value="ringtone_2">Ringtone 2</option>
-                      <option value="ringtone_3">Ringtone 3</option>
-                      <option value="ringtone_4">Ringtone 4</option>
-                      <option value="ringtone_5">Ringtone 5</option>
-                      <option value="ringtone_6">Ringtone 6</option>
-                      <option value="ringtone_7">Ringtone 7</option>
-                      <option value="ringtone_8">Ringtone 8</option>
-                      <option value="ringtone_9">Ringtone 9</option>
-                      <option value="ringtone_10">Ringtone 10</option>
-                      <option value="ringtone_11">Ringtone 11</option>
-                      <option value="ringtone_12">Ringtone 12</option>
-                      <option value="ringtone_13">Ringtone 13</option>
-                      <option value="ringtone_14">Ringtone 14</option>
-                      <option value="ringtone_15">Ringtone 15</option>
-                      <option value="ringtone_16">Ringtone 16</option>
-                      <option value="ringtone_17">Ringtone 17</option>
-                      <option value="ringtone_18">Ringtone 18</option>
-                      <option value="ringtone_19">Ringtone 19</option>
-                      <option value="ringtone_20">Ringtone 20</option>
-                    </select>
-                  </div>
+          <!-- ringtone sound selector -->
+          <li>
+            <div class="item-content item-input">
+              <div class="item-inner">
+                <div class="item-title item-label">Ringtone</div>
+                <div class="item-input-wrap">
+                  <select id="global-ringtone_sound">
+                    <option value="ringtone_1">Ringtone 1</option>
+                    <option value="ringtone_2">Ringtone 2</option>
+                    <option value="ringtone_3">Ringtone 3</option>
+                    <option value="ringtone_4">Ringtone 4</option>
+                    <option value="ringtone_5">Ringtone 5</option>
+                    <option value="ringtone_6">Ringtone 6</option>
+                    <option value="ringtone_7">Ringtone 7</option>
+                    <option value="ringtone_8">Ringtone 8</option>
+                    <option value="ringtone_9">Ringtone 9</option>
+                    <option value="ringtone_10">Ringtone 10</option>
+                    <option value="ringtone_11">Ringtone 11</option>
+                    <option value="ringtone_12">Ringtone 12</option>
+                    <option value="ringtone_13">Ringtone 13</option>
+                    <option value="ringtone_14">Ringtone 14</option>
+                    <option value="ringtone_15">Ringtone 15</option>
+                    <option value="ringtone_16">Ringtone 16</option>
+                    <option value="ringtone_17">Ringtone 17</option>
+                    <option value="ringtone_18">Ringtone 18</option>
+                    <option value="ringtone_19">Ringtone 19</option>
+                    <option value="ringtone_20">Ringtone 20</option>
+                  </select>
                 </div>
               </div>
-            </li>
+            </div>
+          </li>
 
-          </ul>
+        </ul>
       </form>
     </div>
+
+
+
+    <!-- Help Popup -->
+    <div class="popup" id="help-popup">
+      <div class="page">
+        <div class="navbar">
+          <div class="navbar-inner">
+            <div class="title">Help</div>
+            <div class="right">
+              <a href="#" class="link popup-close">Close</a>
+            </div>
+          </div>
+        </div>
+        <div class="page-content">
+          <div class="block">
+            <h2>Overview</h2>
+            <p>SimPhoney is a practical tool for filmmakers to simulate phone notifications and SMS conversations on real devices during filming. Instead of adding notifications in post-production, you can trigger realistic interactions on an actual device in frame.</p>
+
+            <h2>Creating Simulations</h2>
+            <p>From the home screen tap the "+" button in the respective section to create Notifications, SMS Conversations, or Call-Ins.</p>
+
+            <h2>Editing Simulations</h2>
+            <p>Simply click on the Simulation name to edit or delete it.</p>
+            
+
+            <h3>Trigger Types</h3>
+            <p>When editing, you can choose:</p>
+            <ul>
+              <li><strong>Timed</strong> - Automatically triggers after a specified delay</li>
+              <li><strong>Remote</strong> - Waits for trigger from a remote control device</li>
+            </ul>
+
+            <h2>Remote Control</h2>
+            <p>Use a separate device to trigger simulations on cue:</p>
+            <ol>
+              <li>On the player device (phone in frame), set the trigger type to "Remote" and assign it a <strong>Player Slot</strong> (Player 1-5)</li>
+              <li>On the remote control device, go to <strong>"Remote Control"</strong> from the home screen</li>
+              <li>Both devices will auto-discover each other on the same channel</li>
+              <li>Tap the play button next to a connected device to trigger its simulation</li>
+            </ol>
+
+            <h3>Channel Settings</h3>
+            <p>Configure your <strong>Remote Channel</strong> in Settings to isolate different setups on the same network. All devices on the same channel can communicate.</p>
+
+            <p><strong>Note:</strong> Up to 5 devices (Player 1-5) can be controlled simultaneously from one remote.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
   </div>
+
+
 </template>
 
 <!-- component styles -->
@@ -172,21 +229,21 @@
     const updateGlobalSettings = () => {
       const newOS = $$('#global-os').val();
       const newDarkMode = $$('#global-dark_mode').prop('checked');
-      
+
       // Apply theme changes immediately
       if (newOS !== appData.global.os) {
         appData.global.os = newOS;
         applyTheme(newOS);
       }
-      
+
       if (newDarkMode !== appData.global.dark_mode) {
         appData.global.dark_mode = newDarkMode;
         applyDarkMode(newDarkMode);
       }
-      
+
       appData.global.remote_channel = $$('#global-remote_channel').val() || 'default';
-      appData.global.player_slot = $$('#global-player_slot').val() || 'player1';      appData.global.alert_sound = $$('#global-alert_sound').val() || 'alert1';
-      appData.global.ringtone_sound = $$('#global-ringtone_sound').val() || 'ringtone_1';      console.log('Global settings updated:', appData.global);
+      appData.global.player_slot = $$('#global-player_slot').val() || 'player1'; appData.global.alert_sound = $$('#global-alert_sound').val() || 'alert1';
+      appData.global.ringtone_sound = $$('#global-ringtone_sound').val() || 'ringtone_1'; console.log('Global settings updated:', appData.global);
       saveAppData();
     };
 
@@ -250,18 +307,18 @@
     $on('pageBeforeIn', function (e, page) {
       populateGlobalSettings();
       setupBackgroundImageUpload();
-      
+
       // Add event listeners for immediate theme/mode changes
       $$('#global-os').off('change').on('change', updateGlobalSettings);
       $$('#global-dark_mode').off('change').on('change', updateGlobalSettings);
-      
+
       // Add event listeners to preview sounds when changed
-      $$('#global-alert_sound').off('change').on('change', function() {
+      $$('#global-alert_sound').off('change').on('change', function () {
         updateGlobalSettings();
         playNotificationSound();
       });
-      
-      $$('#global-ringtone_sound').off('change').on('change', function() {
+
+      $$('#global-ringtone_sound').off('change').on('change', function () {
         updateGlobalSettings();
         // Play ringtone preview for 2 seconds
         const sound = playRingtone();
