@@ -72,16 +72,16 @@
     margin-left: 5px;
   }
 
-  .page[data-name="sms"] {
-    --sms-keyboard-height: 0px;
-  }
-
   .page[data-name="sms"] .messages-content {
-    padding-bottom: calc(var(--f7-messagebar-height, 44px) + var(--sms-keyboard-height));
+    padding-bottom: calc(var(--f7-messagebar-height, 44px) + var(--f7-safe-area-bottom, 0px));
   }
 
   .page[data-name="sms"] .toolbar.messagebar {
-    transform: translate3d(0, calc(-1 * var(--sms-keyboard-height)), 0);
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 500;
   }
 
   /* Dark mode fix for received message bubbles */
@@ -273,38 +273,37 @@
 
 
       // THIS IS JUST FOR SCROLLING TEXTBAR INTO VIEW WHEN KEYBOARD OPENS
-      // Use Visual Viewport API for Chromium-based browsers
+      // Use Visual Viewport API to keep messagebar at bottom when keyboard opens
       const pageEl = $el.value.find('.page')[0];
       const textareaEl = $$("#message_text")[0];
+      const messagebarEl = $el.value.find('.toolbar.messagebar')[0];
       const visualViewport = window.visualViewport;
       
-      const setKeyboardHeight = (height) => {
-        if (!pageEl) return;
-        pageEl.style.setProperty('--sms-keyboard-height', `${height || 0}px`);
-        console.log('Setting keyboard height:', height);
-      };
-
-      const updateKeyboardState = () => {
-        if (!visualViewport) return;
+      const updateMessagebarPosition = () => {
+        if (!visualViewport || !messagebarEl) return;
         
-        const windowHeight = window.innerHeight;
-        const viewportHeight = visualViewport.height;
-        const keyboardHeight = Math.max(0, windowHeight - viewportHeight);
+        // Calculate the offset from the layout viewport bottom to visual viewport bottom
+        const offsetY = visualViewport.offsetTop + visualViewport.height - window.innerHeight;
         
-        console.log('Window height:', windowHeight, 'Viewport height:', viewportHeight, 'Keyboard:', keyboardHeight);
-        setKeyboardHeight(keyboardHeight);
+        console.log('Visual viewport offsetTop:', visualViewport.offsetTop, 
+                    'height:', visualViewport.height, 
+                    'offsetY:', offsetY);
         
-        // Scroll the textarea into view when keyboard opens
-        if (keyboardHeight > 0 && textareaEl) {
-          setTimeout(() => {
-            textareaEl.scrollIntoView({ behavior: 'instant', block: 'center' });
-          }, 150);
-        }
+        // Position the messagebar at the visual viewport bottom
+        messagebarEl.style.transform = `translateY(${offsetY}px)`;
       };
 
       if (visualViewport) {
-        visualViewport.addEventListener('resize', updateKeyboardState);
-        visualViewport.addEventListener('scroll', updateKeyboardState);
+        visualViewport.addEventListener('resize', updateMessagebarPosition);
+        visualViewport.addEventListener('scroll', updateMessagebarPosition);
+      }
+      
+      // Also handle focus events on the textarea to ensure it's visible
+      if (textareaEl) {
+        textareaEl.addEventListener('focus', () => {
+          // Give browser time to open keyboard, then update position
+          setTimeout(updateMessagebarPosition, 300);
+        });
       }
       
       // END SCROLLING TEXTBAR INTO VIEW WHEN KEYBOARD OPENS
@@ -313,10 +312,9 @@
 
       $on('pageBeforeRemove', () => {
         if (visualViewport) {
-          visualViewport.removeEventListener('resize', updateKeyboardState);
-          visualViewport.removeEventListener('scroll', updateKeyboardState);
+          visualViewport.removeEventListener('resize', updateMessagebarPosition);
+          visualViewport.removeEventListener('scroll', updateMessagebarPosition);
         }
-        setKeyboardHeight(0);
         
         // Clean up PeerJS connection
         if (peer) {
