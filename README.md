@@ -80,14 +80,14 @@ For best results, install as a Progressive Web App on your device for a full-scr
 - SMS conversation simulations (timed and remote)
 - Remote control with auto-discovery
 - Global settings and customization
-
-### Planned
 - PWA installation
 - iOS/Android styling
-- Additional notification types
 - Phone call simulations
-- More messaging apps (WhatsApp, iMessage, etc.)
 - Sound effects
+
+### Planned
+- Additional notification types
+- More messaging apps (WhatsApp, iMessage, etc.)
 - Better error handling
 - Documentation improvements
 
