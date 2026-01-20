@@ -40,7 +40,7 @@
           </a>
         </div>
         <div class="messagebar-area">
-          <textarea  class="resizable" id="message_text"></textarea>
+          <textarea class="resizable" id="message_text"></textarea>
         </div>
         <div class="toolbar-pane">
           <a class="link icon-only demo-send-message-link" @click=${sendMessage}>
@@ -62,7 +62,7 @@
     display: none;
   }
 
-  .messagebar textarea{
+  .messagebar textarea {
     scrollbar-width: none;
   }
 
@@ -72,35 +72,16 @@
     margin-left: 5px;
   }
 
-  .page[data-name="sms"] .messages-content {
-    padding-bottom: calc(var(--f7-messagebar-height, 44px) + var(--f7-safe-area-bottom, 0px));
+  .md, .md .dark, .md [class*=color-] {
+    --f7-message-received-bg-color: #494a5c;
   }
 
-  .page[data-name="sms"] .toolbar.messagebar {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    z-index: 500;
+  .md, .md .dark, .md [class*=color-] {
+    --f7-messagebar-textarea-bg-color: #272727;
   }
 
-  /* Dark mode fix for received message bubbles */
-  .dark .message-received .message-bubble {
-    background-color: #2c2c2e;
-    color: #ffffff;
-  }
 
-  .dark .message-received .message-text {
-    color: #ffffff;
-  }
 
-  .dark .message-name {
-    color: #e5e5e7;
-  }
-
-  .dark .message-name .time {
-    color: #98989d;
-  }
 </style>
 
 <!-- component logic -->
@@ -149,14 +130,14 @@
         return;
       }
       // only if this is a 'timed' trigger type
-      if (currentSim.trigger_type === 'timed'){
+      if (currentSim.trigger_type === 'timed') {
         doResponses();
       }
     }
 
 
     //process any responses and reset for next sent message
-    const doResponses = (initialDelay=1) => {
+    const doResponses = (initialDelay = 1) => {
       if (messageCounter >= currentSim.messages.length) {
         responseInProgress = false;
         return;
@@ -183,7 +164,7 @@
           if (currentSim.vibration_enabled) {
             triggerVibration();
           }
-          
+
           messages.addMessage({
             text: msg.text,
             type: 'received',
@@ -233,7 +214,7 @@
           // $$m.find(".message-name .time").text(m.time ? `~ ${m.time}` : "");
           $$m.find(".message-avatar").css("background-image", "url(" + currentSim.senders[m.from].avatar + ")");
         }
-        if(m.time){
+        if (m.time) {
           $$(".messages").append(`<div class="messages-title">${m.time}</div>`);
         }
         $$(".messages").append($$m);
@@ -273,39 +254,41 @@
 
 
       // THIS IS JUST FOR SCROLLING TEXTBAR INTO VIEW WHEN KEYBOARD OPENS
-      // Use Visual Viewport API to keep messagebar at bottom when keyboard opens
-      const pageEl = $el.value.find('.page')[0];
-      const textareaEl = $$("#message_text")[0];
-      const messagebarEl = $el.value.find('.toolbar.messagebar')[0];
-      const visualViewport = window.visualViewport;
-      
-      const updateMessagebarPosition = () => {
-        if (!visualViewport || !messagebarEl) return;
-        
-        // Calculate the offset from the layout viewport bottom to visual viewport bottom
-        const offsetY = visualViewport.offsetTop + visualViewport.height - window.innerHeight;
-        
-        console.log('Visual viewport offsetTop:', visualViewport.offsetTop, 
-                    'height:', visualViewport.height, 
-                    'offsetY:', offsetY);
-        
-        // Position the messagebar at the visual viewport bottom
-        messagebarEl.style.transform = `translateY(${offsetY}px)`;
-      };
+      // Use Visual Viewport API for Chromium-based browsers
+      // const pageEl = $el.value.find('.page')[0];
+      // const textareaEl = $$("#message_text")[0];
+      // const visualViewport = window.visualViewport;
 
-      if (visualViewport) {
-        visualViewport.addEventListener('resize', updateMessagebarPosition);
-        visualViewport.addEventListener('scroll', updateMessagebarPosition);
-      }
-      
-      // Also handle focus events on the textarea to ensure it's visible
-      if (textareaEl) {
-        textareaEl.addEventListener('focus', () => {
-          // Give browser time to open keyboard, then update position
-          setTimeout(updateMessagebarPosition, 300);
-        });
-      }
-      
+      // const setKeyboardHeight = (height) => {
+      //   if (!pageEl) return;
+      //   pageEl.style.setProperty('--sms-keyboard-height', `${height || 0}px`);
+      //   console.log('Setting keyboard height:', height);
+      // };
+
+      // const updateKeyboardState = () => {
+      //   if (!visualViewport) return;
+
+      //   const windowHeight = window.innerHeight;
+      //   const viewportHeight = visualViewport.height;
+      //   const keyboardHeight = Math.max(0, windowHeight - viewportHeight);
+
+      //   console.log('Window height:', windowHeight, 'Viewport height:', viewportHeight, 'Keyboard:', keyboardHeight);
+      //   setKeyboardHeight(keyboardHeight);
+
+      //   // Scroll the textarea into view when keyboard opens
+      //   if (keyboardHeight > 0 && textareaEl) {
+      //     setTimeout(() => {
+      //       console.log('Scrolling textarea into view');
+      //       textareaEl.scrollIntoView({ behavior: 'instant', block: 'center' });
+      //     }, 1000);
+      //   }
+      // };
+
+      // if (visualViewport) {
+      //   visualViewport.addEventListener('resize', updateKeyboardState);
+      //   visualViewport.addEventListener('scroll', updateKeyboardState);
+      // }
+
       // END SCROLLING TEXTBAR INTO VIEW WHEN KEYBOARD OPENS
 
 
@@ -340,15 +323,15 @@
 
     $on('pageAfterIn', function (e, page) {
       console.log('page displayed...', currentSim);
-      
+
       // if trigger type is 'remote', set up PeerJS to wait for triggers for each response...
       if (currentSim.trigger_type === 'remote') {
         // Remote mode: set up PeerJS and wait for trigger
         let playerSlot = appData.global.player_slot || 'player1';
-        
+
         peerId = `simphoney-${remoteChannel}-${playerSlot}`;
         peer = new Peer(peerId);
-        
+
         peer.on('open', (id) => {
           console.log(`PeerJS connected - Channel: ${remoteChannel}, Slot: ${playerSlot}, ID: ${id}`);
         });
