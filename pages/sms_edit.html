@@ -323,7 +323,7 @@
                     <li>
                         <a class="item-link item-content edit-sender" data-index="${index}">
                             <div class="item-media">
-                                <div class="sender-avatar" style="background-image: url(${sender.picture.thumbnail})"></div>
+                                <div class="sender-avatar" style="background-image: url(${sender.picture.medium})"></div>
                             </div>
                             <div class="item-inner">
                                 <div class="item-title">
@@ -353,7 +353,7 @@
             if (index !== null && currentSim.senders[index]) {
                 const sender = currentSim.senders[index];
                 $$('#sender_form input[name="sender_name"]').val(sender.fullname);
-                $$('#sender_avatar_preview').css('background-image', `url(${sender.picture.thumbnail})`);
+                $$('#sender_avatar_preview').css('background-image', `url(${sender.picture.medium})`);
                 $$('#delete_sender_block').show();
             } else {
                 $$('#sender_form input[name="sender_name"]').val('');
@@ -387,7 +387,7 @@
                     last: nameParts.slice(1).join(' ') || ''
                 },
                 picture: {
-                    thumbnail: avatar
+                    medium: avatar
                 },
                 fullname: fullname.trim()
             };
@@ -487,7 +487,7 @@
             messages.forEach((message, index) => {
                 const isMe = message.from === 'me';
                 const senderName = isMe ? 'Me' : (currentSim.senders[message.from]?.fullname || `Sender ${message.from}`);
-                const senderAvatar = isMe ? '' : (currentSim.senders[message.from]?.picture.thumbnail || '');
+                const senderAvatar = isMe ? '' : (currentSim.senders[message.from]?.picture.medium || '');
                 
                 let footerText;
                 if (type === 'prefilled') {

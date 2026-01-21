@@ -216,8 +216,8 @@
             const fileInput = $$('#caller_avatar_upload');
             const previewImg = $$('#caller_avatar_preview');
 
-            if (currentSim.caller.picture.thumbnail && currentSim.caller.picture.thumbnail.startsWith('data:')) {
-                previewImg.css('background-image', `url(${currentSim.caller.picture.thumbnail})`);
+            if (currentSim.caller.picture.medium && currentSim.caller.picture.medium.startsWith('data:')) {
+                previewImg.css('background-image', `url(${currentSim.caller.picture.medium})`);
             }
 
             fileInput.on('change', function (e) {
@@ -226,7 +226,7 @@
                     resizeImageToBase64(file)
                         .then((base64Data) => {
                             previewImg.css('background-image', `url(${base64Data})`);
-                            currentSim.caller.picture.thumbnail = base64Data;
+                            currentSim.caller.picture.medium = base64Data;
                             console.log('Caller avatar uploaded and stored successfully');
                         })
                         .catch((error) => {
@@ -250,8 +250,8 @@
 
             previewImg.on('click', function (e) {
                 fileInput.val('');
-                currentSim.caller.picture.thumbnail = generateRandomAvatar();
-                previewImg.css('background-image', `url(${currentSim.caller.picture.thumbnail})`);
+                currentSim.caller.picture.medium = generateRandomAvatar();
+                previewImg.css('background-image', `url(${currentSim.caller.picture.medium})`);
                 console.log('Avatar reset');
             });
         };
@@ -378,7 +378,7 @@
             $settings.find('select[name="background_type"]').val(s.background_type);
             $settings.find('input[name="website_url"]').val(s.website_url);
 
-            $$("#caller_avatar_preview").css('background-image', `url(${s.caller.picture.thumbnail})`);
+            $$("#caller_avatar_preview").css('background-image', `url(${s.caller.picture.medium})`);
             
             if (s.custom_ringtone && s.custom_ringtone.startsWith('data:')) {
                 $$('#ringtone_preview_container').show();

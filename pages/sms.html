@@ -152,7 +152,7 @@
       setTimeout(function () {
         messages.showTyping({
           header: person.fullname + ' is typing',
-          avatar: person.picture.thumbnail
+          avatar: person.picture.medium
         });
 
         //then start the delay timer for sending their message
@@ -169,7 +169,7 @@
             text: msg.text,
             type: 'received',
             name: person.fullname,
-            avatar: person.picture.thumbnail
+            avatar: person.picture.medium
           });
           messages.hideTyping();
           responseInProgress = false;
@@ -212,7 +212,7 @@
           $$m.addClass("message-received");
           $$m.find(".message-name .name").text(currentSim.senders[m.from].fullname);
           // $$m.find(".message-name .time").text(m.time ? `~ ${m.time}` : "");
-          $$m.find(".message-avatar").css("background-image", "url(" + currentSim.senders[m.from].picture.thumbnail + ")");
+          $$m.find(".message-avatar").css("background-image", "url(" + currentSim.senders[m.from].picture.medium + ")");
         }
         if (m.time) {
           $$(".messages").append(`<div class="messages-title">${m.time}</div>`);

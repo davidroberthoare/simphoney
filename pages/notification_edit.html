@@ -238,8 +238,8 @@
             const fileInput = $$('#sender_avatar_upload');
             const previewImg = $$('#sender_avatar_preview');
 
-            if (currentSim.sender.picture.thumbnail && currentSim.sender.picture.thumbnail.startsWith('data:')) {
-                previewImg.css('background-image', `url(${currentSim.sender.picture.thumbnail})`);
+            if (currentSim.sender.picture.medium && currentSim.sender.picture.medium.startsWith('data:')) {
+                previewImg.css('background-image', `url(${currentSim.sender.picture.medium})`);
             }
 
             fileInput.on('change', function (e) {
@@ -249,7 +249,7 @@
                     resizeImageToBase64(file)
                         .then((base64Data) => {
                             previewImg.css('background-image', `url(${base64Data})`);
-                            currentSim.sender.picture.thumbnail = base64Data;
+                            currentSim.sender.picture.medium = base64Data;
                             console.log('Sender image uploaded and stored successfully');
                         })
                         .catch((error) => {
@@ -273,8 +273,8 @@
 
             previewImg.on('click', function (e) {
                 fileInput.val('');
-                currentSim.sender.picture.thumbnail = generateRandomAvatar();
-                previewImg.css('background-image', `url(${currentSim.sender.picture.thumbnail})`);
+                currentSim.sender.picture.medium = generateRandomAvatar();
+                previewImg.css('background-image', `url(${currentSim.sender.picture.medium})`);
                 console.log('image reset');
             });
         };
@@ -333,7 +333,7 @@
             $settings.find('input[name="sound_enabled"]').prop('checked', s.sound_enabled || false);
             $settings.find('input[name="vibration_enabled"]').prop('checked', s.vibration_enabled || false);
 
-            $$("#sender_avatar_preview").css('background-image', `url(${s.sender.picture.thumbnail})`);
+            $$("#sender_avatar_preview").css('background-image', `url(${s.sender.picture.medium})`);
             show_hide_website_url_field();
             show_hide_delay_field();
         });

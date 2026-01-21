@@ -293,7 +293,7 @@
             const html = sortedContacts.map(contact => `
                 <li>
                     <div class="contact_edit_item">
-                        <div class="contact_edit_avatar" style="background-image: url('${contact.picture.thumbnail}');"></div>
+                        <div class="contact_edit_avatar" style="background-image: url('${contact.picture.medium}');"></div>
                         <div class="contact_edit_info">
                             <div class="contact_edit_name">${contact.fullname}</div>
                             <div class="contact_edit_number">${contact.phone}</div>
@@ -484,7 +484,7 @@
             const contact = currentSim.contacts.find(c => c.id === contactId);
             if (!contact) return;
             
-            let tempAvatar = contact.picture.thumbnail;
+            let tempAvatar = contact.picture.medium;
             
             const popup = app.popup.create({
                 content: `
@@ -579,7 +579,7 @@
                             contact.name.last = nameParts.slice(1).join(' ') || '';
                             contact.fullname = name;
                             contact.phone = number;
-                            contact.picture.thumbnail = tempAvatar;
+                            contact.picture.medium = tempAvatar;
                             renderContacts();
                             renderRecents();
                             popup.close();

@@ -11,24 +11,17 @@ function generateUniqueId() {
 // generate random placeholder avatars  
 function generateRandomAvatar(id) {
     // If random users data is available, use a random thumbnail from it
-    if (randomUsersData && randomUsersData.length > 0) {
-        let index;
-        if (typeof id !== 'undefined' && id !== null) {
-            // Use the id as a seed for consistent results for the same id
-            index = id % randomUsersData.length;
-        } else {
-            // Otherwise, pick a truly random user
-            index = Math.floor(Math.random() * randomUsersData.length);
-        }
-        const user = randomUsersData[index];
-        return user.picture.medium;
+    let index;
+    if (typeof id !== 'undefined' && id !== null) {
+        // Use the id as a seed for consistent results for the same id
+        index = id % randomUsersData.length;
+    } else {
+        // Otherwise, pick a truly random user
+        index = Math.floor(Math.random() * randomUsersData.length);
     }
+    const user = randomUsersData[index];
+    return user.picture.medium;
 
-    // Fallback to old method if data not loaded yet
-    if (typeof id === 'undefined' || id === null) {
-        id = Date.now();
-    }
-    const avatar = 'https://testingbot.com/free-online-tools/random-avatar/150?u=' + id;
     return avatar;
 }
 
@@ -45,7 +38,7 @@ function generateRandomBackground(id) {
 function generateContacts(count) {
     const contacts = [];
     const maxCount = Math.min(count, randomUsersData.length);
-    
+
     // Shuffle indices to ensure variety and no duplicates
     const availableIndices = [...Array(randomUsersData.length).keys()];
     for (let i = availableIndices.length - 1; i > 0; i--) {
@@ -57,7 +50,7 @@ function generateContacts(count) {
     for (let i = 0; i < maxCount; i++) {
         const userIndex = availableIndices[i];
         const user = randomUsersData[userIndex];
-        
+
         // Add the entire user object with an id, favorite flag, and fullname for convenience
         contacts.push({
             ...user,
@@ -66,7 +59,7 @@ function generateContacts(count) {
             fullname: `${user.name.first} ${user.name.last}`
         });
     }
-    
+
     return contacts;
 }
 
