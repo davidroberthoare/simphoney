@@ -1,10 +1,12 @@
 # Project Instructions
+This is a simple phone simulator for film/tv. Displays custom simulated actions like notifications and sms.
 
 ## Tech Stack
 - Use **Framework7 version 9 or higher** for all frontend development.
 - Use **Vanilla JavaScript** (no React, Vue, or other frameworks).
 - Use **Vanilla CSS** (no preprocessors like Sass or utilities like Tailwind).
 - Avoid npm/yarn/pnpm for frontend dependencies; use CDN or direct script inclusion if needed.
+- NEVER make changes to any files in /live folder.
 
 ## Framework7 Guidelines
 - Initialize Framework7 using the App component and default parameters.
