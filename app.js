@@ -32,6 +32,8 @@ var app = new Framework7({
     { path: '/sms_edit/', name: 'sms_edit', componentUrl: './pages/sms_edit.html' },
     { path: '/call_in/', name: 'call_in', componentUrl: './pages/call_in.html' },
     { path: '/call_in_edit/', name: 'call_in_edit', componentUrl: './pages/call_in_edit.html' },
+    { path: '/call_out/', name: 'call_out', componentUrl: './pages/call_out.html' },
+    { path: '/call_out_edit/', name: 'call_out_edit', componentUrl: './pages/call_out_edit.html' },
     { path: '/remote/', name: 'remote', componentUrl: './pages/remote.html' },
   ]
 });

@@ -80,6 +80,25 @@ const defaultAppData = {
             background_type: 'lockscreen',
             website_url: '',
             custom_ringtone: ''
+        },
+        s_5: {
+            id: 's_5',
+            type: 'call_out',
+            name: 'Sample Outgoing Call',
+            trigger_type: 'timed',
+            delay: 2,
+            contacts: generateContacts(20),
+            recents: [
+                { contactId: 2, type: 'outgoing', duration: '2:34', timestamp: '10:23am' },
+                { contactId: 1, type: 'incoming', duration: '1:12', timestamp: '9:45am' },
+                { contactId: 6, type: 'outgoing', duration: '5:21', timestamp: 'Yesterday' },
+                { contactId: 4, type: 'incoming', duration: '0:43', timestamp: 'Yesterday' },
+                { contactId: 2, type: 'outgoing', duration: '3:18', timestamp: 'Monday' }
+            ],
+            selected_contact_id: null,
+            clock_time: '12:34pm',
+            background_type: 'lockscreen',
+            website_url: ''
         }
     },
 };

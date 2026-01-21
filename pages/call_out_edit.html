@@ -1,0 +1,1035 @@
+<!-- OUTGOING CALL EDIT COMPONENT -->
+<template>
+    <div data-name="call_out_edit" class="page">
+        <div class="navbar">
+            <div class="navbar-inner">
+                <div class="left">
+                    <a href="/" class="link back"><i class="f7-icons">chevron_left</i></a>
+                </div>
+                <div class="title">Outgoing Call Edit</div>
+            </div>
+        </div>
+        <div class="page-content">
+            <div class="block"><button id="play_now_button" class="button button-fill color-green">Play Now</button></div>
+
+            <form class="list list-strong inset list-dividers-ios settings">
+                <ul>
+                    <!-- sim_name -->
+                    <li>
+                        <div class="item-content item-input">
+                            <div class="item-inner">
+                                <div class="item-title item-label">Name</div>
+                                <div class="item-input-wrap">
+                                    <input type="text" name="name" placeholder="Outgoing Call Name" />
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+
+                    <!-- clock_time -->
+                    <li>
+                        <div class="item-content item-input">
+                            <div class="item-inner">
+                                <div class="item-title item-label">Clock Time (blank if not shown)</div>
+                                <div class="item-input-wrap">
+                                    <input type="text" name="clock_time" placeholder="12:34pm" />
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+
+                    <!-- background_type selector lockscreen/website -->
+                    <li>
+                        <div class="item-content item-input">
+                            <div class="item-inner">
+                                <div class="item-title item-label">Background Type</div>
+                                <div class="item-input-wrap">
+                                    <select name="background_type">
+                                        <option value="lockscreen">Lockscreen</option>
+                                        <option value="website">Website</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+
+                    <!-- website_url -->
+                    <li id="website_url_field">
+                        <div class="item-content item-input">
+                            <div class="item-inner">
+                                <div class="item-title item-label">Website URL</div>
+                                <div class="item-input-wrap">
+                                    <input type="url" name="website_url" placeholder="https://example.com" />
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </form>
+
+            <!-- Contacts Management Section -->
+            <div class="block-title">Contacts Management</div>
+            <div class="list list-strong inset list-dividers-ios">
+                <ul>
+                    <li>
+                        <a class="list-button" id="add_contact_button">Add New Contact</a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="block-title">All Contacts (Alphabetical)</div>
+            <div class="list list-strong inset list-dividers-ios" id="contacts_list">
+                <ul id="contacts_ul"></ul>
+            </div>
+
+            <!-- Recents Management Section -->
+            <div class="block-title">Recent Calls</div>
+            <div class="list list-strong inset list-dividers-ios">
+                <ul>
+                    <li>
+                        <a class="list-button" id="add_recent_button">Add Recent Call</a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="list list-strong inset list-dividers-ios" id="recents_list">
+                <ul id="recents_ul"></ul>
+            </div>
+
+            <!-- Save / Delete -->
+            <div class="block">
+                <button id="save_button" class="button button-fill">Save</button>
+            </div>
+            <div class="block">
+                <button id="clear_contacts_button" class="button button-fill color-orange">Clear All Contacts</button>
+            </div>
+            <div class="block">
+                <button id="delete_button" class="button button-fill color-red">Delete Simulation</button>
+            </div>
+        </div>
+    </div>
+</template>
+
+<!-- component styles -->
+<style>
+    .avatar {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background-size: cover;
+        background-position: center;
+        border: 2px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .contact_edit_item {
+        display: flex;
+        align-items: center;
+        padding: 12px 16px;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .contact_edit_avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background-size: cover;
+        background-position: center;
+        margin-right: 12px;
+        border: 2px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .contact_edit_info {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .contact_edit_name {
+        font-size: 16px;
+        font-weight: 500;
+        margin-bottom: 4px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .contact_edit_number {
+        font-size: 14px;
+        color: #8e8e93;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .contact_edit_actions {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+    }
+
+    .favorite_toggle {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        background: rgba(0, 0, 0, 0.05);
+    }
+
+    .favorite_toggle.active {
+        background: #ffd700;
+    }
+
+    .favorite_toggle i {
+        font-size: 20px;
+        color: #8e8e93;
+    }
+
+    .favorite_toggle.active i {
+        color: #fff;
+    }
+
+    .contact_edit_btn {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        background: rgba(0, 122, 255, 0.1);
+    }
+
+    .contact_edit_btn i {
+        font-size: 20px;
+        color: #007aff;
+    }
+
+    .contact_delete_btn {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        background: rgba(255, 59, 48, 0.1);
+    }
+
+    .contact_delete_btn i {
+        font-size: 20px;
+        color: #ff3b30;
+    }
+
+    .recent_edit_btn {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        background: rgba(0, 122, 255, 0.1);
+    }
+
+    .recent_edit_btn i {
+        font-size: 20px;
+        color: #007aff;
+    }
+
+    .recent_edit_item {
+        display: flex;
+        align-items: center;
+        padding: 12px 16px;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .recent_edit_icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 12px;
+        font-size: 20px;
+    }
+
+    .recent_edit_icon.outgoing {
+        background: rgba(52, 199, 89, 0.15);
+        color: #34c759;
+    }
+
+    .recent_edit_icon.incoming {
+        background: rgba(255, 59, 48, 0.15);
+        color: #ff3b30;
+    }
+
+    .recent_edit_info {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .recent_edit_name {
+        font-size: 16px;
+        font-weight: 500;
+        margin-bottom: 4px;
+    }
+
+    .recent_edit_details {
+        font-size: 14px;
+        color: #8e8e93;
+    }
+
+    .recent_delete_btn {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        background: rgba(255, 59, 48, 0.1);
+    }
+
+    .recent_delete_btn i {
+        font-size: 20px;
+        color: #ff3b30;
+    }
+</style>
+
+<!-- component logic -->
+<script>
+    export default (props, { $f7, $on }) => {
+        let isNewSim = false;
+
+        // Render contacts list
+        function renderContacts() {
+            if (!currentSim.contacts || currentSim.contacts.length === 0) {
+                $$('#contacts_ul').html('<li class="item-content"><div class="item-inner" style="text-align: center; color: #8e8e93;">No contacts yet</div></li>');
+                return;
+            }
+
+            const sortedContacts = currentSim.contacts.slice().sort((a, b) => a.name.localeCompare(b.name));
+            
+            const html = sortedContacts.map(contact => `
+                <li>
+                    <div class="contact_edit_item">
+                        <div class="contact_edit_avatar" style="background-image: url('${contact.avatar}');"></div>
+                        <div class="contact_edit_info">
+                            <div class="contact_edit_name">${contact.name}</div>
+                            <div class="contact_edit_number">${contact.number}</div>
+                        </div>
+                        <div class="contact_edit_actions">
+                            <div class="favorite_toggle ${contact.favorite ? 'active' : ''}" data-id="${contact.id}">
+                                <i class="f7-icons">${contact.favorite ? 'star_fill' : 'star'}</i>
+                            </div>
+                            <div class="contact_edit_btn" data-id="${contact.id}">
+                                <i class="f7-icons" style="font-size: 20px; color: #007aff;">pencil</i>
+                            </div>
+                            <div class="contact_delete_btn" data-id="${contact.id}">
+                                <i class="f7-icons">trash</i>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            `).join('');
+            
+            $$('#contacts_ul').html(html);
+            
+            // Update selected contact dropdown
+            updateContactDropdown();
+        }
+
+        // Update the contact dropdown
+        function updateContactDropdown() {
+            const select = $$('select[name="selected_contact_id"]');
+            const currentValue = select.val();
+            
+            let options = '<option value="">None (manual selection)</option>';
+            if (currentSim.contacts) {
+                const sortedContacts = currentSim.contacts.slice().sort((a, b) => a.name.localeCompare(b.name));
+                sortedContacts.forEach(contact => {
+                    options += `<option value="${contact.id}">${contact.name}</option>`;
+                });
+            }
+            
+            select.html(options);
+            if (currentValue) {
+                select.val(currentValue);
+            }
+        }
+
+        // Render recents list
+        function renderRecents() {
+            if (!currentSim.recents || currentSim.recents.length === 0) {
+                $$('#recents_ul').html('<li class="item-content"><div class="item-inner" style="text-align: center; color: #8e8e93;">No recent calls yet</div></li>');
+                return;
+            }
+
+            const html = currentSim.recents.map((recent, index) => {
+                const contact = currentSim.contacts.find(c => c.id === recent.contactId);
+                const contactName = contact ? contact.name : 'Unknown';
+                const iconName = recent.type === 'outgoing' ? 'phone_arrow_up_right' : 'phone_arrow_down_left';
+                const iconClass = recent.type === 'outgoing' ? 'outgoing' : 'incoming';
+                
+                return `
+                    <li>
+                        <div class="recent_edit_item">
+                            <div class="recent_edit_icon ${iconClass}">
+                                <i class="f7-icons">${iconName}</i>
+                            </div>
+                            <div class="recent_edit_info">
+                                <div class="recent_edit_name">${contactName}</div>
+                                <div class="recent_edit_details">${recent.duration} · ${recent.timestamp}</div>
+                            </div>
+                            <div class="recent_edit_btn" data-index="${index}">
+                                <i class="f7-icons" style="font-size: 20px; color: #007aff;">pencil</i>
+                            </div>
+                            <div class="recent_delete_btn" data-index="${index}">
+                                <i class="f7-icons">trash</i>
+                            </div>
+                        </div>
+                    </li>
+                `;
+            }).join('');
+            
+            $$('#recents_ul').html(html);
+        }
+
+        // Add new contact
+        function addContact() {
+            let tempAvatar = generateRandomAvatar(Date.now());
+            
+            const popup = app.popup.create({
+                content: `
+                    <div class="popup">
+                        <div class="page">
+                            <div class="navbar">
+                                <div class="navbar-bg"></div>
+                                <div class="navbar-inner">
+                                    <div class="title">Add New Contact</div>
+                                    <div class="right">
+                                        <a href="#" class="link popup-close">Cancel</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="page-content">
+                                <div class="list list-strong inset">
+                                    <ul>
+                                        <li>
+                                            <div class="item-content item-input">
+                                                <div class="item-media">
+                                                    <div class="avatar" id="new_contact_avatar" style="width: 44px; height: 44px; border-radius: 50%; background-size: cover; background-position: center; background-image: url('${tempAvatar}'); cursor: pointer;"></div>
+                                                </div>
+                                                <div class="item-inner">
+                                                    <div class="item-title item-label">Avatar</div>
+                                                    <div class="item-input-wrap">
+                                                        <input type="file" id="new_contact_avatar_upload" accept="image/*" style="display: none;" />
+                                                        <button class="button button-small button-outline" onclick="document.getElementById('new_contact_avatar_upload').click()">Upload</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="item-content item-input">
+                                                <div class="item-inner">
+                                                    <div class="item-title item-label">Name</div>
+                                                    <div class="item-input-wrap">
+                                                        <input type="text" id="new_contact_name" placeholder="Contact Name" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="item-content item-input">
+                                                <div class="item-inner">
+                                                    <div class="item-title item-label">Number</div>
+                                                    <div class="item-input-wrap">
+                                                        <input type="tel" id="new_contact_number" placeholder="(555) 154-0000" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="block">
+                                    <button class="button button-fill" id="add_contact_save">Add Contact</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `,
+                on: {
+                    opened: function() {
+                        $$('#new_contact_avatar_upload').on('change', function(e) {
+                            const file = e.target.files[0];
+                            if (file && file.type.startsWith('image/')) {
+                                resizeImageToBase64(file).then((base64Data) => {
+                                    tempAvatar = base64Data;
+                                    $$('#new_contact_avatar').css('background-image', `url(${base64Data})`);
+                                }).catch((error) => {
+                                    console.error('Error uploading image:', error);
+                                });
+                            }
+                        });
+                        
+                        $$('#new_contact_avatar').on('click', function() {
+                            tempAvatar = generateRandomAvatar(Date.now());
+                            $$('#new_contact_avatar').css('background-image', `url(${tempAvatar})`);
+                        });
+                        
+                        $$('#add_contact_save').on('click', function() {
+                            const name = $$('#new_contact_name').val().trim();
+                            const number = $$('#new_contact_number').val().trim();
+                            
+                            if (!name || !number) {
+                                app.dialog.alert('Please fill in all fields', 'Error');
+                                return;
+                            }
+                            
+                            if (!currentSim.contacts) {
+                                currentSim.contacts = [];
+                            }
+                            
+                            const newId = currentSim.contacts.length > 0 
+                                ? Math.max(...currentSim.contacts.map(c => c.id)) + 1 
+                                : 1;
+                            
+                            const newContact = {
+                                id: newId,
+                                name: name,
+                                number: number,
+                                avatar: tempAvatar,
+                                favorite: false
+                            };
+                            
+                            currentSim.contacts.push(newContact);
+                            renderContacts();
+                            popup.close();
+                        });
+                    }
+                }
+            });
+            
+            popup.open();
+        }
+
+        // Edit contact
+        function editContact(contactId) {
+            const contact = currentSim.contacts.find(c => c.id === contactId);
+            if (!contact) return;
+            
+            let tempAvatar = contact.avatar;
+            
+            const popup = app.popup.create({
+                content: `
+                    <div class="popup">
+                        <div class="page">
+                            <div class="navbar">
+                                <div class="navbar-bg"></div>
+                                <div class="navbar-inner">
+                                    <div class="title">Edit Contact</div>
+                                    <div class="right">
+                                        <a href="#" class="link popup-close">Cancel</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="page-content">
+                                <div class="list list-strong inset">
+                                    <ul>
+                                        <li>
+                                            <div class="item-content item-input">
+                                                <div class="item-media">
+                                                    <div class="avatar" id="edit_contact_avatar" style="width: 44px; height: 44px; border-radius: 50%; background-size: cover; background-position: center; background-image: url('${tempAvatar}'); cursor: pointer;"></div>
+                                                </div>
+                                                <div class="item-inner">
+                                                    <div class="item-title item-label">Avatar</div>
+                                                    <div class="item-input-wrap">
+                                                        <input type="file" id="edit_contact_avatar_upload" accept="image/*" style="display: none;" />
+                                                        <button class="button button-small button-outline" onclick="document.getElementById('edit_contact_avatar_upload').click()">Upload</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="item-content item-input">
+                                                <div class="item-inner">
+                                                    <div class="item-title item-label">Name</div>
+                                                    <div class="item-input-wrap">
+                                                        <input type="text" id="edit_contact_name" placeholder="Contact Name" value="${contact.name}" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="item-content item-input">
+                                                <div class="item-inner">
+                                                    <div class="item-title item-label">Number</div>
+                                                    <div class="item-input-wrap">
+                                                        <input type="tel" id="edit_contact_number" placeholder="(555) 154-0000" value="${contact.number}" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="block">
+                                    <button class="button button-fill" id="edit_contact_save">Save Changes</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `,
+                on: {
+                    opened: function() {
+                        $$('#edit_contact_avatar_upload').on('change', function(e) {
+                            const file = e.target.files[0];
+                            if (file && file.type.startsWith('image/')) {
+                                resizeImageToBase64(file).then((base64Data) => {
+                                    tempAvatar = base64Data;
+                                    $$('#edit_contact_avatar').css('background-image', `url(${base64Data})`);
+                                }).catch((error) => {
+                                    console.error('Error uploading image:', error);
+                                });
+                            }
+                        });
+                        
+                        $$('#edit_contact_avatar').on('click', function() {
+                            tempAvatar = generateRandomAvatar(Date.now());
+                            $$('#edit_contact_avatar').css('background-image', `url(${tempAvatar})`);
+                        });
+                        
+                        $$('#edit_contact_save').on('click', function() {
+                            const name = $$('#edit_contact_name').val().trim();
+                            const number = $$('#edit_contact_number').val().trim();
+                            
+                            if (!name || !number) {
+                                app.dialog.alert('Please fill in all fields', 'Error');
+                                return;
+                            }
+                            
+                            contact.name = name;
+                            contact.number = number;
+                            contact.avatar = tempAvatar;
+                            renderContacts();
+                            renderRecents();
+                            popup.close();
+                        });
+                    }
+                }
+            });
+            
+            popup.open();
+        }
+
+        // Toggle favorite
+        function toggleFavorite(contactId) {
+            const contact = currentSim.contacts.find(c => c.id === contactId);
+            if (contact) {
+                contact.favorite = !contact.favorite;
+                renderContacts();
+            }
+        }
+
+        // Delete contact
+        function deleteContact(contactId) {
+            app.dialog.confirm('Are you sure you want to delete this contact?', 'Delete Contact', () => {
+                currentSim.contacts = currentSim.contacts.filter(c => c.id !== contactId);
+                currentSim.recents = currentSim.recents.filter(r => r.contactId !== contactId);
+                
+                if (currentSim.selected_contact_id === contactId) {
+                    currentSim.selected_contact_id = null;
+                    $$('select[name="selected_contact_id"]').val('');
+                }
+                
+                renderContacts();
+                renderRecents();
+            });
+        }
+
+        // Add recent call
+        function addRecent() {
+            if (!currentSim.contacts || currentSim.contacts.length === 0) {
+                app.dialog.alert('Please add contacts first', 'No Contacts');
+                return;
+            }
+            
+            const contactOptions = currentSim.contacts
+                .slice()
+                .sort((a, b) => a.name.localeCompare(b.name))
+                .map(c => `<option value="${c.id}">${c.name}</option>`)
+                .join('');
+            
+            const popup = app.popup.create({
+                content: `
+                    <div class="popup">
+                        <div class="page">
+                            <div class="navbar">
+                                <div class="navbar-bg"></div>
+                                <div class="navbar-inner">
+                                    <div class="title">Add Recent Call</div>
+                                    <div class="right">
+                                        <a href="#" class="link popup-close">Cancel</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="page-content">
+                                <div class="list list-strong inset">
+                                    <ul>
+                                        <li>
+                                            <div class="item-content item-input">
+                                                <div class="item-inner">
+                                                    <div class="item-title item-label">Contact</div>
+                                                    <div class="item-input-wrap">
+                                                        <select id="recent_contact_id">
+                                                            ${contactOptions}
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="item-content item-input">
+                                                <div class="item-inner">
+                                                    <div class="item-title item-label">Type</div>
+                                                    <div class="item-input-wrap">
+                                                        <select id="recent_type">
+                                                            <option value="outgoing">Outgoing</option>
+                                                            <option value="incoming">Incoming</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="item-content item-input">
+                                                <div class="item-inner">
+                                                    <div class="item-title item-label">Duration</div>
+                                                    <div class="item-input-wrap">
+                                                        <input type="text" id="recent_duration" placeholder="2:34" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="item-content item-input">
+                                                <div class="item-inner">
+                                                    <div class="item-title item-label">Time</div>
+                                                    <div class="item-input-wrap">
+                                                        <input type="text" id="recent_timestamp" placeholder="10:23am" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="block">
+                                    <button class="button button-fill" id="add_recent_save">Add Recent Call</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `,
+                on: {
+                    opened: function() {
+                        $$('#add_recent_save').on('click', function() {
+                            const contactId = parseInt($$('#recent_contact_id').val());
+                            const type = $$('#recent_type').val();
+                            const duration = $$('#recent_duration').val().trim();
+                            const timestamp = $$('#recent_timestamp').val().trim();
+                            
+                            if (!duration || !timestamp) {
+                                app.dialog.alert('Please fill in all fields', 'Error');
+                                return;
+                            }
+                            
+                            if (!currentSim.recents) {
+                                currentSim.recents = [];
+                            }
+                            
+                            currentSim.recents.unshift({
+                                contactId: contactId,
+                                type: type,
+                                duration: duration,
+                                timestamp: timestamp
+                            });
+                            
+                            renderRecents();
+                            popup.close();
+                        });
+                    }
+                }
+            });
+            
+            popup.open();
+        }
+
+        // Edit recent call
+        function editRecent(index) {
+            const recent = currentSim.recents[index];
+            if (!recent) return;
+            
+            const contactOptions = currentSim.contacts
+                .slice()
+                .sort((a, b) => a.name.localeCompare(b.name))
+                .map(c => `<option value="${c.id}" ${c.id === recent.contactId ? 'selected' : ''}>${c.name}</option>`)
+                .join('');
+            
+            const popup = app.popup.create({
+                content: `
+                    <div class="popup">
+                        <div class="page">
+                            <div class="navbar">
+                                <div class="navbar-bg"></div>
+                                <div class="navbar-inner">
+                                    <div class="title">Edit Recent Call</div>
+                                    <div class="right">
+                                        <a href="#" class="link popup-close">Cancel</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="page-content">
+                                <div class="list list-strong inset">
+                                    <ul>
+                                        <li>
+                                            <div class="item-content item-input">
+                                                <div class="item-inner">
+                                                    <div class="item-title item-label">Contact</div>
+                                                    <div class="item-input-wrap">
+                                                        <select id="edit_recent_contact_id">
+                                                            ${contactOptions}
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="item-content item-input">
+                                                <div class="item-inner">
+                                                    <div class="item-title item-label">Type</div>
+                                                    <div class="item-input-wrap">
+                                                        <select id="edit_recent_type">
+                                                            <option value="outgoing" ${recent.type === 'outgoing' ? 'selected' : ''}>Outgoing</option>
+                                                            <option value="incoming" ${recent.type === 'incoming' ? 'selected' : ''}>Incoming</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="item-content item-input">
+                                                <div class="item-inner">
+                                                    <div class="item-title item-label">Duration</div>
+                                                    <div class="item-input-wrap">
+                                                        <input type="text" id="edit_recent_duration" placeholder="Duration" value="${recent.duration}" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="item-content item-input">
+                                                <div class="item-inner">
+                                                    <div class="item-title item-label">Time</div>
+                                                    <div class="item-input-wrap">
+                                                        <input type="text" id="edit_recent_timestamp" placeholder="Time" value="${recent.timestamp}" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="block">
+                                    <button class="button button-fill" id="edit_recent_save">Save Changes</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `,
+                on: {
+                    opened: function() {
+                        $$('#edit_recent_save').on('click', function() {
+                            const contactId = parseInt($$('#edit_recent_contact_id').val());
+                            const type = $$('#edit_recent_type').val();
+                            const duration = $$('#edit_recent_duration').val().trim();
+                            const timestamp = $$('#edit_recent_timestamp').val().trim();
+                            
+                            if (!duration || !timestamp) {
+                                app.dialog.alert('Please fill in all fields', 'Error');
+                                return;
+                            }
+                            
+                            recent.contactId = contactId;
+                            recent.type = type;
+                            recent.duration = duration;
+                            recent.timestamp = timestamp;
+                            
+                            renderRecents();
+                            popup.close();
+                        });
+                    }
+                }
+            });
+            
+            popup.open();
+        }
+
+        // Delete recent call
+        function deleteRecent(index) {
+            app.dialog.confirm('Are you sure you want to delete this recent call?', 'Delete Recent', () => {
+                currentSim.recents.splice(index, 1);
+                renderRecents();
+            });
+        }
+
+        $on('pageInit', function (e, page) {
+            console.log('call_out_edit pageInit');
+
+            isNewSim = !currentSim || !currentSim.id;
+
+            if (isNewSim) {
+                currentSim = {
+                    id: 's_' + Date.now(),
+                    type: 'call_out',
+                    name: 'New Outgoing Call',
+                    contacts: [],
+                    recents: [],
+                    clock_time: '',
+                    background_type: 'lockscreen',
+                    website_url: ''
+                };
+            }
+
+            // Populate form fields
+            $$('input[name="name"]').val(currentSim.name || '');
+            $$('input[name="clock_time"]').val(currentSim.clock_time || '');
+            $$('select[name="background_type"]').val(currentSim.background_type || 'lockscreen');
+            $$('input[name="website_url"]').val(currentSim.website_url || '');
+
+            // Initialize contacts and recents if they don't exist
+            if (!currentSim.contacts) currentSim.contacts = [];
+            if (!currentSim.recents) currentSim.recents = [];
+
+            // Render lists
+            renderContacts();
+            renderRecents();
+
+            // Show/hide fields based on settings
+            function updateFieldVisibility() {
+                const backgroundType = $$('select[name="background_type"]').val();
+
+                if (backgroundType === 'website') {
+                    $$('#website_url_field').show();
+                } else {
+                    $$('#website_url_field').hide();
+                }
+            }
+
+            updateFieldVisibility();
+
+            $$('select[name="background_type"]').on('change', updateFieldVisibility);
+
+            // Contact management handlers
+            $$('#add_contact_button').on('click', addContact);
+
+            $$(document).on('click', '.favorite_toggle', function() {
+                const contactId = parseInt($$(this).attr('data-id'));
+                toggleFavorite(contactId);
+            });
+
+            $$(document).on('click', '.contact_edit_btn', function() {
+                const contactId = parseInt($$(this).attr('data-id'));
+                editContact(contactId);
+            });
+
+            $$(document).on('click', '.contact_delete_btn', function() {
+                const contactId = parseInt($$(this).attr('data-id'));
+                deleteContact(contactId);
+            });
+
+            // Recent calls management handlers
+            $$('#add_recent_button').on('click', addRecent);
+
+            $$(document).on('click', '.recent_edit_btn', function() {
+                const index = parseInt($$(this).attr('data-index'));
+                editRecent(index);
+            });
+
+            $$(document).on('click', '.recent_delete_btn', function() {
+                const index = parseInt($$(this).attr('data-index'));
+                deleteRecent(index);
+            });
+
+            // Play Now button
+            $$('#play_now_button').on('click', function () {
+                // Collect form data
+                currentSim.name = $$('input[name="name"]').val();
+                currentSim.clock_time = $$('input[name="clock_time"]').val();
+                currentSim.background_type = $$('select[name="background_type"]').val();
+                currentSim.website_url = $$('input[name="website_url"]').val();
+
+                // Navigate to the simulation page
+                app.views.main.router.navigate('/call_out/');
+            });
+
+            // Save button
+            $$('#save_button').on('click', function () {
+                // Collect form data
+                currentSim.name = $$('input[name="name"]').val();
+                currentSim.clock_time = $$('input[name="clock_time"]').val();
+                currentSim.background_type = $$('select[name="background_type"]').val();
+                currentSim.website_url = $$('input[name="website_url"]').val();
+
+                // Save to appData
+                appData.sims[currentSim.id] = currentSim;
+                saveAppData();
+
+                app.toast.create({
+                    text: 'Outgoing call saved successfully',
+                    closeTimeout: 2000,
+                }).open();
+
+                app.views.main.router.back();
+            });
+
+            // Clear All Contacts button
+            $$('#clear_contacts_button').on('click', function () {
+                app.dialog.confirm(
+                    'Are you sure you want to clear all contacts and recent calls? This cannot be undone.',
+                    'Clear All Contacts',
+                    function () {
+                        currentSim.contacts = [];
+                        currentSim.recents = [];
+                        renderContacts();
+                        renderRecents();
+                        app.toast.create({
+                            text: 'All contacts and recents cleared',
+                            closeTimeout: 2000,
+                        }).open();
+                    }
+                );
+            });
+
+            // Delete button
+            $$('#delete_button').on('click', function () {
+                app.dialog.confirm(
+                    'Are you sure you want to delete this simulation?',
+                    'Confirm Delete',
+                    function () {
+                        delete appData.sims[currentSim.id];
+                        saveAppData();
+                        app.views.main.router.back();
+                    }
+                );
+            });
+
+            // Hide delete button if new sim
+            if (isNewSim) {
+                $$('#delete_button').hide();
+            }
+        });
+
+        return $render;
+    };
+</script>

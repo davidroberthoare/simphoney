@@ -1,0 +1,942 @@
+<!-- OUTGOING CALL COMPONENT -->
+<template>
+    <div data-name="call_out" class="page">
+        <!-- Desktop-only back button -->
+        <a href="/" class="desktop-back-button link back"><i class="f7-icons">chevron_left</i></a>
+        
+        <div class="page-content">
+            <div id="clock">${currentSim.clock_time}</div>
+            <iframe id="website" src=""></iframe>
+
+            <!-- Contacts List Screen -->
+            <div id="contacts_screen">
+                <div class="contacts_header">
+                    <h2>Contacts</h2>
+                    <button class="keypad_toggle_button" id="keypad_toggle">
+                        <i class="f7-icons">circle_grid_3x3_fill</i>
+                    </button>
+                </div>
+
+                <!-- Keypad -->
+                <div id="keypad_panel">
+                    <div class="keypad_display">
+                        <input type="tel" id="keypad_number" placeholder="Enter number" />
+                    </div>
+                    <div class="keypad_grid">
+                        <div class="keypad_button" data-digit="1">1<span></span></div>
+                        <div class="keypad_button" data-digit="2">2<span>ABC</span></div>
+                        <div class="keypad_button" data-digit="3">3<span>DEF</span></div>
+                        <div class="keypad_button" data-digit="4">4<span>GHI</span></div>
+                        <div class="keypad_button" data-digit="5">5<span>JKL</span></div>
+                        <div class="keypad_button" data-digit="6">6<span>MNO</span></div>
+                        <div class="keypad_button" data-digit="7">7<span>PQRS</span></div>
+                        <div class="keypad_button" data-digit="8">8<span>TUV</span></div>
+                        <div class="keypad_button" data-digit="9">9<span>WXYZ</span></div>
+                        <div class="keypad_button" data-digit="*">*<span></span></div>
+                        <div class="keypad_button" data-digit="0">0<span>+</span></div>
+                        <div class="keypad_button" data-digit="#">#<span></span></div>
+                    </div>
+                    <div class="keypad_actions">
+                        <button class="keypad_delete" id="keypad_delete"><i class="f7-icons">delete_left</i></button>
+                        <button class="keypad_call" id="keypad_call"><i class="f7-icons">phone_fill</i></button>
+                    </div>
+                </div>
+
+                <!-- Contacts List -->
+                <div id="contacts_list">
+                    <!-- Favorites -->
+                    <div class="contacts_section" id="favorites_section">
+                        <div class="section_header">Favourites</div>
+                        <div class="contacts_items" id="favorites_list"></div>
+                    </div>
+
+                    <!-- Recents -->
+                    <div class="contacts_section" id="recents_section">
+                        <div class="section_header">Recents</div>
+                        <div class="contacts_items" id="recents_list"></div>
+                    </div>
+
+                    <!-- All Contacts -->
+                    <div class="contacts_section" id="all_contacts_section">
+                        <div class="section_header">All Contacts</div>
+                        <div class="contacts_items" id="all_contacts_list"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Calling Screen -->
+            <div id="calling_screen">
+                <div class="calling_header">
+                    <div class="calling_avatar"></div>
+                    <div class="calling_name"></div>
+                    <div class="calling_number"></div>
+                    <div class="calling_status" id="calling_status">calling...</div>
+                </div>
+
+                <div class="calling_actions">
+                    <div class="calling_button_row">
+                        <div class="calling_button" id="calling_mute_button">
+                            <i class="f7-icons">mic_fill</i>
+                            <span>Mute</span>
+                        </div>
+                        <div class="calling_button" id="calling_keypad_button">
+                            <i class="f7-icons">circle_grid_3x3_fill</i>
+                            <span>Keypad</span>
+                        </div>
+                        <div class="calling_button" id="calling_speaker_button">
+                            <i class="f7-icons">speaker_fill</i>
+                            <span>Speaker</span>
+                        </div>
+                    </div>
+
+                    <div class="calling_button_row">
+                        <div class="calling_button hangup" id="calling_hangup_button">
+                            <i class="f7-icons">phone_down_fill</i>
+                            <span>Hang Up</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<!-- component styles -->
+<style>
+    .page[data-name="call_out"] {
+        background: #000;
+    }
+    
+    /* Desktop-only back button */
+    .desktop-back-button {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(10px);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 2000;
+        color: #fff;
+        font-size: 24px;
+        transition: background 0.2s;
+    }
+    
+    .desktop-back-button:active {
+        background: rgba(0, 0, 0, 0.7);
+    }
+    
+    /* Show back button only on desktop (wider than mobile) */
+    @media (min-width: 768px) {
+        .desktop-back-button {
+            display: flex;
+        }
+    }
+
+    #clock {
+        width: 100%;
+        text-align: center;
+        font-size: 4em;
+        color: white;
+        text-shadow: 4px 2px 5px #00000052;
+        margin-top: 10vh;
+        display: none;
+    }
+
+    #website {
+        position: absolute;
+        top: 0;
+        width: 100%;
+        left: 0;
+        height: 100%;
+        overflow: hidden;
+        border: 0px;
+        display: none;
+    }
+
+    /* Contacts Screen */
+    #contacts_screen {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: #000;
+        display: flex;
+        flex-direction: column;
+        z-index: 1000;
+        overflow: hidden;
+    }
+
+    .contacts_header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .contacts_header h2 {
+        color: #fff;
+        font-size: 28px;
+        font-weight: 600;
+        margin: 0;
+    }
+
+    .keypad_toggle_button {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.15);
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: #fff;
+        font-size: 20px;
+        transition: background 0.2s;
+        position: relative;
+        z-index: 100;
+    }
+
+    .keypad_toggle_button:active {
+        background: rgba(255, 255, 255, 0.35);
+        transform: scale(0.95);
+    }
+
+    .keypad_toggle_button.active {
+        background: #007aff;
+    }
+
+    /* Keypad Panel */
+    #keypad_panel {
+        display: none;
+        flex-direction: column;
+        padding: 20px;
+        gap: 20px;
+        background: #000;
+    }
+
+    #keypad_panel.active {
+        display: flex;
+    }
+
+    .keypad_display {
+        text-align: center;
+    }
+
+    .keypad_display input {
+        background: transparent;
+        border: none;
+        color: #fff;
+        font-size: 32px;
+        text-align: center;
+        width: 100%;
+        letter-spacing: 2px;
+    }
+
+    .keypad_display input::placeholder {
+        color: rgba(255, 255, 255, 0.3);
+    }
+
+    .keypad_grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+        max-width: 320px;
+        margin: 0 auto;
+    }
+
+    .keypad_button {
+        aspect-ratio: 1;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.15);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        user-select: none;
+        color: #fff;
+        font-size: 28px;
+        font-weight: 300;
+    }
+
+    .keypad_button span {
+        font-size: 11px;
+        color: rgba(255, 255, 255, 0.5);
+        margin-top: -4px;
+        letter-spacing: 1px;
+    }
+
+    .keypad_button:active {
+        background: rgba(255, 255, 255, 0.25);
+        transform: scale(0.95);
+    }
+
+    .keypad_actions {
+        display: flex;
+        justify-content: center;
+        gap: 60px;
+        margin-top: 10px;
+    }
+
+    .keypad_delete {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.15);
+        border: none;
+        color: #fff;
+        font-size: 24px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .keypad_call {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: #34c759;
+        border: none;
+        color: #fff;
+        font-size: 24px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .keypad_delete:active,
+    .keypad_call:active {
+        transform: scale(0.95);
+    }
+
+    /* Contacts List */
+    #contacts_list {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0 0 20px 0;
+    }
+
+    .contacts_section {
+        margin-bottom: 20px;
+    }
+
+    .section_header {
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 14px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        padding: 12px 20px;
+        background: rgba(255, 255, 255, 0.05);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .contacts_items {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .contact_item {
+        display: flex;
+        align-items: center;
+        padding: 12px 20px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        cursor: pointer;
+        user-select: none;
+    }
+
+    .contact_item:active {
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    .contact_avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background-size: cover;
+        background-position: center;
+        margin-right: 15px;
+        border: 2px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .contact_info {
+        flex: 1;
+    }
+
+    .contact_name {
+        color: #fff;
+        font-size: 17px;
+        font-weight: 400;
+        margin-bottom: 3px;
+    }
+
+    .contact_number {
+        color: rgba(255, 255, 255, 0.5);
+        font-size: 14px;
+    }
+
+    .recent_item {
+        display: flex;
+        align-items: center;
+        padding: 12px 20px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        cursor: pointer;
+        user-select: none;
+    }
+
+    .recent_item:active {
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    .recent_icon {
+        width: 20px;
+        margin-right: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .recent_icon i {
+        font-size: 16px;
+    }
+
+    .recent_icon.outgoing i {
+        color: #34c759;
+    }
+
+    .recent_icon.incoming i {
+        color: #ff3b30;
+    }
+
+    .recent_avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background-size: cover;
+        background-position: center;
+        margin-right: 15px;
+        border: 2px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .recent_info {
+        flex: 1;
+    }
+
+    .recent_name {
+        color: #fff;
+        font-size: 17px;
+        font-weight: 400;
+        margin-bottom: 3px;
+    }
+
+    .recent_details {
+        color: rgba(255, 255, 255, 0.5);
+        font-size: 14px;
+    }
+
+    .recent_time {
+        color: rgba(255, 255, 255, 0.4);
+        font-size: 13px;
+    }
+
+    /* Calling Screen */
+    #calling_screen {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: calc(100% - 40px);
+        background: linear-gradient(to bottom, #1c1c1e 0%, #000 100%);
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+        padding-bottom:40px;
+        z-index: 1001;
+    }
+
+    .calling_header {
+        text-align: center;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .calling_avatar {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background-size: cover;
+        background-position: center;
+        margin-bottom: 20px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .calling_name {
+        color: #fff;
+        font-size: 28px;
+        font-weight: 400;
+        margin-bottom: 8px;
+    }
+
+    .calling_number {
+        color: #8e8e93;
+        font-size: 16px;
+        margin-bottom: 16px;
+    }
+
+    .calling_status {
+        color: #8e8e93;
+        font-size: 16px;
+    }
+
+    .calling_actions {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 40px;
+    }
+
+    .calling_button_row {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        width: 100%;
+    }
+
+    .calling_button {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        user-select: none;
+    }
+
+    .calling_button i {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+        background: rgba(255, 255, 255, 0.15);
+        color: #fff;
+        transition: transform 0.1s, background 0.2s;
+    }
+
+    .calling_button span {
+        font-size: 13px;
+        color: #fff;
+    }
+
+    .calling_button.active i {
+        background: #fff;
+        color: #000;
+    }
+
+    .calling_button.hangup i {
+        width: 64px;
+        height: 64px;
+        background: #ff3b30;
+        color: #fff;
+        font-size: 32px;
+    }
+
+    .calling_button:active i {
+        transform: scale(0.95);
+    }
+</style>
+
+<!-- component logic -->
+<script>
+    export default (props, { $f7, $on }) => {
+        let peer = null;
+        let peerId = null;
+        const remoteChannel = appData.global.remote_channel || 'default';
+        let ringingSound = null;
+        let callTimer = null;
+        let callSeconds = 0;
+        let currentContact = null;
+
+        // Play ringing sound (outbound ringing tone)
+        function playRingingSound() {
+            const ringtone = appData.global.ringtone_sound || 'ringtone_1';
+            ringingSound = playRingtone();
+        }
+
+        function stopRingingSound() {
+            if (ringingSound) {
+                stopSound(ringingSound);
+                ringingSound = null;
+            }
+        }
+
+        // Render contacts lists
+        function renderContacts() {
+            if (!currentSim.contacts) return;
+
+            const favorites = currentSim.contacts.filter(c => c.favorite);
+            const allContacts = currentSim.contacts.slice().sort((a, b) =>
+                a.name.localeCompare(b.name)
+            );
+
+            // Render favorites
+            const favoritesHtml = favorites.map(contact => `
+        <div class="contact_item" data-contact-id="${contact.id}">
+          <div class="contact_avatar" style="background-image: url('${contact.avatar}');"></div>
+          <div class="contact_info">
+            <div class="contact_name">${contact.name}</div>
+            <div class="contact_number">${contact.number}</div>
+          </div>
+        </div>
+      `).join('');
+
+            $$('#favorites_list').html(favoritesHtml || '<div style="padding: 20px; color: rgba(255,255,255,0.5); text-align: center;">No favourites</div>');
+
+            // Render recents
+            if (currentSim.recents && currentSim.recents.length > 0) {
+                const recentsHtml = currentSim.recents.map(recent => {
+                    const contact = currentSim.contacts.find(c => c.id === recent.contactId);
+                    if (!contact) return '';
+
+                    const iconName = recent.type === 'outgoing' ? 'phone_arrow_up_right' : 'phone_arrow_down_left';
+                    const iconClass = recent.type === 'outgoing' ? 'outgoing' : 'incoming';
+
+                    return `
+            <div class="recent_item" data-contact-id="${contact.id}">
+              <div class="recent_icon ${iconClass}">
+                <i class="f7-icons">${iconName}</i>
+              </div>
+              <div class="recent_avatar" style="background-image: url('${contact.avatar}');"></div>
+              <div class="recent_info">
+                <div class="recent_name">${contact.name}</div>
+                <div class="recent_details">${contact.number} · ${recent.duration}</div>
+              </div>
+              <div class="recent_time">${recent.timestamp}</div>
+            </div>
+          `;
+                }).join('');
+
+                $$('#recents_list').html(recentsHtml);
+            } else {
+                $$('#recents_list').html('<div style="padding: 20px; color: rgba(255,255,255,0.5); text-align: center;">No recent calls</div>');
+            }
+
+            // Render all contacts
+            const allContactsHtml = allContacts.map(contact => `
+        <div class="contact_item" data-contact-id="${contact.id}">
+          <div class="contact_avatar" style="background-image: url('${contact.avatar}');"></div>
+          <div class="contact_info">
+            <div class="contact_name">${contact.name}</div>
+            <div class="contact_number">${contact.number}</div>
+          </div>
+        </div>
+      `).join('');
+
+            $$('#all_contacts_list').html(allContactsHtml);
+        }
+
+        // Call a contact
+        function callContact(contact) {
+            // Clear any existing timer first
+            if (callTimer) {
+                clearInterval(callTimer);
+                callTimer = null;
+            }
+            stopRingingSound();
+            
+            currentContact = contact;
+
+            $$('#contacts_screen').hide();
+            $$('#calling_screen').css('display', 'flex');
+
+            $$('.calling_avatar').css('background-image', `url('${contact.avatar}')`);
+            $$('.calling_name').text(contact.name);
+            $$('.calling_number').text(contact.number);
+            $$('#calling_status').text('calling...');
+
+            playRingingSound();
+
+            // Simulate call being answered after 2-4 seconds
+            setTimeout(() => {
+                stopRingingSound();
+                $$('#calling_status').text('');
+
+                // Start call timer
+                callSeconds = 0;
+                updateCallDuration();
+                callTimer = setInterval(() => {
+                    callSeconds++;
+                    updateCallDuration();
+                }, 1000);
+            }, Math.random() * 2000 + 2000);
+        }
+
+        function updateCallDuration() {
+            const minutes = Math.floor(callSeconds / 60);
+            const seconds = callSeconds % 60;
+            const formatted = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            $$('#calling_status').text(formatted);
+        }
+
+        function hangupCall() {
+            stopRingingSound();
+
+            // Stop call timer
+            if (callTimer) {
+                clearInterval(callTimer);
+                callTimer = null;
+            }
+
+            $$('#calling_screen').hide();
+            $$('#contacts_screen').show();
+
+            // Show call ended notification
+            if (callSeconds > 0) {
+                const minutes = Math.floor(callSeconds / 60);
+                const seconds = callSeconds % 60;
+                const duration = minutes > 0 ? `${minutes}m ${seconds}s` : `${seconds}s`;
+
+                app.notification.create({
+                    title: 'Call Ended',
+                    text: `Call duration: ${duration}`,
+                    closeTimeout: 2000,
+                    closeOnClick: true,
+                }).open();
+            }
+
+            callSeconds = 0;
+            currentContact = null;
+        }
+
+        // Keypad functions
+        function toggleKeypad() {
+            console.log('Toggling keypad...');
+            $$('#keypad_panel').toggleClass('active');
+            $$('#keypad_toggle').toggleClass('active');
+
+            if ($$('#keypad_panel').hasClass('active')) {
+                $$('#contacts_list').hide();
+                $$('#keypad_number').focus();
+            } else {
+                $$('#contacts_list').show();
+            }
+        }
+
+        function addDigit(digit) {
+            const input = $$('#keypad_number');
+            input.val(input.val() + digit);
+        }
+
+        function deleteDigit() {
+            const input = $$('#keypad_number');
+            input.val(input.val().slice(0, -1));
+        }
+
+        function callFromKeypad() {
+            const number = $$('#keypad_number').val();
+            if (number) {
+                const contact = {
+                    id: 0,
+                    name: 'Unknown Number',
+                    number: number,
+                    avatar: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"%3E%3Ccircle cx="50" cy="50" r="50" fill="%23999"%2F%3E%3Cpath d="M50 45c8.284 0 15-6.716 15-15s-6.716-15-15-15-15 6.716-15 15 6.716 15 15 15zM50 52.5c-16.569 0-30 7.5-30 22.5v5h60v-5c0-15-13.431-22.5-30-22.5z" fill="%23666"%2F%3E%3C%2Fsvg%3E'
+                };
+                callContact(contact);
+                $$('#keypad_number').val('');
+                $$('#keypad_panel').removeClass('active');
+                $$('#contacts_list').show();
+            }
+        }
+
+        $on('pageBeforeIn', function (e, page) {
+            console.log('Preparing outgoing call page...');
+            if (!currentSim || currentSim.type !== 'call_out') {
+                console.error('No valid outgoing call sim');
+                return;
+            }
+
+            // Preload ringtone
+            const ringtone = appData.global.ringtone_sound || 'ringtone_1';
+            preloadSound(`sounds/${ringtone}.mp3`, ringtone);
+
+            // Set background
+            if (appData.global.background_img) {
+                $$('.page[data-name="call_out"]').css('background-image', `url(${appData.global.background_img})`);
+            } else {
+                $$('.page[data-name="call_out"]').css('background-image', 'none');
+            }
+
+            // Hide/show elements based on settings
+            if (currentSim.background_type === 'website' && currentSim.website_url.trim() !== '') {
+                $$('#website').attr('src', currentSim.website_url);
+                $$('#website').show();
+                $$('#contacts_screen').css('background', 'rgba(0, 0, 0, 0.85)');
+            } else if (currentSim.background_type === 'lockscreen') {
+                $$('#website').hide();
+                $$('#contacts_screen').css('background', 'rgba(0, 0, 0, 0.95)');
+
+                if (currentSim.clock_time && currentSim.clock_time.trim() !== '') {
+                    $$('#clock').show();
+                } else {
+                    $$('#clock').hide();
+                }
+            }
+        });
+
+
+
+        $on('pageInit', function (e, page) {
+            // Render contacts
+            renderContacts();
+        });
+
+
+
+        $on('pageAfterIn', function (e, page) {
+            console.log('Outgoing call page displayed...', currentSim);
+            if (!currentSim || currentSim.type !== 'call_out') {
+                console.error('No valid outgoing call sim');
+                return;
+            }
+
+
+            // Set up keypad toggle
+            console.log('Setting up keypad toggle button...');
+            const keypadBtn = $$('#keypad_toggle');
+            console.log('Keypad button found:', keypadBtn.length);
+            
+            keypadBtn.off('click').on('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('Keypad button clicked!');
+                toggleKeypad();
+            });
+
+            // Set up keypad buttons
+            $$('.keypad_button').off('click').on('click', function () {
+                const digit = $$(this).attr('data-digit');
+                addDigit(digit);
+            });
+
+            $$('#keypad_delete').off('click').on('click', deleteDigit);
+            $$('#keypad_call').off('click').on('click', callFromKeypad);
+
+            // Set up contact click handlers with better event delegation
+            $$('#contacts_screen').on('click', '.contact_item', function (e) {
+                e.preventDefault();
+                const contactId = parseInt($$(this).attr('data-contact-id'));
+                console.log('Contact clicked:', contactId);
+                const contact = currentSim.contacts.find(c => c.id === contactId);
+                if (contact) {
+                    callContact(contact);
+                }
+            });
+
+            $$('#contacts_screen').on('click', '.recent_item', function (e) {
+                e.preventDefault();
+                const contactId = parseInt($$(this).attr('data-contact-id'));
+                console.log('Recent clicked:', contactId);
+                const contact = currentSim.contacts.find(c => c.id === contactId);
+                if (contact) {
+                    callContact(contact);
+                }
+            });
+
+            // Set up calling screen buttons
+            $$('#calling_hangup_button').on('click', hangupCall);
+
+            $$('#calling_mute_button').on('click', function () {
+                $$(this).toggleClass('active');
+                const isMuted = $$(this).hasClass('active');
+                $$(this).find('span').text(isMuted ? 'Unmute' : 'Mute');
+            });
+
+            $$('#calling_speaker_button').on('click', function () {
+                $$(this).toggleClass('active');
+                const isOn = $$(this).hasClass('active');
+                $$(this).find('span').text(isOn ? 'Speaker On' : 'Speaker');
+            });
+
+            $$('#calling_keypad_button').on('click', function () {
+                app.notification.create({
+                    title: 'Keypad',
+                    text: 'In-call keypad coming soon',
+                    closeTimeout: 1500,
+                    closeOnClick: true,
+                }).open();
+            });
+
+            // Auto-trigger call if selected_contact_id is set
+            if (currentSim.trigger_type === 'timed' && currentSim.selected_contact_id) {
+                setTimeout(() => {
+                    const contact = currentSim.contacts.find(c => c.id === currentSim.selected_contact_id);
+                    if (contact) {
+                        callContact(contact);
+                    }
+                }, currentSim.delay * 1000);
+            } else if (currentSim.trigger_type === 'remote') {
+                // Remote trigger setup
+                let playerSlot = appData.global.player_slot || 'player1';
+                peerId = `simphoney-${remoteChannel}-${playerSlot}`;
+                peer = new Peer(peerId);
+
+                peer.on('open', (id) => {
+                    console.log(`PeerJS connected - Channel: ${remoteChannel}, Slot: ${playerSlot}, ID: ${id}`);
+                });
+
+                peer.on('connection', (conn) => {
+                    console.log('Remote connection established');
+                    conn.on('data', (data) => {
+                        console.log('Received data from remote:', data);
+                        if (data === 'go' && currentSim.selected_contact_id) {
+                            const contact = currentSim.contacts.find(c => c.id === currentSim.selected_contact_id);
+                            if (contact) {
+                                callContact(contact);
+                            }
+                        }
+                    });
+                });
+
+                peer.on('error', (err) => {
+                    console.error('PeerJS error:', err);
+                });
+            }
+        });
+
+        $on('pageBeforeOut', function (e, page) {
+            // Clean up
+            stopRingingSound();
+
+            // Clean up call timer
+            if (callTimer) {
+                clearInterval(callTimer);
+                callTimer = null;
+            }
+
+            if (peer) {
+                peer.destroy();
+                peer = null;
+                peerId = null;
+                console.log('PeerJS connection closed');
+            }
+        });
+
+        // component function must return render function
+        return $render;
+    };
+</script>

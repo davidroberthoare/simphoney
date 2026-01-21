@@ -6,7 +6,7 @@ This is a simple phone simulator for film/tv. Displays custom simulated actions 
 - Use **Vanilla JavaScript** (no React, Vue, or other frameworks).
 - Use **Vanilla CSS** (no preprocessors like Sass or utilities like Tailwind).
 - Avoid npm/yarn/pnpm for frontend dependencies; use CDN or direct script inclusion if needed.
-- NEVER make changes to any files in /live folder.
+- NEVER make changes to any files in /live folder. And never copy files from /dev to /live. You ONLY make changes to files in /dev folder.
 
 ## Framework7 Guidelines
 - Initialize Framework7 using the App component and default parameters.
