@@ -90,6 +90,30 @@ const defaultAppData = {
             ],
             selected_contact_id: null,
             clock_time: '12:34pm',
+        },
+        s_6: {
+            id: 's_6',
+            type: 'email',
+            name: 'Sample Email',
+            trigger_type: 'timed',
+            delay: 3,
+            sound_enabled: true,
+            vibration_enabled: true,
+            start_mode: 'notification',
+            clock_time: '12:34pm',
+            background_type: 'lockscreen',
+            website_url: '',
+            notification_preview: 'This is an important update regarding your account...',
+            featured_email: {
+                sender_name: generateContacts(1)[0].fullname,
+                sender_email: generateContacts(1)[0].email,
+                sender_avatar: generateContacts(1)[0].picture.medium,
+                subject: 'Important Update',
+                sent_time: '10:23 AM',
+                body: 'Hi there,\n\nThis is an important update regarding your account. We wanted to inform you about some recent changes that may affect your experience.\n\nPlease review the following details carefully:\n\n1. Your account settings have been updated\n2. New features are now available\n3. Security enhancements have been implemented\n\nIf you have any questions or concerns, please don\'t hesitate to reach out to our support team.\n\nBest regards,\nThe Support Team'
+            },
+            inbox_emails: [],
+            use_random_inbox: true
         }
     },
 };

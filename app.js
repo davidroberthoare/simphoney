@@ -30,6 +30,8 @@ var app = new Framework7({
     { path: '/notification_edit/', name: 'notification_edit', componentUrl: './pages/notification_edit.html' },
     { path: '/sms/', name: 'sms', componentUrl: './pages/sms.html' },
     { path: '/sms_edit/', name: 'sms_edit', componentUrl: './pages/sms_edit.html' },
+    { path: '/email/', name: 'email', componentUrl: './pages/email.html' },
+    { path: '/email_edit/', name: 'email_edit', componentUrl: './pages/email_edit.html' },
     { path: '/call_in/', name: 'call_in', componentUrl: './pages/call_in.html' },
     { path: '/call_in_edit/', name: 'call_in_edit', componentUrl: './pages/call_in_edit.html' },
     { path: '/call_out/', name: 'call_out', componentUrl: './pages/call_out.html' },

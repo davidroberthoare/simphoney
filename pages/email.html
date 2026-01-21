@@ -1,0 +1,691 @@
+<!-- EMAIL COMPONENT -->
+<template>
+  <div data-name="email" class="page">
+    <div class="navbar">
+      <div class="navbar-inner">
+        <div class="left">
+          <a href="/" class="link back"><i class="f7-icons">chevron_left</i></a>
+        </div>
+        <div class="title">Inbox</div>
+        <div class="right">
+          <a href="#" class="link icon-only" id="compose_button">
+            <i class="f7-icons">square_pencil</i>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="page-content" id="main_page_content">
+      <!-- Clock for lockscreen notification mode -->
+      <div id="clock">${currentSim.clock_time}</div>
+      
+      <!-- Website iframe for notification mode -->
+      <iframe id="website" src=""></iframe>
+
+      <!-- INBOX VIEW -->
+      <div id="inbox_view" class="email-view">
+        <div class="list list-strong-ios list-dividers-ios media-list" id="inbox_list">
+          <ul></ul>
+        </div>
+      </div>
+
+      <!-- EMAIL READER VIEW -->
+      <div id="reader_view" class="email-view" style="display: none;">
+        <div class="email-header">
+          <div class="email-actions">
+            <a href="#" class="link" id="back_to_inbox"><i class="f7-icons">chevron_left</i> Inbox</a>
+            <div class="email-action-buttons">
+              <a href="#" class="link icon-only" id="reply_button"><i class="f7-icons">arrowshape_turn_up_left</i></a>
+              <a href="#" class="link icon-only" id="forward_button"><i class="f7-icons">arrowshape_turn_up_right</i></a>
+              <a href="#" class="link icon-only" id="delete_button"><i class="f7-icons">trash</i></a>
+            </div>
+          </div>
+          <div class="email-subject"></div>
+          <div class="email-from">
+            <div class="email-avatar"></div>
+            <div class="email-from-info">
+              <div class="email-from-name"></div>
+              <div class="email-from-email"></div>
+            </div>
+            <div class="email-time"></div>
+          </div>
+        </div>
+        <div class="email-body-container">
+          <div class="email-body"></div>
+        </div>
+      </div>
+
+      <!-- COMPOSE VIEW -->
+      <div id="compose_view" class="email-view" style="display: none;">
+        <div class="compose-header">
+          <a href="#" class="link" id="cancel_compose">Cancel</a>
+          <div class="compose-title">New Message</div>
+          <a href="#" class="link" id="send_button">Send</a>
+        </div>
+        <div class="compose-form">
+          <div class="list list-strong-ios list-dividers-ios no-margin">
+            <ul>
+              <li class="item-content item-input">
+                <div class="item-inner">
+                  <div class="item-title item-label">To:</div>
+                  <div class="item-input-wrap">
+                    <input type="email" id="compose_to" readonly />
+                  </div>
+                </div>
+              </li>
+              <li class="item-content item-input">
+                <div class="item-inner">
+                  <div class="item-title item-label">Subject:</div>
+                  <div class="item-input-wrap">
+                    <input type="text" id="compose_subject" />
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </div>
+          <div class="compose-body-wrap">
+            <textarea id="compose_body" placeholder="Message"></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<!-- component styles -->
+<style>
+  /* Clock and website background for notifications */
+  #clock {
+    width: 100%;
+    text-align: center;
+    font-size: 4em;
+    color: white;
+    text-shadow: 4px 2px 5px #00000052;
+    margin-top: 10vh;
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+  }
+
+  #website {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    left: 0;
+    height: 100%;
+    overflow: hidden;
+    border: 0px;
+    display: none;
+  }
+
+  /* Inbox view */
+  #inbox_view {
+    padding-top: 8px;
+  }
+
+  .email-item {
+    position: relative;
+  }
+
+  .email-item.unread {
+    background-color: rgba(0, 122, 255, 0.05);
+  }
+
+  .email-item.unread .item-title {
+    font-weight: 600;
+  }
+
+  .email-item .item-title {
+    font-size: 15px;
+  }
+
+  .email-item .item-subtitle {
+    font-size: 14px;
+    margin-top: 2px;
+  }
+
+  .email-item .item-text {
+    font-size: 13px;
+    color: #8e8e93;
+    margin-top: 2px;
+  }
+
+  .email-item .item-after {
+    font-size: 13px;
+    color: #8e8e93;
+  }
+
+  .email-avatar-thumb {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-size: cover;
+    background-position: center;
+    background-color: #e0e0e0;
+  }
+
+  /* Reader view */
+  #reader_view {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  .email-header {
+    padding: 16px;
+    border-bottom: 1px solid var(--f7-list-item-border-color);
+  }
+
+  .email-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+
+  .email-action-buttons {
+    display: flex;
+    gap: 16px;
+  }
+
+  .email-subject {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    line-height: 1.3;
+  }
+
+  .email-from {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .email-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-size: cover;
+    background-position: center;
+    background-color: #e0e0e0;
+    flex-shrink: 0;
+  }
+
+  .email-from-info {
+    flex: 1;
+  }
+
+  .email-from-name {
+    font-size: 15px;
+    font-weight: 500;
+  }
+
+  .email-from-email {
+    font-size: 13px;
+    color: #8e8e93;
+  }
+
+  .email-time {
+    font-size: 13px;
+    color: #8e8e93;
+  }
+
+  .email-body-container {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+  }
+
+  .email-body {
+    font-size: 15px;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+
+  /* Compose view */
+  #compose_view {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  .compose-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--f7-list-item-border-color);
+  }
+
+  .compose-title {
+    font-size: 17px;
+    font-weight: 600;
+  }
+
+  .compose-form {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .compose-form .list {
+    margin: 0;
+  }
+
+  .compose-body-wrap {
+    flex: 1;
+    padding: 16px;
+  }
+
+  #compose_body {
+    width: 100%;
+    height: 100%;
+    border: none;
+    outline: none;
+    font-size: 15px;
+    resize: none;
+    font-family: inherit;
+  }
+
+  /* Dark mode adjustments */
+  .dark #compose_body {
+    background: transparent;
+    color: #fff;
+  }
+</style>
+
+<!-- component logic -->
+<script>
+  export default (props, { $f7, $on }) => {
+    let peer = null;
+    let peerId = null;
+    const remoteChannel = appData.global.remote_channel || 'default';
+    let allEmails = [];
+    let currentView = 'inbox';
+    let currentEmailIndex = -1;
+    let composeMode = 'new'; // 'new', 'reply', 'forward'
+
+    // Generate random inbox emails
+    function generateRandomInboxEmails(count = 10) {
+      const subjects = [
+        'Meeting Tomorrow at 2 PM',
+        'Project Update Required',
+        'Weekly Report',
+        'Important: Action Required',
+        'RE: Your question',
+        'Invoice #12345',
+        'Newsletter - March 2026',
+        'Reminder: Deadline Approaching',
+        'FW: Team Announcement',
+        'Account Security Alert',
+        'New Message from Support',
+        'Your Order Has Shipped',
+        'Invitation: Company Event'
+      ];
+
+      const previews = [
+        'Hi, I hope this email finds you well...',
+        'Following up on our conversation...',
+        'Please review the attached document...',
+        'This is a reminder that...',
+        'I wanted to reach out to discuss...',
+        'Thank you for your email...',
+        'Just wanted to let you know...',
+        'Quick question about...',
+        'Please find attached...',
+        'I hope you\'re having a great day...'
+      ];
+
+      const times = ['8:23 AM', '9:45 AM', 'Yesterday', 'Yesterday', 'Monday', 'Monday', 'Sunday', 'Mar 15', 'Mar 14', 'Mar 13'];
+
+      const emails = [];
+      const contacts = generateContacts(count);
+
+      for (let i = 0; i < count; i++) {
+        emails.push({
+          sender_name: contacts[i].fullname,
+          sender_email: contacts[i].email,
+          sender_avatar: contacts[i].picture.medium,
+          subject: subjects[i % subjects.length],
+          sent_time: times[i % times.length],
+          body: previews[i % previews.length] + '\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\nBest regards,\n' + contacts[i].fullname,
+          preview: previews[i % previews.length],
+          read: true
+        });
+      }
+
+      return emails;
+    }
+
+    // Populate inbox
+    function populateInbox() {
+      $$('#inbox_list ul').html('');
+      
+      allEmails.forEach((email, index) => {
+        const emailItem = `
+          <li class="email-item ${email.read ? '' : 'unread'}" data-email-index="${index}">
+            <a href="#" class="item-link item-content">
+              <div class="item-media">
+                <div class="email-avatar-thumb" style="background-image: url('${email.sender_avatar}')"></div>
+              </div>
+              <div class="item-inner">
+                <div class="item-title-row">
+                  <div class="item-title">${email.sender_name}</div>
+                  <div class="item-after">${email.sent_time}</div>
+                </div>
+                <div class="item-subtitle">${email.subject}</div>
+                <div class="item-text">${email.preview || email.body.substring(0, 50) + '...'}</div>
+              </div>
+            </a>
+          </li>
+        `;
+        $$('#inbox_list ul').append(emailItem);
+      });
+
+      // Add click handlers
+      $$('.email-item').on('click', function(e) {
+        e.preventDefault();
+        const index = $$(this).data('email-index');
+        openEmail(index);
+      });
+    }
+
+    // Open email reader
+    function openEmail(index) {
+      currentEmailIndex = index;
+      const email = allEmails[index];
+      
+      // Mark as read
+      email.read = true;
+      
+      // Populate reader view
+      $$('.email-subject').text(email.subject);
+      $$('.email-from-name').text(email.sender_name);
+      $$('.email-from-email').text(email.sender_email);
+      $$('.email-time').text(email.sent_time);
+      $$('.email-avatar').css('background-image', `url('${email.sender_avatar}')`);
+      $$('.email-body').text(email.body);
+      
+      // Switch to reader view
+      showView('reader');
+    }
+
+    // Show compose view
+    function showCompose(mode = 'new', emailIndex = -1) {
+      composeMode = mode;
+      
+      if (mode === 'reply' && emailIndex >= 0) {
+        const email = allEmails[emailIndex];
+        $$('#compose_to').val(email.sender_email);
+        $$('#compose_subject').val('Re: ' + email.subject);
+        $$('#compose_body').val('\n\n---\nOn ' + email.sent_time + ', ' + email.sender_name + ' wrote:\n' + email.body);
+        $$('.compose-title').text('Reply');
+      } else if (mode === 'forward' && emailIndex >= 0) {
+        const email = allEmails[emailIndex];
+        $$('#compose_to').val('');
+        $$('#compose_subject').val('Fwd: ' + email.subject);
+        $$('#compose_body').val('\n\n---\nForwarded message from ' + email.sender_name + ':\n' + email.body);
+        $$('.compose-title').text('Forward');
+      } else {
+        $$('#compose_to').val('');
+        $$('#compose_subject').val('');
+        $$('#compose_body').val('');
+        $$('.compose-title').text('New Message');
+      }
+      
+      showView('compose');
+    }
+
+    // Send email
+    function sendEmail() {
+      // Play sound if enabled
+      if (currentSim.sound_enabled) {
+        playSMSSound();
+      }
+      
+      // Show sending notification
+      $f7.notification.create({
+        icon: '<i class="f7-icons">paperplane</i>',
+        title: 'Email',
+        text: 'Sending...',
+        closeTimeout: 1000,
+      }).open();
+      
+      // After a short delay, show sent notification
+      setTimeout(() => {
+        $f7.notification.create({
+          icon: '<i class="f7-icons">checkmark_circle</i>',
+          title: 'Email',
+          text: 'Message Sent',
+          closeTimeout: 2000,
+        }).open();
+        
+        // Return to inbox
+        showView('inbox');
+      }, 1000);
+    }
+
+    // Switch views
+    function showView(view) {
+      currentView = view;
+      
+      $$('#inbox_view').hide();
+      $$('#reader_view').hide();
+      $$('#compose_view').hide();
+      
+      if (view === 'inbox') {
+        $$('#inbox_view').show();
+        $$('.navbar .title').text('Inbox');
+        $$('#compose_button').show();
+        populateInbox(); // Refresh to show read/unread states
+      } else if (view === 'reader') {
+        $$('#reader_view').show();
+        $$('.navbar .title').text('Message');
+        $$('#compose_button').hide();
+      } else if (view === 'compose') {
+        $$('#compose_view').show();
+        $$('.navbar .title').text('Compose');
+        $$('#compose_button').hide();
+      }
+    }
+
+    // Trigger notification
+    function triggerNotification() {
+      // Play sound effect if enabled
+      if (currentSim.sound_enabled) {
+        playNotificationSound();
+      }
+      
+      // Trigger vibration if enabled
+      if (currentSim.vibration_enabled) {
+        triggerVibration();
+      }
+      
+      const featuredEmail = currentSim.featured_email;
+      
+      let notification = $f7.notification.create({
+        icon: `<div class="avatar" style="background-image: url('${featuredEmail.sender_avatar || generateRandomAvatar()}'); width: 40px; height: 40px; border-radius: 50%; background-size: cover;"></div>`,
+        title: featuredEmail.sender_name || 'New Email',
+        subtitle: featuredEmail.subject || 'No Subject',
+        titleRightText: featuredEmail.sent_time || 'now',
+        text: currentSim.notification_preview || featuredEmail.body.substring(0, 50) + '...',
+        closeOnClick: true,
+        swipeToClose: true,
+        on: {
+          click: function() {
+            // When notification is clicked, open the featured email
+            openEmail(0); // Featured email is always first
+          }
+        }
+      });
+      notification.open();
+    }
+
+    $on('pageBeforeIn', function (e, page) {
+      console.log('Preparing email page...');
+      if (!currentSim || currentSim.type !== 'email') {
+        console.error('No valid email sim');
+        return;
+      }
+      
+      // Preload alert sound if enabled
+      if (currentSim.sound_enabled) {
+        const alertSound = appData.global.alert_sound || 'alert1';
+        preloadSound(`sounds/${alertSound}.mp3`, alertSound);
+      }
+      
+      // Setup background for notification mode
+      if (currentSim.start_mode === 'notification') {
+        if (appData.global.background_img) {
+          $$('.page[data-name="email"]').css('background-image', `url(${appData.global.background_img})`);
+        } else {
+          $$('.page[data-name="email"]').css('background-image', 'none');
+        }
+      }
+    });
+
+    $on('pageAfterIn', function (e, page) {
+      console.log('Email page displayed...', currentSim);
+      if (!currentSim || currentSim.type !== 'email') {
+        console.error('No valid email sim');
+        return;
+      }
+
+      // Build email list
+      allEmails = [];
+      
+      // Add featured email first (as unread)
+      if (currentSim.featured_email) {
+        allEmails.push({
+          ...currentSim.featured_email,
+          preview: currentSim.notification_preview || currentSim.featured_email.body.substring(0, 50) + '...',
+          read: false
+        });
+      }
+      
+      // Add custom inbox emails if not using random
+      if (!currentSim.use_random_inbox && currentSim.inbox_emails && currentSim.inbox_emails.length > 0) {
+        allEmails.push(...currentSim.inbox_emails);
+      } else {
+        // Generate random inbox emails
+        allEmails.push(...generateRandomInboxEmails(10));
+      }
+
+      // Setup event handlers
+      $$('#back_to_inbox').on('click', (e) => {
+        e.preventDefault();
+        showView('inbox');
+      });
+
+      $$('#reply_button').on('click', (e) => {
+        e.preventDefault();
+        showCompose('reply', currentEmailIndex);
+      });
+
+      $$('#forward_button').on('click', (e) => {
+        e.preventDefault();
+        showCompose('forward', currentEmailIndex);
+      });
+
+      $$('#delete_button').on('click', (e) => {
+        e.preventDefault();
+        $f7.dialog.confirm('Delete this message?', () => {
+          allEmails.splice(currentEmailIndex, 1);
+          showView('inbox');
+        });
+      });
+
+      $$('#compose_button').on('click', (e) => {
+        e.preventDefault();
+        showCompose('new');
+      });
+
+      $$('#cancel_compose').on('click', (e) => {
+        e.preventDefault();
+        if (currentEmailIndex >= 0) {
+          showView('reader');
+        } else {
+          showView('inbox');
+        }
+      });
+
+      $$('#send_button').on('click', (e) => {
+        e.preventDefault();
+        sendEmail();
+      });
+
+      // Determine start mode
+      if (currentSim.start_mode === 'notification') {
+        // Show background elements
+        if (currentSim.background_type === 'lockscreen') {
+          if (currentSim.clock_time) {
+            $$('#clock').text(currentSim.clock_time).show();
+          }
+        } else if (currentSim.background_type === 'website' && currentSim.website_url) {
+          $$('#website').attr('src', currentSim.website_url).show();
+        }
+        
+        // Hide inbox initially
+        $$('#inbox_view').hide();
+        
+        // Trigger notification based on trigger type
+        if (currentSim.trigger_type === 'timed') {
+          const delay = (currentSim.delay || 3) * 1000;
+          setTimeout(() => {
+            triggerNotification();
+          }, delay);
+        } else if (currentSim.trigger_type === 'remote') {
+          // Setup peer connection for remote trigger
+          setupPeerConnection();
+        }
+      } else {
+        // Start directly in inbox
+        populateInbox();
+        showView('inbox');
+      }
+    });
+
+    // Remote control setup
+    function setupPeerConnection() {
+      if (typeof Peer === 'undefined') {
+        console.error('PeerJS library not loaded');
+        return;
+      }
+
+      const playerId = appData.global.player_slot || 'player1';
+      peerId = `simphoney_email_${remoteChannel}_${playerId}`;
+
+      peer = new Peer(peerId);
+
+      peer.on('open', (id) => {
+        console.log('Email peer connection established:', id);
+      });
+
+      peer.on('connection', (conn) => {
+        conn.on('data', (data) => {
+          console.log('Received remote command:', data);
+          if (data.action === 'trigger' && data.simId === currentSim.id) {
+            triggerNotification();
+          }
+        });
+      });
+
+      peer.on('error', (err) => {
+        console.error('Peer connection error:', err);
+      });
+    }
+
+    $on('pageBeforeRemove', () => {
+      // Cleanup peer connection
+      if (peer) {
+        peer.destroy();
+        peer = null;
+      }
+    });
+    
+    return $render
+  };
+</script>

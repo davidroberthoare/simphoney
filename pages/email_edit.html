@@ -1,0 +1,637 @@
+<!-- EMAIL EDIT COMPONENT -->
+<template>
+    <div data-name="email_edit" class="page">
+        <div class="navbar">
+            <div class="navbar-inner">
+                <div class="left">
+                    <a href="/" class="link back"><i class="f7-icons">chevron_left</i></a>
+                </div>
+                <div class="title">Email Edit</div>
+            </div>
+        </div>
+        <div class="page-content">
+            <div class="block"><button id="play_now_button" class="button button-fill color-green">Play Now</button></div>
+
+            <form class="list list-strong inset list-dividers-ios settings">
+                <ul>
+                    <!-- name -->
+                    <li>
+                        <div class="item-content item-input">
+                            <div class="item-inner">
+                                <div class="item-title item-label">Name</div>
+                                <div class="item-input-wrap">
+                                    <input type="text" name="name" placeholder="Email Simulation Name" />
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+
+                    <!-- trigger_type -->
+                    <li>
+                        <div class="item-content item-input">
+                            <div class="item-inner">
+                                <div class="item-title item-label">Trigger Type</div>
+                                <div class="item-input-wrap">
+                                    <select name="trigger_type">
+                                        <option value="timed">Timed</option>
+                                        <option value="remote">Remote</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+
+                    <!-- delay -->
+                    <li id="delay_field">
+                        <div class="item-content item-input">
+                            <div class="item-inner">
+                                <div class="item-title item-label">Delay (seconds)</div>
+                                <div class="item-input-wrap">
+                                    <input type="number" name="delay" placeholder="3" value="3" />
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+
+                    <!-- sound effect toggle -->
+                    <li>
+                        <div class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title">Sound Effect</div>
+                                <div class="item-after">
+                                    <label class="toggle">
+                                        <input type="checkbox" name="sound_enabled" value="true" /><i class="toggle-icon"></i>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+
+                    <!-- vibration toggle -->
+                    <li>
+                        <div class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title">Vibration</div>
+                                <div class="item-after">
+                                    <label class="toggle">
+                                        <input type="checkbox" name="vibration_enabled" value="true" /><i class="toggle-icon"></i>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+
+                    <!-- start_mode -->
+                    <li>
+                        <div class="item-content item-input">
+                            <div class="item-inner">
+                                <div class="item-title item-label">Start Mode</div>
+                                <div class="item-input-wrap">
+                                    <select name="start_mode">
+                                        <option value="notification">With Notification</option>
+                                        <option value="inbox">Direct to Inbox</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </form>
+
+            <!-- NOTIFICATION SETTINGS SECTION (shown when start_mode is 'notification') -->
+            <div id="notification_settings">
+                <div class="block-title">Notification Settings</div>
+                <form class="list list-strong inset list-dividers-ios">
+                    <ul>
+                        <!-- clock_time -->
+                        <li>
+                            <div class="item-content item-input">
+                                <div class="item-inner">
+                                    <div class="item-title item-label">Clock Time</div>
+                                    <div class="item-input-wrap">
+                                        <input type="text" name="clock_time" placeholder="12:34pm" />
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+
+                        <!-- background_type -->
+                        <li>
+                            <div class="item-content item-input">
+                                <div class="item-inner">
+                                    <div class="item-title item-label">Background</div>
+                                    <div class="item-input-wrap">
+                                        <select name="background_type">
+                                            <option value="lockscreen">Lock Screen</option>
+                                            <option value="website">Website</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+
+                        <!-- website_url (shown when background_type is 'website') -->
+                        <li id="website_url_field">
+                            <div class="item-content item-input">
+                                <div class="item-inner">
+                                    <div class="item-title item-label">Website URL</div>
+                                    <div class="item-input-wrap">
+                                        <input type="url" name="website_url" placeholder="https://example.com" />
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+
+                        <!-- notification_preview -->
+                        <li>
+                            <div class="item-content item-input">
+                                <div class="item-inner">
+                                    <div class="item-title item-label">Preview Text</div>
+                                    <div class="item-input-wrap">
+                                        <input type="text" name="notification_preview" placeholder="First line of email..." />
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </form>
+            </div>
+
+            <!-- FEATURED EMAIL SECTION -->
+            <div class="block-title">Featured Email (Unread Message)</div>
+            <form class="list list-strong inset list-dividers-ios">
+                <ul>
+                    <!-- sender_name -->
+                    <li>
+                        <div class="item-content item-input">
+                            <div class="item-inner">
+                                <div class="item-title item-label">Sender Name</div>
+                                <div class="item-input-wrap">
+                                    <input type="text" name="featured_sender_name" placeholder="John Doe" />
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+
+                    <!-- sender_email -->
+                    <li>
+                        <div class="item-content item-input">
+                            <div class="item-inner">
+                                <div class="item-title item-label">Sender Email</div>
+                                <div class="item-input-wrap">
+                                    <input type="email" name="featured_sender_email" placeholder="john@example.com" />
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+
+                    <!-- sender_avatar -->
+                    <li>
+                        <div class="item-content item-input">
+                            <div class="item-media">
+                                <div class="avatar" id="featured_sender_avatar_preview"></div>
+                            </div>
+                            <div class="item-inner">
+                                <div class="item-title item-label">Sender Image</div>
+                                <div class="item-input-wrap">
+                                    <input type="file" id="featured_sender_avatar_upload" name="featured_sender_avatar_upload" accept="image/*" />
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+
+                    <!-- subject -->
+                    <li>
+                        <div class="item-content item-input">
+                            <div class="item-inner">
+                                <div class="item-title item-label">Subject</div>
+                                <div class="item-input-wrap">
+                                    <input type="text" name="featured_subject" placeholder="Email Subject" />
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+
+                    <!-- sent_time -->
+                    <li>
+                        <div class="item-content item-input">
+                            <div class="item-inner">
+                                <div class="item-title item-label">Sent Time</div>
+                                <div class="item-input-wrap">
+                                    <input type="text" name="featured_sent_time" placeholder="10:23 AM" />
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+
+                    <!-- body -->
+                    <li class="item-content item-input">
+                        <div class="item-inner">
+                            <div class="item-title item-label">Email Body</div>
+                            <div class="item-input-wrap">
+                                <textarea name="featured_body" placeholder="Email body text..." rows="8"></textarea>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </form>
+
+            <!-- INBOX EMAILS SECTION -->
+            <div class="block-title">Inbox Emails
+                <a href="#" id="add_inbox_email_button"><i class="f7-icons">plus_circle_fill</i></a>
+            </div>
+            <div class="list list-strong inset list-dividers-ios sortable sortable-enabled" id="inbox_emails_list">
+                <ul></ul>
+            </div>
+
+            <!-- use_random_inbox toggle -->
+            <form class="list list-strong inset list-dividers-ios">
+                <ul>
+                    <li>
+                        <div class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title">Use Random Inbox Emails</div>
+                                <div class="item-after">
+                                    <label class="toggle">
+                                        <input type="checkbox" name="use_random_inbox" value="true" /><i class="toggle-icon"></i>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </form>
+
+        </div>
+    </div>
+</template>
+
+<!-- component styles -->
+<style>
+    .avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-size: cover;
+        background-position: center;
+        background-color: #ccc;
+    }
+
+    #featured_sender_avatar_preview {
+        width: 60px;
+        height: 60px;
+    }
+
+    .sortable-handler {
+        cursor: grab;
+    }
+</style>
+
+<!-- component logic -->
+<script>
+    export default (props, { $f7, $on }) => {
+        let inboxEmailCounter = 0;
+
+        $on('pageInit', () => {
+            console.log('Email edit page initialized');
+
+            // If editing existing sim, populate form
+            if (currentSim && currentSim.type === 'email') {
+                populateForm();
+            } else {
+                // Initialize new email sim with defaults
+                currentSim = {
+                    id: generateUniqueId(),
+                    type: 'email',
+                    name: 'New Email',
+                    trigger_type: 'timed',
+                    delay: 3,
+                    sound_enabled: true,
+                    vibration_enabled: true,
+                    start_mode: 'notification',
+                    clock_time: '12:34pm',
+                    background_type: 'lockscreen',
+                    website_url: '',
+                    notification_preview: '',
+                    featured_email: {
+                        sender_name: '',
+                        sender_email: '',
+                        sender_avatar: '',
+                        subject: '',
+                        sent_time: 'now',
+                        body: ''
+                    },
+                    inbox_emails: [],
+                    use_random_inbox: true
+                };
+            }
+
+            // Populate inbox emails list
+            populateInboxEmailsList();
+
+            // Show/hide fields based on selections
+            updateFieldVisibility();
+
+            // Event listeners
+            $$('[name="trigger_type"]').on('change', updateFieldVisibility);
+            $$('[name="start_mode"]').on('change', updateFieldVisibility);
+            $$('[name="background_type"]').on('change', updateFieldVisibility);
+
+            // Play Now button
+            $$('#play_now_button').on('click', () => {
+                saveCurrentSim();
+                playSim(currentSim.id);
+            });
+
+            // Add inbox email button
+            $$('#add_inbox_email_button').on('click', (e) => {
+                e.preventDefault();
+                addInboxEmail();
+            });
+
+            // Avatar upload
+            $$('#featured_sender_avatar_upload').on('change', handleAvatarUpload);
+
+            // Auto-save on input changes
+            $$('.settings input, .settings select, .settings textarea').on('change', () => {
+                saveCurrentSim();
+            });
+        });
+
+        function populateForm() {
+            // Populate basic fields
+            $$('[name="name"]').val(currentSim.name || '');
+            $$('[name="trigger_type"]').val(currentSim.trigger_type || 'timed');
+            $$('[name="delay"]').val(currentSim.delay || 3);
+            $$('[name="sound_enabled"]').prop('checked', currentSim.sound_enabled);
+            $$('[name="vibration_enabled"]').prop('checked', currentSim.vibration_enabled);
+            $$('[name="start_mode"]').val(currentSim.start_mode || 'notification');
+            $$('[name="clock_time"]').val(currentSim.clock_time || '');
+            $$('[name="background_type"]').val(currentSim.background_type || 'lockscreen');
+            $$('[name="website_url"]').val(currentSim.website_url || '');
+            $$('[name="notification_preview"]').val(currentSim.notification_preview || '');
+            $$('[name="use_random_inbox"]').prop('checked', currentSim.use_random_inbox);
+
+            // Populate featured email
+            if (currentSim.featured_email) {
+                $$('[name="featured_sender_name"]').val(currentSim.featured_email.sender_name || '');
+                $$('[name="featured_sender_email"]').val(currentSim.featured_email.sender_email || '');
+                $$('[name="featured_subject"]').val(currentSim.featured_email.subject || '');
+                $$('[name="featured_sent_time"]').val(currentSim.featured_email.sent_time || '');
+                $$('[name="featured_body"]').val(currentSim.featured_email.body || '');
+                
+                if (currentSim.featured_email.sender_avatar) {
+                    $$('#featured_sender_avatar_preview').css('background-image', `url(${currentSim.featured_email.sender_avatar})`);
+                }
+            }
+        }
+
+        function populateInboxEmailsList() {
+            $$('#inbox_emails_list ul').html('');
+            
+            if (!currentSim.inbox_emails || currentSim.inbox_emails.length === 0) {
+                return;
+            }
+
+            currentSim.inbox_emails.forEach((email, index) => {
+                addInboxEmailToList(email, index);
+            });
+        }
+
+        function addInboxEmailToList(email, index) {
+            const emailItem = `
+                <li data-email-index="${index}" class="swipeout">
+                    <div class="item-content swipeout-content">
+                        <div class="item-media sortable-handler"><i class="f7-icons">line_horizontal_3</i></div>
+                        <div class="item-inner">
+                            <div class="item-title-row">
+                                <div class="item-title">${email.subject || 'No Subject'}</div>
+                            </div>
+                            <div class="item-subtitle">${email.sender_name || 'Unknown'} - ${email.sent_time || ''}</div>
+                        </div>
+                    </div>
+                    <div class="swipeout-actions-right">
+                        <a href="#" class="swipeout-delete">Delete</a>
+                    </div>
+                </li>
+            `;
+            $$('#inbox_emails_list ul').append(emailItem);
+        }
+
+        function addInboxEmail() {
+            const email = {
+                sender_name: 'Sender ' + (inboxEmailCounter + 1),
+                sender_email: 'sender' + (inboxEmailCounter + 1) + '@example.com',
+                sender_avatar: generateRandomAvatar(inboxEmailCounter),
+                subject: 'Subject ' + (inboxEmailCounter + 1),
+                sent_time: 'Yesterday',
+                body: 'Email body text...',
+                read: true
+            };
+
+            if (!currentSim.inbox_emails) {
+                currentSim.inbox_emails = [];
+            }
+
+            currentSim.inbox_emails.push(email);
+            addInboxEmailToList(email, currentSim.inbox_emails.length - 1);
+            inboxEmailCounter++;
+            saveCurrentSim();
+
+            // Open edit sheet for the new email
+            openInboxEmailEditSheet(currentSim.inbox_emails.length - 1);
+        }
+
+        function openInboxEmailEditSheet(index) {
+            const email = currentSim.inbox_emails[index];
+
+            const sheet = $f7.sheet.create({
+                content: `
+                    <div class="sheet-modal">
+                        <div class="toolbar">
+                            <div class="toolbar-inner">
+                                <div class="left"></div>
+                                <div class="right">
+                                    <a class="link sheet-close">Done</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="sheet-modal-inner">
+                            <div class="page-content">
+                                <div class="block-title">Edit Inbox Email</div>
+                                <div class="list list-strong inset">
+                                    <ul>
+                                        <li class="item-content item-input">
+                                            <div class="item-inner">
+                                                <div class="item-title item-label">Sender Name</div>
+                                                <div class="item-input-wrap">
+                                                    <input type="text" class="inbox-sender-name" value="${email.sender_name || ''}" />
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li class="item-content item-input">
+                                            <div class="item-inner">
+                                                <div class="item-title item-label">Sender Email</div>
+                                                <div class="item-input-wrap">
+                                                    <input type="email" class="inbox-sender-email" value="${email.sender_email || ''}" />
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li class="item-content item-input">
+                                            <div class="item-inner">
+                                                <div class="item-title item-label">Subject</div>
+                                                <div class="item-input-wrap">
+                                                    <input type="text" class="inbox-subject" value="${email.subject || ''}" />
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li class="item-content item-input">
+                                            <div class="item-inner">
+                                                <div class="item-title item-label">Sent Time</div>
+                                                <div class="item-input-wrap">
+                                                    <input type="text" class="inbox-sent-time" value="${email.sent_time || ''}" />
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li class="item-content item-input">
+                                            <div class="item-inner">
+                                                <div class="item-title item-label">Body</div>
+                                                <div class="item-input-wrap">
+                                                    <textarea class="inbox-body" rows="6">${email.body || ''}</textarea>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="item-content">
+                                                <div class="item-inner">
+                                                    <div class="item-title">Mark as Read</div>
+                                                    <div class="item-after">
+                                                        <label class="toggle">
+                                                            <input type="checkbox" class="inbox-read" ${email.read ? 'checked' : ''} />
+                                                            <i class="toggle-icon"></i>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `,
+                on: {
+                    closed: function() {
+                        // Save changes when sheet closes
+                        email.sender_name = $$('.inbox-sender-name').val();
+                        email.sender_email = $$('.inbox-sender-email').val();
+                        email.subject = $$('.inbox-subject').val();
+                        email.sent_time = $$('.inbox-sent-time').val();
+                        email.body = $$('.inbox-body').val();
+                        email.read = $$('.inbox-read').prop('checked');
+                        
+                        saveCurrentSim();
+                        populateInboxEmailsList();
+                    }
+                }
+            });
+
+            sheet.open();
+        }
+
+        // Handle clicking on inbox email items
+        $on('pageInit', () => {
+            $$('#inbox_emails_list').on('click', 'li:not(.swipeout-deleting)', (e) => {
+                if (!$$(e.target).closest('.swipeout-actions-right').length) {
+                    const index = $$(e.target).closest('li').data('email-index');
+                    openInboxEmailEditSheet(index);
+                }
+            });
+
+            // Handle swipe delete
+            $$('#inbox_emails_list').on('swipeout:deleted', (e) => {
+                const index = $$(e.target).data('email-index');
+                currentSim.inbox_emails.splice(index, 1);
+                saveCurrentSim();
+                populateInboxEmailsList();
+            });
+        });
+
+        function handleAvatarUpload(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const dataUrl = event.target.result;
+                    $$('#featured_sender_avatar_preview').css('background-image', `url(${dataUrl})`);
+                    currentSim.featured_email.sender_avatar = dataUrl;
+                    saveCurrentSim();
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function updateFieldVisibility() {
+            const triggerType = $$('[name="trigger_type"]').val();
+            const startMode = $$('[name="start_mode"]').val();
+            const backgroundType = $$('[name="background_type"]').val();
+
+            // Show/hide delay field
+            if (triggerType === 'timed') {
+                $$('#delay_field').show();
+            } else {
+                $$('#delay_field').hide();
+            }
+
+            // Show/hide notification settings
+            if (startMode === 'notification') {
+                $$('#notification_settings').show();
+            } else {
+                $$('#notification_settings').hide();
+            }
+
+            // Show/hide website URL field
+            if (backgroundType === 'website') {
+                $$('#website_url_field').show();
+            } else {
+                $$('#website_url_field').hide();
+            }
+        }
+
+        function saveCurrentSim() {
+            // Save basic fields
+            currentSim.name = $$('[name="name"]').val() || 'Unnamed Email';
+            currentSim.trigger_type = $$('[name="trigger_type"]').val();
+            currentSim.delay = parseInt($$('[name="delay"]').val()) || 3;
+            currentSim.sound_enabled = $$('[name="sound_enabled"]').prop('checked');
+            currentSim.vibration_enabled = $$('[name="vibration_enabled"]').prop('checked');
+            currentSim.start_mode = $$('[name="start_mode"]').val();
+            currentSim.clock_time = $$('[name="clock_time"]').val();
+            currentSim.background_type = $$('[name="background_type"]').val();
+            currentSim.website_url = $$('[name="website_url"]').val();
+            currentSim.notification_preview = $$('[name="notification_preview"]').val();
+            currentSim.use_random_inbox = $$('[name="use_random_inbox"]').prop('checked');
+
+            // Save featured email
+            if (!currentSim.featured_email) {
+                currentSim.featured_email = {};
+            }
+            currentSim.featured_email.sender_name = $$('[name="featured_sender_name"]').val();
+            currentSim.featured_email.sender_email = $$('[name="featured_sender_email"]').val();
+            currentSim.featured_email.subject = $$('[name="featured_subject"]').val();
+            currentSim.featured_email.sent_time = $$('[name="featured_sent_time"]').val();
+            currentSim.featured_email.body = $$('[name="featured_body"]').val();
+
+            // Save to appData
+            appData.sims[currentSim.id] = currentSim;
+            saveAppData();
+            console.log('Email sim saved:', currentSim);
+        }
+
+        $on('pageBeforeRemove', () => {
+            saveCurrentSim();
+        });
+        
+        return $render
+    };
+</script>
