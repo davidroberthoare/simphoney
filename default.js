@@ -97,8 +97,6 @@ const defaultAppData = {
             ],
             selected_contact_id: null,
             clock_time: '12:34pm',
-            background_type: 'lockscreen',
-            website_url: ''
         }
     },
 };

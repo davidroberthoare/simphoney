@@ -6,7 +6,6 @@
         
         <div class="page-content">
             <div id="clock">${currentSim.clock_time}</div>
-            <iframe id="website" src=""></iframe>
 
             <!-- Contacts List Screen -->
             <div id="contacts_screen">
@@ -144,17 +143,6 @@
         color: white;
         text-shadow: 4px 2px 5px #00000052;
         margin-top: 10vh;
-        display: none;
-    }
-
-    #website {
-        position: absolute;
-        top: 0;
-        width: 100%;
-        left: 0;
-        height: 100%;
-        overflow: hidden;
-        border: 0px;
         display: none;
     }
 
@@ -781,20 +769,11 @@
                 $$('.page[data-name="call_out"]').css('background-image', 'none');
             }
 
-            // Hide/show elements based on settings
-            if (currentSim.background_type === 'website' && currentSim.website_url.trim() !== '') {
-                $$('#website').attr('src', currentSim.website_url);
-                $$('#website').show();
-                $$('#contacts_screen').css('background', 'rgba(0, 0, 0, 0.85)');
-            } else if (currentSim.background_type === 'lockscreen') {
-                $$('#website').hide();
-                $$('#contacts_screen').css('background', 'rgba(0, 0, 0, 0.95)');
-
-                if (currentSim.clock_time && currentSim.clock_time.trim() !== '') {
-                    $$('#clock').show();
-                } else {
-                    $$('#clock').hide();
-                }
+            // Show clock if clock_time is set
+            if (currentSim.clock_time && currentSim.clock_time.trim() !== '') {
+                $$('#clock').show();
+            } else {
+                $$('#clock').hide();
             }
         });
 
@@ -880,42 +859,6 @@
                     closeOnClick: true,
                 }).open();
             });
-
-            // Auto-trigger call if selected_contact_id is set
-            if (currentSim.trigger_type === 'timed' && currentSim.selected_contact_id) {
-                setTimeout(() => {
-                    const contact = currentSim.contacts.find(c => c.id === currentSim.selected_contact_id);
-                    if (contact) {
-                        callContact(contact);
-                    }
-                }, currentSim.delay * 1000);
-            } else if (currentSim.trigger_type === 'remote') {
-                // Remote trigger setup
-                let playerSlot = appData.global.player_slot || 'player1';
-                peerId = `simphoney-${remoteChannel}-${playerSlot}`;
-                peer = new Peer(peerId);
-
-                peer.on('open', (id) => {
-                    console.log(`PeerJS connected - Channel: ${remoteChannel}, Slot: ${playerSlot}, ID: ${id}`);
-                });
-
-                peer.on('connection', (conn) => {
-                    console.log('Remote connection established');
-                    conn.on('data', (data) => {
-                        console.log('Received data from remote:', data);
-                        if (data === 'go' && currentSim.selected_contact_id) {
-                            const contact = currentSim.contacts.find(c => c.id === currentSim.selected_contact_id);
-                            if (contact) {
-                                callContact(contact);
-                            }
-                        }
-                    });
-                });
-
-                peer.on('error', (err) => {
-                    console.error('PeerJS error:', err);
-                });
-            }
         });
 
         $on('pageBeforeOut', function (e, page) {

@@ -37,33 +37,6 @@
                             </div>
                         </div>
                     </li>
-
-                    <!-- background_type selector lockscreen/website -->
-                    <li>
-                        <div class="item-content item-input">
-                            <div class="item-inner">
-                                <div class="item-title item-label">Background Type</div>
-                                <div class="item-input-wrap">
-                                    <select name="background_type">
-                                        <option value="lockscreen">Lockscreen</option>
-                                        <option value="website">Website</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                    </li>
-
-                    <!-- website_url -->
-                    <li id="website_url_field">
-                        <div class="item-content item-input">
-                            <div class="item-inner">
-                                <div class="item-title item-label">Website URL</div>
-                                <div class="item-input-wrap">
-                                    <input type="url" name="website_url" placeholder="https://example.com" />
-                                </div>
-                            </div>
-                        </div>
-                    </li>
                 </ul>
             </form>
 
@@ -337,28 +310,6 @@
             `).join('');
             
             $$('#contacts_ul').html(html);
-            
-            // Update selected contact dropdown
-            updateContactDropdown();
-        }
-
-        // Update the contact dropdown
-        function updateContactDropdown() {
-            const select = $$('select[name="selected_contact_id"]');
-            const currentValue = select.val();
-            
-            let options = '<option value="">None (manual selection)</option>';
-            if (currentSim.contacts) {
-                const sortedContacts = currentSim.contacts.slice().sort((a, b) => a.name.localeCompare(b.name));
-                sortedContacts.forEach(contact => {
-                    options += `<option value="${contact.id}">${contact.name}</option>`;
-                });
-            }
-            
-            select.html(options);
-            if (currentValue) {
-                select.val(currentValue);
-            }
         }
 
         // Render recents list
@@ -639,11 +590,6 @@
                 currentSim.contacts = currentSim.contacts.filter(c => c.id !== contactId);
                 currentSim.recents = currentSim.recents.filter(r => r.contactId !== contactId);
                 
-                if (currentSim.selected_contact_id === contactId) {
-                    currentSim.selected_contact_id = null;
-                    $$('select[name="selected_contact_id"]').val('');
-                }
-                
                 renderContacts();
                 renderRecents();
             });
@@ -895,17 +841,13 @@
                     name: 'New Outgoing Call',
                     contacts: [],
                     recents: [],
-                    clock_time: '',
-                    background_type: 'lockscreen',
-                    website_url: ''
+                    clock_time: ''
                 };
             }
 
             // Populate form fields
             $$('input[name="name"]').val(currentSim.name || '');
             $$('input[name="clock_time"]').val(currentSim.clock_time || '');
-            $$('select[name="background_type"]').val(currentSim.background_type || 'lockscreen');
-            $$('input[name="website_url"]').val(currentSim.website_url || '');
 
             // Initialize contacts and recents if they don't exist
             if (!currentSim.contacts) currentSim.contacts = [];
@@ -914,21 +856,6 @@
             // Render lists
             renderContacts();
             renderRecents();
-
-            // Show/hide fields based on settings
-            function updateFieldVisibility() {
-                const backgroundType = $$('select[name="background_type"]').val();
-
-                if (backgroundType === 'website') {
-                    $$('#website_url_field').show();
-                } else {
-                    $$('#website_url_field').hide();
-                }
-            }
-
-            updateFieldVisibility();
-
-            $$('select[name="background_type"]').on('change', updateFieldVisibility);
 
             // Contact management handlers
             $$('#add_contact_button').on('click', addContact);
@@ -966,8 +893,6 @@
                 // Collect form data
                 currentSim.name = $$('input[name="name"]').val();
                 currentSim.clock_time = $$('input[name="clock_time"]').val();
-                currentSim.background_type = $$('select[name="background_type"]').val();
-                currentSim.website_url = $$('input[name="website_url"]').val();
 
                 // Navigate to the simulation page
                 app.views.main.router.navigate('/call_out/');
@@ -978,8 +903,6 @@
                 // Collect form data
                 currentSim.name = $$('input[name="name"]').val();
                 currentSim.clock_time = $$('input[name="clock_time"]').val();
-                currentSim.background_type = $$('select[name="background_type"]').val();
-                currentSim.website_url = $$('input[name="website_url"]').val();
 
                 // Save to appData
                 appData.sims[currentSim.id] = currentSim;
