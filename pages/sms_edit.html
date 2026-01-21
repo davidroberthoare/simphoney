@@ -323,11 +323,11 @@
                     <li>
                         <a class="item-link item-content edit-sender" data-index="${index}">
                             <div class="item-media">
-                                <div class="sender-avatar" style="background-image: url(${sender.avatar})"></div>
+                                <div class="sender-avatar" style="background-image: url(${sender.picture.thumbnail})"></div>
                             </div>
                             <div class="item-inner">
                                 <div class="item-title">
-                                    ${sender.name}
+                                    ${sender.fullname}
                                 </div>
                             </div>
                         </a>
@@ -352,8 +352,8 @@
 
             if (index !== null && currentSim.senders[index]) {
                 const sender = currentSim.senders[index];
-                $$('#sender_form input[name="sender_name"]').val(sender.name);
-                $$('#sender_avatar_preview').css('background-image', `url(${sender.avatar})`);
+                $$('#sender_form input[name="sender_name"]').val(sender.fullname);
+                $$('#sender_avatar_preview').css('background-image', `url(${sender.picture.thumbnail})`);
                 $$('#delete_sender_block').show();
             } else {
                 $$('#sender_form input[name="sender_name"]').val('');
@@ -366,10 +366,10 @@
         };
 
         const saveSender = () => {
-            const name = $$('#sender_form input[name="sender_name"]').val();
+            const fullname = $$('#sender_form input[name="sender_name"]').val();
             const avatar = $$('#sender_avatar_preview').css('background-image').slice(4, -1).replace(/"/g, "");
 
-            if (!name.trim()) {
+            if (!fullname.trim()) {
                 app.notification.create({
                     title: 'Error',
                     text: 'Sender name is required',
@@ -379,7 +379,18 @@
                 return;
             }
 
-            const senderData = { name: name.trim(), avatar };
+            // Split name into first and last
+            const nameParts = fullname.trim().split(' ');
+            const senderData = {
+                name: {
+                    first: nameParts[0] || '',
+                    last: nameParts.slice(1).join(' ') || ''
+                },
+                picture: {
+                    thumbnail: avatar
+                },
+                fullname: fullname.trim()
+            };
 
             if (!currentSim.senders) {
                 currentSim.senders = [];
@@ -455,7 +466,7 @@
             
             if (currentSim.senders) {
                 currentSim.senders.forEach((sender, index) => {
-                    $select.append(`<option value="${index}">${sender.name}</option>`);
+                    $select.append(`<option value="${index}">${sender.fullname}</option>`);
                 });
             }
 
@@ -475,8 +486,8 @@
 
             messages.forEach((message, index) => {
                 const isMe = message.from === 'me';
-                const senderName = isMe ? 'Me' : (currentSim.senders[message.from]?.name || `Sender ${message.from}`);
-                const senderAvatar = isMe ? '' : (currentSim.senders[message.from]?.avatar || '');
+                const senderName = isMe ? 'Me' : (currentSim.senders[message.from]?.fullname || `Sender ${message.from}`);
+                const senderAvatar = isMe ? '' : (currentSim.senders[message.from]?.picture.thumbnail || '');
                 
                 let footerText;
                 if (type === 'prefilled') {

@@ -19,9 +19,9 @@
         </div>
         
         <div class="caller_info">
-          <div class="caller_avatar" style="background-image: url('${currentSim.caller_avatar}');"></div>
-          <div class="caller_name">${currentSim.caller_name}</div>
-          <div class="caller_number">${currentSim.caller_number}</div>
+          <div class="caller_avatar" style="background-image: url('${currentSim.caller.picture.thumbnail}');"></div>
+          <div class="caller_name">${currentSim.caller.fullname}</div>
+          <div class="caller_number">${currentSim.caller.phone}</div>
         </div>
         
         <div class="call_actions">
@@ -39,8 +39,8 @@
       <!-- In-Call Screen -->
       <div id="in_call_screen">
         <div class="incall_header">
-          <div class="incall_caller_avatar" style="background-image: url('${currentSim.caller_avatar}');"></div>
-          <div class="incall_caller_name">${currentSim.caller_name}</div>
+          <div class="incall_caller_avatar" style="background-image: url('${currentSim.caller.picture.thumbnail}');"></div>
+          <div class="incall_caller_name">${currentSim.caller.fullname}</div>
           <div class="incall_duration" id="call_duration">00:00</div>
         </div>
         
@@ -396,7 +396,7 @@
       // Show a notification that call was declined
       app.notification.create({
         title: 'Call Declined',
-        text: `Declined call from ${currentSim.caller_name}`,
+        text: `Declined call from ${currentSim.caller.fullname}`,
         closeTimeout: 2000,
         closeOnClick: true,
       }).open();

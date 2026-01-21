@@ -26,25 +26,25 @@
                         </div>
                     </li>
 
-                    <!-- caller_name -->
+                    <!-- caller name -->
                     <li>
                         <div class="item-content item-input">
                             <div class="item-inner">
                                 <div class="item-title item-label">Caller Name</div>
                                 <div class="item-input-wrap">
-                                    <input type="text" name="caller_name" placeholder="Caller Name" />
+                                    <input type="text" name="caller_fullname" placeholder="Caller Name" />
                                 </div>
                             </div>
                         </div>
                     </li>
 
-                    <!-- caller_number -->
+                    <!-- caller number -->
                     <li>
                         <div class="item-content item-input">
                             <div class="item-inner">
                                 <div class="item-title item-label">Caller Number</div>
                                 <div class="item-input-wrap">
-                                    <input type="text" name="caller_number" placeholder="+1 (555) 123-4567" />
+                                    <input type="text" name="caller_phone" placeholder="+1 (555) 123-4567" />
                                 </div>
                             </div>
                         </div>
@@ -184,8 +184,13 @@
             try {
                 if (currentSim) {
                     currentSim.name = $settings.find('input[name="name"]').val();
-                    currentSim.caller_name = $settings.find('input[name="caller_name"]').val();
-                    currentSim.caller_number = $settings.find('input[name="caller_number"]').val();
+                    // Update caller fullname and split into first/last
+                    const callerFullname = $settings.find('input[name="caller_fullname"]').val();
+                    const nameParts = callerFullname.split(' ');
+                    currentSim.caller.name.first = nameParts[0] || '';
+                    currentSim.caller.name.last = nameParts.slice(1).join(' ') || '';
+                    currentSim.caller.fullname = callerFullname;
+                    currentSim.caller.phone = $settings.find('input[name="caller_phone"]').val();
                     currentSim.trigger_type = $settings.find('select[name="trigger_type"]').val();
                     currentSim.delay = $settings.find('input[name="delay"]').val();
                     currentSim.clock_time = $settings.find('input[name="clock_time"]').val();
@@ -211,8 +216,8 @@
             const fileInput = $$('#caller_avatar_upload');
             const previewImg = $$('#caller_avatar_preview');
 
-            if (currentSim.caller_avatar && currentSim.caller_avatar.startsWith('data:')) {
-                previewImg.css('background-image', `url(${currentSim.caller_avatar})`);
+            if (currentSim.caller.picture.thumbnail && currentSim.caller.picture.thumbnail.startsWith('data:')) {
+                previewImg.css('background-image', `url(${currentSim.caller.picture.thumbnail})`);
             }
 
             fileInput.on('change', function (e) {
@@ -221,7 +226,7 @@
                     resizeImageToBase64(file)
                         .then((base64Data) => {
                             previewImg.css('background-image', `url(${base64Data})`);
-                            currentSim.caller_avatar = base64Data;
+                            currentSim.caller.picture.thumbnail = base64Data;
                             console.log('Caller avatar uploaded and stored successfully');
                         })
                         .catch((error) => {
@@ -245,8 +250,8 @@
 
             previewImg.on('click', function (e) {
                 fileInput.val('');
-                currentSim.caller_avatar = generateRandomAvatar();
-                previewImg.css('background-image', `url(${currentSim.caller_avatar})`);
+                currentSim.caller.picture.thumbnail = generateRandomAvatar();
+                previewImg.css('background-image', `url(${currentSim.caller.picture.thumbnail})`);
                 console.log('Avatar reset');
             });
         };
@@ -365,15 +370,15 @@
             console.log('Incoming call edit page displayed...', s);
             const $settings = $$('form.list.settings');
             $settings.find('input[name="name"]').val(s.name);
-            $settings.find('input[name="caller_name"]').val(s.caller_name);
-            $settings.find('input[name="caller_number"]').val(s.caller_number);
+            $settings.find('input[name="caller_fullname"]').val(s.caller.fullname);
+            $settings.find('input[name="caller_phone"]').val(s.caller.phone);
             $settings.find('input[name="clock_time"]').val(s.clock_time);
             $settings.find('input[name="delay"]').val(s.delay);
             $settings.find('select[name="trigger_type"]').val(s.trigger_type);
             $settings.find('select[name="background_type"]').val(s.background_type);
             $settings.find('input[name="website_url"]').val(s.website_url);
 
-            $$("#caller_avatar_preview").css('background-image', `url(${s.caller_avatar})`);
+            $$("#caller_avatar_preview").css('background-image', `url(${s.caller.picture.thumbnail})`);
             
             if (s.custom_ringtone && s.custom_ringtone.startsWith('data:')) {
                 $$('#ringtone_preview_container').show();

@@ -60,8 +60,8 @@
       }
       
       let notification = app.notification.create({
-        icon: `<div class="avatar" style="background-image: url('${currentSim.sender_avatar}');"></div>`,
-        title: currentSim.sender_name,
+        icon: `<div class="avatar" style="background-image: url('${currentSim.sender.picture.thumbnail}');"></div>`,
+        title: currentSim.sender.fullname,
         titleRightText: currentSim.sent_time,
         text: currentSim.message,
         closeOnClick: true,

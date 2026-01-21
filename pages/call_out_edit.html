@@ -295,7 +295,7 @@
                     <div class="contact_edit_item">
                         <div class="contact_edit_avatar" style="background-image: url('${contact.picture.thumbnail}');"></div>
                         <div class="contact_edit_info">
-                            <div class="contact_edit_name">${contact.name.first} ${contact.name.last}</div>
+                            <div class="contact_edit_name">${contact.fullname}</div>
                             <div class="contact_edit_number">${contact.phone}</div>
                         </div>
                         <div class="contact_edit_actions">
@@ -325,7 +325,7 @@
 
             const html = currentSim.recents.map((recent, index) => {
                 const contact = currentSim.contacts.find(c => c.id === recent.contactId);
-                const contactName = contact ? `${contact.name.first} ${contact.name.last}` : 'Unknown';
+                const contactName = contact ? contact.fullname : 'Unknown';
                 const iconName = recent.type === 'outgoing' ? 'phone_arrow_up_right' : 'phone_arrow_down_left';
                 const iconClass = recent.type === 'outgoing' ? 'outgoing' : 'incoming';
                 
@@ -521,7 +521,7 @@
                                                 <div class="item-inner">
                                                     <div class="item-title item-label">Name</div>
                                                     <div class="item-input-wrap">
-                                                        <input type="text" id="edit_contact_name" placeholder="Contact Name" value="${contact.name.first} ${contact.name.last}" />
+                                                        <input type="text" id="edit_contact_name" placeholder="Contact Name" value="${contact.fullname}" />
                                                     </div>
                                                 </div>
                                             </div>
@@ -577,6 +577,7 @@
                             const nameParts = name.split(' ');
                             contact.name.first = nameParts[0] || '';
                             contact.name.last = nameParts.slice(1).join(' ') || '';
+                            contact.fullname = name;
                             contact.phone = number;
                             contact.picture.thumbnail = tempAvatar;
                             renderContacts();
@@ -619,8 +620,8 @@
             
             const contactOptions = currentSim.contacts
                 .slice()
-                .sort((a, b) => a.name.localeCompare(b.name))
-                .map(c => `<option value="${c.id}">${c.name}</option>`)
+                .sort((a, b) => a.fullname.localeCompare(b.fullname))
+                .map(c => `<option value="${c.id}">${c.fullname}</option>`)
                 .join('');
             
             const popup = app.popup.create({
@@ -734,8 +735,8 @@
             
             const contactOptions = currentSim.contacts
                 .slice()
-                .sort((a, b) => a.name.localeCompare(b.name))
-                .map(c => `<option value="${c.id}" ${c.id === recent.contactId ? 'selected' : ''}>${c.name}</option>`)
+                .sort((a, b) => a.fullname.localeCompare(b.fullname))
+                .map(c => `<option value="${c.id}" ${c.id === recent.contactId ? 'selected' : ''}>${c.fullname}</option>`)
                 .join('');
             
             const popup = app.popup.create({

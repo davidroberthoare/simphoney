@@ -26,13 +26,13 @@
                         </div>
                     </li>
 
-                    <!-- sender_name -->
+                    <!-- sender name -->
                     <li>
                         <div class="item-content item-input">
                             <div class="item-inner">
                                 <div class="item-title item-label">Sender Name</div>
                                 <div class="item-input-wrap">
-                                    <input type="text" name="sender_name" placeholder="Sender Name" />
+                                    <input type="text" name="sender_fullname" placeholder="Sender Name" />
                                 </div>
                             </div>
                         </div>
@@ -203,7 +203,12 @@
             try {
                 if (currentSim) {
                     currentSim.name = $settings.find('input[name="name"]').val();
-                    currentSim.sender_name = $settings.find('input[name="sender_name"]').val();
+                    // Update sender fullname and split into first/last
+                    const senderFullname = $settings.find('input[name="sender_fullname"]').val();
+                    const nameParts = senderFullname.split(' ');
+                    currentSim.sender.name.first = nameParts[0] || '';
+                    currentSim.sender.name.last = nameParts.slice(1).join(' ') || '';
+                    currentSim.sender.fullname = senderFullname;
                     currentSim.message = $settings.find('input[name="message"]').val();
                     currentSim.sent_time = $settings.find('input[name="sent_time"]').val();
                     currentSim.trigger_type = $settings.find('select[name="trigger_type"]').val();
@@ -233,8 +238,8 @@
             const fileInput = $$('#sender_avatar_upload');
             const previewImg = $$('#sender_avatar_preview');
 
-            if (currentSim.sender_avatar && currentSim.sender_avatar.startsWith('data:')) {
-                previewImg.css('background-image', `url(${currentSim.sender_avatar})`);
+            if (currentSim.sender.picture.thumbnail && currentSim.sender.picture.thumbnail.startsWith('data:')) {
+                previewImg.css('background-image', `url(${currentSim.sender.picture.thumbnail})`);
             }
 
             fileInput.on('change', function (e) {
@@ -244,7 +249,7 @@
                     resizeImageToBase64(file)
                         .then((base64Data) => {
                             previewImg.css('background-image', `url(${base64Data})`);
-                            currentSim.sender_avatar = base64Data;
+                            currentSim.sender.picture.thumbnail = base64Data;
                             console.log('Sender image uploaded and stored successfully');
                         })
                         .catch((error) => {
@@ -268,8 +273,8 @@
 
             previewImg.on('click', function (e) {
                 fileInput.val('');
-                currentSim.sender_avatar = generateRandomAvatar();
-                previewImg.css('background-image', `url(${currentSim.sender_avatar})`);
+                currentSim.sender.picture.thumbnail = generateRandomAvatar();
+                previewImg.css('background-image', `url(${currentSim.sender.picture.thumbnail})`);
                 console.log('image reset');
             });
         };
@@ -317,7 +322,7 @@
             console.log('notification edit page displayed...', s);
             const $settings = $$('form.list.settings');
             $settings.find('input[name="name"]').val(s.name);
-            $settings.find('input[name="sender_name"]').val(s.sender_name);
+            $settings.find('input[name="sender_fullname"]').val(s.sender.fullname);
             $settings.find('input[name="message"]').val(s.message);
             $settings.find('input[name="sent_time"]').val(s.sent_time);
             $settings.find('input[name="clock_time"]').val(s.clock_time);
@@ -328,7 +333,7 @@
             $settings.find('input[name="sound_enabled"]').prop('checked', s.sound_enabled || false);
             $settings.find('input[name="vibration_enabled"]').prop('checked', s.vibration_enabled || false);
 
-            $$("#sender_avatar_preview").css('background-image', `url(${s.sender_avatar})`);
+            $$("#sender_avatar_preview").css('background-image', `url(${s.sender.picture.thumbnail})`);
             show_hide_website_url_field();
             show_hide_delay_field();
         });

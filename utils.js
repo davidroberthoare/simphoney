@@ -21,7 +21,7 @@ function generateRandomAvatar(id) {
             index = Math.floor(Math.random() * randomUsersData.length);
         }
         const user = randomUsersData[index];
-        return user.picture.thumbnail;
+        return user.picture.medium;
     }
 
     // Fallback to old method if data not loaded yet
@@ -58,11 +58,12 @@ function generateContacts(count) {
         const userIndex = availableIndices[i];
         const user = randomUsersData[userIndex];
         
-        // Add the entire user object with an id and favorite flag
+        // Add the entire user object with an id, favorite flag, and fullname for convenience
         contacts.push({
             ...user,
             id: i + 1,
-            favorite: Math.random() < 0.2 // 20% chance of being a favorite
+            favorite: Math.random() < 0.2, // 20% chance of being a favorite
+            fullname: `${user.name.first} ${user.name.last}`
         });
     }
     

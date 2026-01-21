@@ -589,7 +589,7 @@
         <div class="contact_item" data-contact-id="${contact.id}">
           <div class="contact_avatar" style="background-image: url('${contact.picture.thumbnail}');"></div>
           <div class="contact_info">
-            <div class="contact_name">${contact.name.first} ${contact.name.last}</div>
+            <div class="contact_name">${contact.fullname}</div>
             <div class="contact_number">${contact.phone}</div>
           </div>
         </div>
@@ -613,7 +613,7 @@
               </div>
               <div class="recent_avatar" style="background-image: url('${contact.picture.thumbnail}');"></div>
               <div class="recent_info">
-                <div class="recent_name">${contact.name.first} ${contact.name.last}</div>
+                <div class="recent_name">${contact.fullname}</div>
                 <div class="recent_details">${contact.phone} · ${recent.duration}</div>
               </div>
               <div class="recent_time">${recent.timestamp}</div>
@@ -631,7 +631,7 @@
         <div class="contact_item" data-contact-id="${contact.id}">
           <div class="contact_avatar" style="background-image: url('${contact.picture.thumbnail}');"></div>
           <div class="contact_info">
-            <div class="contact_name">${contact.name.first} ${contact.name.last}</div>
+            <div class="contact_name">${contact.fullname}</div>
             <div class="contact_number">${contact.phone}</div>
           </div>
         </div>
@@ -655,7 +655,7 @@
             $$('#calling_screen').css('display', 'flex');
 
             $$('.calling_avatar').css('background-image', `url('${contact.picture.thumbnail}')`);
-            $$('.calling_name').text(`${contact.name.first} ${contact.name.last}`);
+            $$('.calling_name').text(contact.fullname);
             $$('.calling_number').text(contact.phone);
             $$('#calling_status').text('calling...');
 
