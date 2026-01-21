@@ -18,7 +18,7 @@ const defaultAppData = {
             trigger_type: "timed",
             sent_time: "now",
             sender_name: "Sender Name",
-            sender_avatar: "https://testingbot.com/free-online-tools/random-avatar/150?u=1768663665999",
+            sender_avatar: generateRandomAvatar(1000),
             message: "This is an example notification message.",
             clock_time: "12:34pm",
             background_type: "lockscreen",

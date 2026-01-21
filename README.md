@@ -101,8 +101,8 @@ Open source and free to use for any purpose. No warranty provided.
 
 ## Credits
 
-Created for filmmakers, by a film teacher, David Hoare.
-
-"Using phone" icons created by kornkun (https://www.flaticon.com/free-icons/using-phone)
+- Created for filmmakers, by a film teacher, **David Hoare** (https://davidhoare.net).
+- "Using phone" icons created by **kornkun** (https://www.flaticon.com/free-icons/using-phone)
+- Random users provided by **randomuser.me** (https://randomuser.me/api/?results=200&nat=us,dk,fr,gb&inc=gender,name,nat,phone,email,picture)
 
 :)

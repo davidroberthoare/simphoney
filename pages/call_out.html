@@ -578,17 +578,19 @@
             if (!currentSim.contacts) return;
 
             const favorites = currentSim.contacts.filter(c => c.favorite);
-            const allContacts = currentSim.contacts.slice().sort((a, b) =>
-                a.name.localeCompare(b.name)
-            );
+            const allContacts = currentSim.contacts.slice().sort((a, b) => {
+                const nameA = `${a.name.first} ${a.name.last}`;
+                const nameB = `${b.name.first} ${b.name.last}`;
+                return nameA.localeCompare(nameB);
+            });
 
             // Render favorites
             const favoritesHtml = favorites.map(contact => `
         <div class="contact_item" data-contact-id="${contact.id}">
-          <div class="contact_avatar" style="background-image: url('${contact.avatar}');"></div>
+          <div class="contact_avatar" style="background-image: url('${contact.picture.thumbnail}');"></div>
           <div class="contact_info">
-            <div class="contact_name">${contact.name}</div>
-            <div class="contact_number">${contact.number}</div>
+            <div class="contact_name">${contact.name.first} ${contact.name.last}</div>
+            <div class="contact_number">${contact.phone}</div>
           </div>
         </div>
       `).join('');
@@ -609,10 +611,10 @@
               <div class="recent_icon ${iconClass}">
                 <i class="f7-icons">${iconName}</i>
               </div>
-              <div class="recent_avatar" style="background-image: url('${contact.avatar}');"></div>
+              <div class="recent_avatar" style="background-image: url('${contact.picture.thumbnail}');"></div>
               <div class="recent_info">
-                <div class="recent_name">${contact.name}</div>
-                <div class="recent_details">${contact.number} · ${recent.duration}</div>
+                <div class="recent_name">${contact.name.first} ${contact.name.last}</div>
+                <div class="recent_details">${contact.phone} · ${recent.duration}</div>
               </div>
               <div class="recent_time">${recent.timestamp}</div>
             </div>
@@ -627,10 +629,10 @@
             // Render all contacts
             const allContactsHtml = allContacts.map(contact => `
         <div class="contact_item" data-contact-id="${contact.id}">
-          <div class="contact_avatar" style="background-image: url('${contact.avatar}');"></div>
+          <div class="contact_avatar" style="background-image: url('${contact.picture.thumbnail}');"></div>
           <div class="contact_info">
-            <div class="contact_name">${contact.name}</div>
-            <div class="contact_number">${contact.number}</div>
+            <div class="contact_name">${contact.name.first} ${contact.name.last}</div>
+            <div class="contact_number">${contact.phone}</div>
           </div>
         </div>
       `).join('');
@@ -652,9 +654,9 @@
             $$('#contacts_screen').hide();
             $$('#calling_screen').css('display', 'flex');
 
-            $$('.calling_avatar').css('background-image', `url('${contact.avatar}')`);
-            $$('.calling_name').text(contact.name);
-            $$('.calling_number').text(contact.number);
+            $$('.calling_avatar').css('background-image', `url('${contact.picture.thumbnail}')`);
+            $$('.calling_name').text(`${contact.name.first} ${contact.name.last}`);
+            $$('.calling_number').text(contact.phone);
             $$('#calling_status').text('calling...');
 
             playRingingSound();
