@@ -3,6 +3,78 @@
 // UTILITY FUNCTIONS -------------------------------------
 // UTILITY FUNCTIONS -------------------------------------
 
+// Reset app: clear all data, cache, and service worker
+async function resetApp() {
+  try {
+    // Show confirmation dialog
+    const confirmed = await new Promise((resolve) => {
+      app.dialog.confirm(
+        'This will reset all data, clear cache, and reload the app. Are you sure?',
+        'Reset App',
+        () => resolve(true),
+        () => resolve(false)
+      );
+    });
+
+    if (!confirmed) {
+      return;
+    }
+
+    console.log('[Reset] Starting app reset...');
+
+    // 1. Clear localStorage
+    console.log('[Reset] Clearing localStorage...');
+    localStorage.clear();
+
+    // 2. Clear sessionStorage
+    console.log('[Reset] Clearing sessionStorage...');
+    sessionStorage.clear();
+
+    // 3. Clear all caches
+    if ('caches' in window) {
+      console.log('[Reset] Clearing all caches...');
+      const cacheNames = await caches.keys();
+      await Promise.all(
+        cacheNames.map(cacheName => {
+          console.log('[Reset] Deleting cache:', cacheName);
+          return caches.delete(cacheName);
+        })
+      );
+    }
+
+    // 4. Unregister all service workers
+    if ('serviceWorker' in navigator) {
+      console.log('[Reset] Unregistering service workers...');
+      const registrations = await navigator.serviceWorker.getRegistrations();
+      await Promise.all(
+        registrations.map(registration => {
+          console.log('[Reset] Unregistering:', registration.scope);
+          return registration.unregister();
+        })
+      );
+    }
+
+    // 5. Clear IndexedDB if used (future-proofing)
+    if ('indexedDB' in window) {
+      console.log('[Reset] Clearing IndexedDB...');
+      const dbs = await indexedDB.databases();
+      dbs.forEach(db => {
+        if (db.name) {
+          indexedDB.deleteDatabase(db.name);
+        }
+      });
+    }
+
+    console.log('[Reset] Reset complete, reloading...');
+
+    // 6. Reload the page with cache bypass
+    window.location.reload(true);
+  } catch (error) {
+    console.error('[Reset] Error during reset:', error);
+    app.dialog.alert('An error occurred during reset. Please try manually clearing your browser cache.', 'Reset Error');
+  }
+}
+
 // Generate a unique ID
 function generateUniqueId() {
     return 'sim-' + Math.random().toString(36).slice(2, 16);

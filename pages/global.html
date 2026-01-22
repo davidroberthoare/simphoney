@@ -149,6 +149,17 @@
 
         </ul>
       </form>
+
+      <!-- Reset App Section -->
+      <div class="block block-strong inset" style="margin-top: 30px;">
+        <p style="font-size: 14px; color: #888; margin-bottom: 10px;">
+          Reset all data, clear cache, and force a fresh start. Use this if updates aren't loading properly.
+        </p>
+        <button id="reset-app-btn" class="button button-fill button-raised color-red">
+          <i class="f7-icons" style="margin-right: 8px;">arrow_clockwise</i>
+          Reset App & Clear Cache
+        </button>
+      </div>
     </div>
 
 
@@ -325,6 +336,12 @@
         setTimeout(() => {
           if (sound) stopSound(sound);
         }, 2000);
+      });
+
+      // Add reset app button handler
+      $$('#reset-app-btn').off('click').on('click', function (e) {
+        e.preventDefault();
+        resetApp();
       });
     });
 
