@@ -103,7 +103,6 @@ const defaultAppData = {
             clock_time: '12:34pm',
             background_type: 'lockscreen',
             website_url: '',
-            notification_preview: 'This is an important update regarding your account...',
             featured_email: {
                 sender_name: generateContacts(1)[0].fullname,
                 sender_email: generateContacts(1)[0].email,
@@ -112,7 +111,26 @@ const defaultAppData = {
                 sent_time: '10:23 AM',
                 body: 'Hi there,\n\nThis is an important update regarding your account. We wanted to inform you about some recent changes that may affect your experience.\n\nPlease review the following details carefully:\n\n1. Your account settings have been updated\n2. New features are now available\n3. Security enhancements have been implemented\n\nIf you have any questions or concerns, please don\'t hesitate to reach out to our support team.\n\nBest regards,\nThe Support Team'
             },
-            inbox_emails: [],
+            inbox_emails: [
+                {
+                    sender_name: generateContacts(1)[0].fullname,
+                    sender_email: generateContacts(1)[0].email,
+                    sender_avatar: generateContacts(1)[0].picture.medium,
+                    subject: 'RE: Project Update',
+                    sent_time: 'Yesterday',
+                    body: 'Thanks for the update. I reviewed the documents and everything looks good.\n\nLet me know when you\'re ready to proceed with the next phase.\n\nBest,\nJohn',
+                    read: true
+                },
+                {
+                    sender_name: generateContacts(1)[0].fullname,
+                    sender_email: generateContacts(1)[0].email,
+                    sender_avatar: generateContacts(1)[0].picture.medium,
+                    subject: 'Meeting Notes',
+                    sent_time: 'Monday',
+                    body: 'Here are the notes from yesterday\'s meeting:\n\n- Discussed Q1 goals\n- Reviewed budget allocations\n- Assigned action items\n\nPlease review and let me know if I missed anything.',
+                    read: true
+                }
+            ],
             use_random_inbox: true
         }
     },

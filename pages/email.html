@@ -1,12 +1,12 @@
 <!-- EMAIL COMPONENT -->
 <template>
   <div data-name="email" class="page">
-    <div class="navbar">
+    <!-- Desktop-only back button -->
+    <a href="/" class="desktop-back-button link back"><i class="f7-icons">chevron_left</i></a>
+    
+    <div class="navbar" id="email_navbar">
       <div class="navbar-inner">
-        <div class="left">
-          <a href="/" class="link back"><i class="f7-icons">chevron_left</i></a>
-        </div>
-        <div class="title">Inbox</div>
+        <div class="title" id="email_navbar_title">Inbox</div>
         <div class="right">
           <a href="#" class="link icon-only" id="compose_button">
             <i class="f7-icons">square_pencil</i>
@@ -59,7 +59,6 @@
       <div id="compose_view" class="email-view" style="display: none;">
         <div class="compose-header">
           <a href="#" class="link" id="cancel_compose">Cancel</a>
-          <div class="compose-title">New Message</div>
           <a href="#" class="link" id="send_button">Send</a>
         </div>
         <div class="compose-form">
@@ -69,7 +68,7 @@
                 <div class="item-inner">
                   <div class="item-title item-label">To:</div>
                   <div class="item-input-wrap">
-                    <input type="email" id="compose_to" readonly />
+                    <input type="email" id="compose_to" placeholder="Recipient's email" />
                   </div>
                 </div>
               </li>
@@ -77,7 +76,7 @@
                 <div class="item-inner">
                   <div class="item-title item-label">Subject:</div>
                   <div class="item-input-wrap">
-                    <input type="text" id="compose_subject" />
+                    <input type="text" id="compose_subject" placeholder="Subject" />
                   </div>
                 </div>
               </li>
@@ -94,6 +93,54 @@
 
 <!-- component styles -->
 <style>
+  /* f7 override */
+  .list {
+    margin:0px; 
+  }
+
+  .navbar{
+    display:none;
+  }
+
+  /* Desktop-only back button */
+  .desktop-back-button {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(10px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    color: #fff;
+    font-size: 24px;
+    transition: background 0.2s;
+  }
+  
+  .desktop-back-button:active {
+    background: rgba(0, 0, 0, 0.7);
+  }
+  
+  /* Show back button only on desktop (wider than mobile) */
+  @media (min-width: 768px) {
+    .desktop-back-button {
+      display: flex;
+    }
+  }
+
+  /* Navbar background - only show when views are active */
+  #email_navbar {
+    background: transparent;
+  }
+  
+  #email_navbar.navbar-with-bg {
+    background: var(--f7-bars-bg-color);
+  }
+
   /* Clock and website background for notifications */
   #clock {
     width: 100%;
@@ -106,7 +153,7 @@
     position: absolute;
     top: 0;
     left: 0;
-    z-index: 1;
+    z-index: -1;
   }
 
   #website {
@@ -120,6 +167,17 @@
     display: none;
   }
 
+  /* Email views */
+  .email-view {
+    min-height: 100%;
+    display:none;
+    background-color: #fff;
+  }
+  
+  .dark .email-view {
+    background-color: #000;
+  }
+  
   /* Inbox view */
   #inbox_view {
     padding-top: 8px;
@@ -168,7 +226,7 @@
 
   /* Reader view */
   #reader_view {
-    display: flex;
+    display: none;
     flex-direction: column;
     height: 100%;
   }
@@ -247,7 +305,7 @@
 
   /* Compose view */
   #compose_view {
-    display: flex;
+    display: none;
     flex-direction: column;
     height: 100%;
   }
@@ -260,10 +318,7 @@
     border-bottom: 1px solid var(--f7-list-item-border-color);
   }
 
-  .compose-title {
-    font-size: 17px;
-    font-weight: 600;
-  }
+
 
   .compose-form {
     flex: 1;
@@ -422,18 +477,15 @@
         $$('#compose_to').val(email.sender_email);
         $$('#compose_subject').val('Re: ' + email.subject);
         $$('#compose_body').val('\n\n---\nOn ' + email.sent_time + ', ' + email.sender_name + ' wrote:\n' + email.body);
-        $$('.compose-title').text('Reply');
       } else if (mode === 'forward' && emailIndex >= 0) {
         const email = allEmails[emailIndex];
         $$('#compose_to').val('');
         $$('#compose_subject').val('Fwd: ' + email.subject);
         $$('#compose_body').val('\n\n---\nForwarded message from ' + email.sender_name + ':\n' + email.body);
-        $$('.compose-title').text('Forward');
       } else {
         $$('#compose_to').val('');
         $$('#compose_subject').val('');
         $$('#compose_body').val('');
-        $$('.compose-title').text('New Message');
       }
       
       showView('compose');
@@ -472,23 +524,32 @@
     function showView(view) {
       currentView = view;
       
+      $$('#website').hide();
       $$('#inbox_view').hide();
       $$('#reader_view').hide();
       $$('#compose_view').hide();
       
+      const navbar = $$('#email_navbar');
+      const navbarTitle = $$('#email_navbar_title');
+      const pageContent = $$('#main_page_content');
+      
       if (view === 'inbox') {
         $$('#inbox_view').show();
-        $$('.navbar .title').text('Inbox');
+        navbar.addClass('navbar-with-bg').show();
+        navbarTitle.text('Inbox').show();
         $$('#compose_button').show();
+        pageContent.css('padding-top', '');
         populateInbox(); // Refresh to show read/unread states
       } else if (view === 'reader') {
         $$('#reader_view').show();
-        $$('.navbar .title').text('Message');
+        navbar.removeClass('navbar-with-bg').hide();
         $$('#compose_button').hide();
+        pageContent.css('padding-top', '0');
       } else if (view === 'compose') {
         $$('#compose_view').show();
-        $$('.navbar .title').text('Compose');
+        navbar.removeClass('navbar-with-bg').hide();
         $$('#compose_button').hide();
+        pageContent.css('padding-top', '0');
       }
     }
 
@@ -511,7 +572,7 @@
         title: featuredEmail.sender_name || 'New Email',
         subtitle: featuredEmail.subject || 'No Subject',
         titleRightText: featuredEmail.sent_time || 'now',
-        text: currentSim.notification_preview || featuredEmail.body.substring(0, 50) + '...',
+        text: featuredEmail.body.substring(0, 50) + '...',
         closeOnClick: true,
         swipeToClose: true,
         on: {
@@ -553,6 +614,10 @@
         console.error('No valid email sim');
         return;
       }
+      
+      // Hide navbar and remove padding initially
+      $$('#email_navbar').hide();
+      $$('#main_page_content').css('padding-top', '0');
 
       // Build email list
       allEmails = [];
@@ -561,7 +626,7 @@
       if (currentSim.featured_email) {
         allEmails.push({
           ...currentSim.featured_email,
-          preview: currentSim.notification_preview || currentSim.featured_email.body.substring(0, 50) + '...',
+          preview: currentSim.featured_email.body.substring(0, 50) + '...',
           read: false
         });
       }
@@ -619,6 +684,11 @@
 
       // Determine start mode
       if (currentSim.start_mode === 'notification') {
+        // Hide navbar for notification mode
+        $$('#email_navbar').removeClass('navbar-with-bg').hide();
+        $$('#email_navbar_title').hide();
+        $$('#main_page_content').css('padding-top', '0');
+        
         // Show background elements
         if (currentSim.background_type === 'lockscreen') {
           if (currentSim.clock_time) {
@@ -626,10 +696,13 @@
           }
         } else if (currentSim.background_type === 'website' && currentSim.website_url) {
           $$('#website').attr('src', currentSim.website_url).show();
+          // Ensure navbar and views stay hidden when website is the background
+          $$('#email_navbar').hide();
+          $$('#inbox_view').hide();
+          $$('#reader_view').hide();
+          $$('#compose_view').hide();
         }
         
-        // Hide inbox initially
-        $$('#inbox_view').hide();
         
         // Trigger notification based on trigger type
         if (currentSim.trigger_type === 'timed') {

@@ -141,18 +141,6 @@
                                 </div>
                             </div>
                         </li>
-
-                        <!-- notification_preview -->
-                        <li>
-                            <div class="item-content item-input">
-                                <div class="item-inner">
-                                    <div class="item-title item-label">Preview Text</div>
-                                    <div class="item-input-wrap">
-                                        <input type="text" name="notification_preview" placeholder="First line of email..." />
-                                    </div>
-                                </div>
-                            </div>
-                        </li>
                     </ul>
                 </form>
             </div>
@@ -312,7 +300,6 @@
                     clock_time: '12:34pm',
                     background_type: 'lockscreen',
                     website_url: '',
-                    notification_preview: '',
                     featured_email: {
                         sender_name: '',
                         sender_email: '',
@@ -340,7 +327,7 @@
             // Play Now button
             $$('#play_now_button').on('click', () => {
                 saveCurrentSim();
-                playSim(currentSim.id);
+                mainView.router.navigate('/email/');
             });
 
             // Add inbox email button
@@ -369,7 +356,6 @@
             $$('[name="clock_time"]').val(currentSim.clock_time || '');
             $$('[name="background_type"]').val(currentSim.background_type || 'lockscreen');
             $$('[name="website_url"]').val(currentSim.website_url || '');
-            $$('[name="notification_preview"]').val(currentSim.notification_preview || '');
             $$('[name="use_random_inbox"]').prop('checked', currentSim.use_random_inbox);
 
             // Populate featured email
@@ -402,7 +388,7 @@
             const emailItem = `
                 <li data-email-index="${index}" class="swipeout">
                     <div class="item-content swipeout-content">
-                        <div class="item-media sortable-handler"><i class="f7-icons">line_horizontal_3</i></div>
+                        <div class="item-media sortable-handler"></div>
                         <div class="item-inner">
                             <div class="item-title-row">
                                 <div class="item-title">${email.subject || 'No Subject'}</div>
@@ -445,20 +431,19 @@
         function openInboxEmailEditSheet(index) {
             const email = currentSim.inbox_emails[index];
 
-            const sheet = $f7.sheet.create({
+            const popup = $f7.popup.create({
                 content: `
-                    <div class="sheet-modal">
-                        <div class="toolbar">
-                            <div class="toolbar-inner">
-                                <div class="left"></div>
-                                <div class="right">
-                                    <a class="link sheet-close">Done</a>
+                    <div class="popup">
+                        <div class="page">
+                            <div class="navbar">
+                                <div class="navbar-inner">
+                                    <div class="title">Edit Inbox Email</div>
+                                    <div class="right">
+                                        <a class="link popup-close">Done</a>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="sheet-modal-inner">
                             <div class="page-content">
-                                <div class="block-title">Edit Inbox Email</div>
                                 <div class="list list-strong inset">
                                     <ul>
                                         <li class="item-content item-input">
@@ -474,6 +459,17 @@
                                                 <div class="item-title item-label">Sender Email</div>
                                                 <div class="item-input-wrap">
                                                     <input type="email" class="inbox-sender-email" value="${email.sender_email || ''}" />
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li class="item-content item-input">
+                                            <div class="item-media">
+                                                <div class="avatar inbox-sender-avatar-preview" style="background-image: url('${email.sender_avatar || ''}'); cursor: pointer;"></div>
+                                            </div>
+                                            <div class="item-inner">
+                                                <div class="item-title item-label">Sender Image</div>
+                                                <div class="item-input-wrap">
+                                                    <input type="file" class="inbox-sender-avatar-upload" accept="image/*" />
                                                 </div>
                                             </div>
                                         </li>
@@ -516,13 +512,48 @@
                                         </li>
                                     </ul>
                                 </div>
+                                <div class="block">
+                                    <button class="button button-fill color-red inbox-delete-button">Delete Email</button>
+                                </div>
                             </div>
                         </div>
                     </div>
                 `,
                 on: {
+                    opened: function() {
+                        // Avatar upload handler
+                        $$('.inbox-sender-avatar-upload').on('change', (e) => {
+                            const file = e.target.files[0];
+                            if (file) {
+                                const reader = new FileReader();
+                                reader.onload = (event) => {
+                                    const dataUrl = event.target.result;
+                                    $$('.inbox-sender-avatar-preview').css('background-image', `url(${dataUrl})`);
+                                    email.sender_avatar = dataUrl;
+                                };
+                                reader.readAsDataURL(file);
+                            }
+                        });
+
+                        // Click avatar to generate random
+                        $$('.inbox-sender-avatar-preview').on('click', () => {
+                            const randomAvatar = generateRandomAvatar();
+                            $$('.inbox-sender-avatar-preview').css('background-image', `url(${randomAvatar})`);
+                            email.sender_avatar = randomAvatar;
+                        });
+
+                        // Delete button handler
+                        $$('.inbox-delete-button').on('click', () => {
+                            $f7.dialog.confirm('Delete this inbox email?', () => {
+                                currentSim.inbox_emails.splice(index, 1);
+                                saveCurrentSim();
+                                populateInboxEmailsList();
+                                popup.close();
+                            });
+                        });
+                    },
                     closed: function() {
-                        // Save changes when sheet closes
+                        // Save changes when popup closes
                         email.sender_name = $$('.inbox-sender-name').val();
                         email.sender_email = $$('.inbox-sender-email').val();
                         email.subject = $$('.inbox-subject').val();
@@ -536,13 +567,13 @@
                 }
             });
 
-            sheet.open();
+            popup.open();
         }
 
         // Handle clicking on inbox email items
         $on('pageInit', () => {
             $$('#inbox_emails_list').on('click', 'li:not(.swipeout-deleting)', (e) => {
-                if (!$$(e.target).closest('.swipeout-actions-right').length) {
+                if (!$$(e.target).closest('.swipeout-actions-right').length && !$$(e.target).closest('.sortable-handler').length) {
                     const index = $$(e.target).closest('li').data('email-index');
                     openInboxEmailEditSheet(index);
                 }
@@ -554,6 +585,42 @@
                 currentSim.inbox_emails.splice(index, 1);
                 saveCurrentSim();
                 populateInboxEmailsList();
+            });
+        });
+
+        // Handle sortable reordering - attach after list is populated
+        $on('pageAfterIn', () => {
+            // Remove any existing handler
+            $$('#inbox_emails_list').off('sortable:sort');
+            
+            // Attach sortable handler
+            $$('#inbox_emails_list').on('sortable:sort', function(e) {
+                console.log('Sortable sort event triggered');
+                console.log('Total li elements:', $$('#inbox_emails_list ul li').length);
+                
+                // Get the new order from the DOM
+                const sortedEmails = [];
+                $$('#inbox_emails_list ul li').each(function(index) {
+                    const emailIndex = $$(this).attr('data-email-index');
+                    console.log('Li element:', index, 'has email-index:', emailIndex);
+                    
+                    if (emailIndex !== undefined && emailIndex !== null && currentSim.inbox_emails[emailIndex]) {
+                        sortedEmails.push(currentSim.inbox_emails[emailIndex]);
+                    }
+                });
+                
+                console.log('Sorted emails:', sortedEmails.length);
+                
+                if (sortedEmails.length > 0) {
+                    currentSim.inbox_emails = sortedEmails;
+                    saveCurrentSim();
+                    console.log('Saved sorted emails');
+                    
+                    // Update indices without full repopulate
+                    $$('#inbox_emails_list ul li').each(function(index) {
+                        $$(this).attr('data-email-index', index);
+                    });
+                }
             });
         });
 
@@ -609,7 +676,6 @@
             currentSim.clock_time = $$('[name="clock_time"]').val();
             currentSim.background_type = $$('[name="background_type"]').val();
             currentSim.website_url = $$('[name="website_url"]').val();
-            currentSim.notification_preview = $$('[name="notification_preview"]').val();
             currentSim.use_random_inbox = $$('[name="use_random_inbox"]').prop('checked');
 
             // Save featured email
