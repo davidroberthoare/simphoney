@@ -728,34 +728,40 @@
         return;
       }
 
-      const playerId = appData.global.player_slot || 'player1';
-      peerId = `simphoney_email_${remoteChannel}_${playerId}`;
+      // Get player slot from global settings
+      let playerSlot = appData.global.player_slot || 'player1';
 
+      // Initialize PeerJS with predictable ID for auto-discovery
+      peerId = `simphoney-${remoteChannel}-${playerSlot}`;
       peer = new Peer(peerId);
 
       peer.on('open', (id) => {
-        console.log('Email peer connection established:', id);
+        console.log(`PeerJS connected - Channel: ${remoteChannel}, Slot: ${playerSlot}, ID: ${id}`);
       });
 
       peer.on('connection', (conn) => {
+        console.log('Remote connection established');
         conn.on('data', (data) => {
-          console.log('Received remote command:', data);
-          if (data.action === 'trigger' && data.simId === currentSim.id) {
+          console.log('Received data from remote:', data);
+          if (data === 'go') {
             triggerNotification();
           }
         });
       });
 
       peer.on('error', (err) => {
-        console.error('Peer connection error:', err);
+        console.error('PeerJS error:', err);
       });
     }
 
-    $on('pageBeforeRemove', () => {
-      // Cleanup peer connection
+    $on('pageBeforeOut', function (e, page) {
+      // Clean up PeerJS connection when leaving the page
       if (peer) {
         peer.destroy();
         peer = null;
+        peerId = null;
+        localStorage.removeItem('simphoney_peer_id');
+        console.log('PeerJS connection closed');
       }
     });
     
