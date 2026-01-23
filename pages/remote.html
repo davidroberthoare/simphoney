@@ -21,7 +21,7 @@
         <ul></ul>
       </div>
       <div class="block" id="no-devices">
-        <p>Searching for devices in channel...</p>
+        <p><i class="f7-icons search-icon">arrow_clockwise</i> <span id="search-text">Searching for devices in channel...</span></p>
       </div>
     </div>
   </div>
@@ -57,6 +57,22 @@
     font-size: 0.9em;
     color: #666;
   }
+
+  .search-icon {
+    display: inline-block;
+    font-size: 16px;
+    vertical-align: middle;
+    margin-right: 4px;
+  }
+
+  .search-icon.searching {
+    animation: rotate 1s linear infinite;
+  }
+
+  @keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
 </style>
 
 <!-- component logic -->
@@ -64,9 +80,11 @@
   export default (props, { $f7, $on }) => {
     let peer = null;
     let connections = {};
+    let connectionAttempts = {}; // Track attempted connections with timestamps
     let pollInterval = null;
     const remoteChannel = appData.global.remote_channel || 'default';
     const knownDevices = ['player1', 'player2', 'player3', 'player4', 'player5']; // Try connecting to these device slots
+    const RETRY_DELAY = 2000; // Retry failed connections after 2 seconds
 
     function updateDeviceList() {
       const deviceList = $$('#device-list ul');
@@ -128,31 +146,61 @@
     }
 
     function connectToPeer(peerId) {
+      // Check if we already have a connection
       if (connections[peerId]) {
         return;
       }
 
+      // Check if we have a recent failed attempt (within retry delay)
+      const lastAttempt = connectionAttempts[peerId];
+      if (lastAttempt && (Date.now() - lastAttempt < RETRY_DELAY)) {
+        return; // Too soon to retry
+      }
+
+      // Mark this peer with timestamp
+      connectionAttempts[peerId] = Date.now();
+
       const conn = peer.connect(peerId);
       
       conn.on('open', () => {
-        console.log('Connected to device:', peerId);
+        console.log('✓ Connected to device:', peerId);
         connections[peerId] = conn;
+        delete connectionAttempts[peerId]; // Clear attempt marker on success
         updateDeviceList();
       });
 
       conn.on('close', () => {
         console.log('Disconnected from:', peerId);
         delete connections[peerId];
+        delete connectionAttempts[peerId]; // Clear so we can reconnect
         updateDeviceList();
       });
 
       conn.on('error', (err) => {
-        // Silently handle connection errors
+        // Silently handle connection errors - devices may not be online yet
+        // Only log if it's not a "peer unavailable" error
+        if (err.type !== 'peer-unavailable') {
+          console.warn('Connection error to', peerId, ':', err.type);
+        }
         delete connections[peerId];
+        // Keep the timestamp in connectionAttempts - it will allow retry after RETRY_DELAY
       });
     }
 
     function pollForDevices() {
+      console.log('🔍 Polling for devices in channel:', remoteChannel);
+      
+      // Show searching animation (safe check)
+      const searchIcon = $$('.search-icon');
+      if (searchIcon.length > 0) {
+        searchIcon.addClass('searching');
+        
+        // Stop animation after a brief moment
+        setTimeout(() => {
+          searchIcon.removeClass('searching');
+        }, 500);
+      }
+      
       // Try connecting to predictable peer IDs based on remote channel
       knownDevices.forEach((deviceSlot) => {
         const targetPeerId = `simphoney-${remoteChannel}-${deviceSlot}`;
@@ -166,23 +214,49 @@
       console.log('Remote control page displayed for channel:', remoteChannel);
       $$('#room-name-display').text(remoteChannel);
 
+      // Check WebRTC support
+      const hasWebRTC = !!(window.RTCPeerConnection || window.webkitRTCPeerConnection || window.mozRTCPeerConnection);
+      if (!hasWebRTC) {
+        console.error('WebRTC not available');
+        $f7.dialog.alert('WebRTC is disabled. In Brave, go to Settings → Shields and set Fingerprinting to "Standard"', 'WebRTC Disabled');
+        return;
+      }
+
       // Initialize PeerJS with random ID
-      peer = new Peer();
+      try {
+        peer = new Peer({
+          debug: 0
+        });
+      } catch (err) {
+        console.error('Failed to create peer:', err);
+        $f7.dialog.alert('Failed to initialize remote control. Please check browser settings.', 'Connection Error');
+        return;
+      }
 
       peer.on('open', (id) => {
         console.log('Remote controller PeerJS ID:', id);
         
-        // Start polling for devices every 2 seconds
-        pollInterval = setInterval(pollForDevices, 2000);
+        // Start polling for devices every 3 seconds
+        pollInterval = setInterval(pollForDevices, 3000);
         
         // Do an immediate poll
         pollForDevices();
       });
 
       peer.on('error', (err) => {
-        // Quietly log connection errors, suppress "Could not connect" messages
-        if (err.type !== 'peer-unavailable') {
-          console.error('PeerJS error:', err);
+        // Only log non-routine errors
+        if (err.type === 'peer-unavailable') {
+          // Silently ignore - device just isn't online
+          return;
+        }
+        
+        console.error('PeerJS error:', err);
+        
+        // Show user-friendly error for WebRTC issues
+        if (err.type === 'unavailable-id') {
+          console.warn('Peer ID conflict');
+        } else if (err.type === 'browser-incompatible' || err.type === 'webrtc') {
+          $f7.dialog.alert('WebRTC error. In Brave: Settings → Shields → Fingerprinting → "Standard"', 'WebRTC Issue');
         }
       });
     });
@@ -196,9 +270,12 @@
 
       // Close all connections
       Object.keys(connections).forEach((peerId) => {
-        connections[peerId].close();
+        if (connections[peerId] && !connections[peerId].disconnected) {
+          connections[peerId].close();
+        }
       });
       connections = {};
+      connectionAttempts = {};
 
       // Destroy peer
       if (peer) {

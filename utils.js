@@ -285,3 +285,146 @@ function triggerVibration(pattern = [200, 100, 200]) {
         navigator.vibrate(pattern);
     }
 }
+
+
+// PEER.JS CONNECTION UTILITIES **********************
+// PEER.JS CONNECTION UTILITIES **********************
+// PEER.JS CONNECTION UTILITIES **********************
+
+// Global peer connection state
+let activePeer = null;
+let activePeerId = null;
+let remoteGoCallback = null;
+let activeConnections = {}; // Track active connections to prevent duplicates
+
+/**
+ * Initialize a PeerJS connection for receiving remote triggers
+ * @param {Function} onRemoteGoCallback - Function to call when 'go' message is received
+ * @returns {Object} - Peer instance
+ */
+function initializePeerConnection(onRemoteGoCallback) {
+    if (typeof Peer === 'undefined') {
+        console.error('PeerJS library not loaded');
+        return null;
+    }
+
+    // Clean up any existing connection first
+    cleanupPeerConnection();
+
+    // Better WebRTC detection for Brave and other browsers
+    const hasWebRTC = !!(window.RTCPeerConnection || window.webkitRTCPeerConnection || window.mozRTCPeerConnection);
+    
+    if (!hasWebRTC) {
+        console.error('WebRTC not supported or disabled in browser settings');
+        console.log('Please check: Brave Shields → Fingerprinting → Set to Standard (not Strict)');
+        app.dialog.alert('WebRTC is disabled in your browser. In Brave, go to Settings → Shields and set Fingerprinting to "Standard"', 'WebRTC Disabled');
+        return null;
+    }
+
+    const remoteChannel = appData.global.remote_channel || 'default';
+    const playerSlot = appData.global.player_slot || 'player1';
+
+    // Initialize PeerJS with predictable ID for auto-discovery
+    activePeerId = `simphoney-${remoteChannel}-${playerSlot}`;
+    
+    try {
+        activePeer = new Peer(activePeerId, {
+            debug: 0 // Reduce debug output; set to 2 for verbose logging
+        });
+        remoteGoCallback = onRemoteGoCallback;
+        activeConnections = {};
+    } catch (err) {
+        console.error('Failed to create Peer instance:', err);
+        app.dialog.alert('Failed to initialize peer connection. Please check browser settings.', 'Connection Error');
+        return null;
+    }
+
+    activePeer.on('open', (id) => {
+        console.log(`PeerJS connected - Channel: ${remoteChannel}, Slot: ${playerSlot}, ID: ${id}`);
+    });
+
+    activePeer.on('connection', (conn) => {
+        // Check if we already have an active connection from this peer
+        if (activeConnections[conn.peer]) {
+            console.log('Duplicate connection attempt from:', conn.peer, '- ignoring');
+            return;
+        }
+
+        console.log('Remote connection established from:', conn.peer);
+        activeConnections[conn.peer] = conn;
+
+        conn.on('data', (data) => {
+            console.log('Received data from remote:', data);
+            if (data === 'go' && remoteGoCallback) {
+                remoteGoCallback();
+            }
+        });
+
+        conn.on('close', () => {
+            console.log('Remote connection closed:', conn.peer);
+            delete activeConnections[conn.peer];
+        });
+
+        conn.on('error', (err) => {
+            console.error('Connection error:', err);
+            delete activeConnections[conn.peer];
+        });
+    });
+
+    activePeer.on('error', (err) => {
+        console.error('PeerJS error:', err);
+        
+        // Handle specific error types
+        if (err.type === 'unavailable-id') {
+            console.warn('Peer ID already in use, cleaning up...');
+            cleanupPeerConnection();
+        } else if (err.type === 'webrtc') {
+            console.error('WebRTC error - check browser permissions and settings');
+        }
+    });
+
+    return activePeer;
+}
+
+/**
+ * Clean up active PeerJS connection
+ */
+function cleanupPeerConnection() {
+    // Close all active connections
+    if (activeConnections) {
+        Object.keys(activeConnections).forEach(peerId => {
+            const conn = activeConnections[peerId];
+            if (conn && !conn.disconnected) {
+                try {
+                    conn.close();
+                } catch (err) {
+                    console.warn('Error closing connection:', err);
+                }
+            }
+        });
+        activeConnections = {};
+    }
+
+    if (activePeer) {
+        try {
+            if (!activePeer.destroyed) {
+                activePeer.destroy();
+            }
+        } catch (err) {
+            console.warn('Error destroying peer:', err);
+        }
+        activePeer = null;
+        activePeerId = null;
+        remoteGoCallback = null;
+        localStorage.removeItem('simphoney_peer_id');
+        console.log('PeerJS connection closed');
+    }
+}
+
+/**
+ * Check if peer connection is active
+ * @returns {boolean}
+ */
+function isPeerConnected() {
+    return activePeer !== null && !activePeer.destroyed;
+}

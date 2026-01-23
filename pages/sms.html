@@ -93,9 +93,6 @@
     let messagebar;
     let messages;
     let messageCounter = 0;
-    let peer = null;
-    let peerId = null;
-    const remoteChannel = appData.global.remote_channel || 'default';
 
 
 
@@ -300,12 +297,7 @@
         }
         
         // Clean up PeerJS connection
-        if (peer) {
-          peer.destroy();
-          peer = null;
-          peerId = null;
-          console.log('PeerJS connection closed');
-        }
+        cleanupPeerConnection();
       });
 
 
@@ -327,28 +319,9 @@
       // if trigger type is 'remote', set up PeerJS to wait for triggers for each response...
       if (currentSim.trigger_type === 'remote') {
         // Remote mode: set up PeerJS and wait for trigger
-        let playerSlot = appData.global.player_slot || 'player1';
-
-        peerId = `simphoney-${remoteChannel}-${playerSlot}`;
-        peer = new Peer(peerId);
-
-        peer.on('open', (id) => {
-          console.log(`PeerJS connected - Channel: ${remoteChannel}, Slot: ${playerSlot}, ID: ${id}`);
-        });
-
-        peer.on('connection', (conn) => {
-          console.log('Remote connection established');
-          conn.on('data', (data) => {
-            console.log('Received data from remote:', data);
-            if (data === 'go') {
-              // Trigger the first message response
-              doResponses(0);
-            }
-          });
-        });
-
-        peer.on('error', (err) => {
-          console.error('PeerJS error:', err);
+        initializePeerConnection(() => {
+          // Trigger the first message response
+          doResponses(0);
         });
       }
 

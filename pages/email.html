@@ -355,9 +355,6 @@
 <!-- component logic -->
 <script>
   export default (props, { $f7, $on }) => {
-    let peer = null;
-    let peerId = null;
-    const remoteChannel = appData.global.remote_channel || 'default';
     let allEmails = [];
     let currentView = 'inbox';
     let currentEmailIndex = -1;
@@ -703,7 +700,6 @@
           $$('#compose_view').hide();
         }
         
-        
         // Trigger notification based on trigger type
         if (currentSim.trigger_type === 'timed') {
           const delay = (currentSim.delay || 3) * 1000;
@@ -712,7 +708,7 @@
           }, delay);
         } else if (currentSim.trigger_type === 'remote') {
           // Setup peer connection for remote trigger
-          setupPeerConnection();
+          initializePeerConnection(triggerNotification);
         }
       } else {
         // Start directly in inbox
@@ -720,51 +716,12 @@
         showView('inbox');
       }
     });
-
-    // Remote control setup
-    function setupPeerConnection() {
-      if (typeof Peer === 'undefined') {
-        console.error('PeerJS library not loaded');
-        return;
-      }
-
-      // Get player slot from global settings
-      let playerSlot = appData.global.player_slot || 'player1';
-
-      // Initialize PeerJS with predictable ID for auto-discovery
-      peerId = `simphoney-${remoteChannel}-${playerSlot}`;
-      peer = new Peer(peerId);
-
-      peer.on('open', (id) => {
-        console.log(`PeerJS connected - Channel: ${remoteChannel}, Slot: ${playerSlot}, ID: ${id}`);
-      });
-
-      peer.on('connection', (conn) => {
-        console.log('Remote connection established');
-        conn.on('data', (data) => {
-          console.log('Received data from remote:', data);
-          if (data === 'go') {
-            triggerNotification();
-          }
-        });
-      });
-
-      peer.on('error', (err) => {
-        console.error('PeerJS error:', err);
-      });
-    }
-
-    $on('pageBeforeOut', function (e, page) {
-      // Clean up PeerJS connection when leaving the page
-      if (peer) {
-        peer.destroy();
-        peer = null;
-        peerId = null;
-        localStorage.removeItem('simphoney_peer_id');
-        console.log('PeerJS connection closed');
-      }
-    });
     
     return $render
   };
 </script>
+$on('pageBeforeOut', function (e, page) {
+      // Clean up PeerJS connection when leaving the page
+      cleanupPeerConnection();
+    });
+    
