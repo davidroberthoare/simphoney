@@ -1,29 +1,24 @@
 <!-- INCOMING CALL COMPONENT -->
 <template>
   <div data-name="call_in" class="page">
-    <div class="navbar">
-      <div class="navbar-inner">
-        <div class="left">
-          <a href="/" class="link back"><i class="f7-icons">chevron_left</i></a>
-        </div>
-      </div>
-    </div>
+    
     <div class="page-content">
+      <div id="blank_overlay"></div>
       <div id="clock">${currentSim.clock_time}</div>
       <iframe id="website" src=""></iframe>
-      
+
       <!-- Incoming Call Overlay -->
       <div id="call_overlay">
         <div class="call_header">
           <div class="call_label">incoming call</div>
         </div>
-        
+
         <div class="caller_info">
           <div class="caller_avatar" style="background-image: url('${currentSim.caller.picture.medium}');"></div>
           <div class="caller_name">${currentSim.caller.fullname}</div>
           <div class="caller_number">${currentSim.caller.phone}</div>
         </div>
-        
+
         <div class="call_actions">
           <div class="call_button decline" id="decline_button">
             <i class="f7-icons">phone_down_fill</i>
@@ -35,7 +30,7 @@
           </div>
         </div>
       </div>
-      
+
       <!-- In-Call Screen -->
       <div id="in_call_screen">
         <div class="incall_header">
@@ -43,7 +38,7 @@
           <div class="incall_caller_name">${currentSim.caller.fullname}</div>
           <div class="incall_duration" id="call_duration">00:00</div>
         </div>
-        
+
         <div class="incall_actions">
           <div class="incall_button_row">
             <div class="incall_button" id="mute_button">
@@ -59,7 +54,7 @@
               <span>Speaker</span>
             </div>
           </div>
-          
+
           <div class="incall_button_row">
             <div class="incall_button hangup" id="hangup_button">
               <i class="f7-icons">phone_down_fill</i>
@@ -77,7 +72,18 @@
   .page[data-name="call_in"] {
     background: #000;
   }
-  
+
+  #blank_overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    z-index: 10000;
+    display: none;
+  }
+
   #clock {
     width: 100%;
     text-align: center;
@@ -98,7 +104,7 @@
     border: 0px;
     display: none;
   }
-  
+
   #call_overlay {
     position: absolute;
     top: 0;
@@ -113,18 +119,18 @@
     padding: 60px 0px;
     z-index: 1000;
   }
-  
+
   .call_header {
     text-align: center;
   }
-  
+
   .call_label {
     color: #888;
     font-size: 14px;
     text-transform: uppercase;
     letter-spacing: 2px;
   }
-  
+
   .caller_info {
     text-align: center;
     flex: 1;
@@ -133,7 +139,7 @@
     justify-content: center;
     align-items: center;
   }
-  
+
   .caller_avatar {
     width: 120px;
     height: 120px;
@@ -143,26 +149,26 @@
     margin-bottom: 20px;
     border: 3px solid #fff;
   }
-  
+
   .caller_name {
     color: #fff;
     font-size: 32px;
     font-weight: 500;
     margin-bottom: 8px;
   }
-  
+
   .caller_number {
     color: #888;
     font-size: 18px;
   }
-  
+
   .call_actions {
     display: flex;
     justify-content: space-around;
     width: 100%;
     max-width: 300px;
   }
-  
+
   .call_button {
     display: flex;
     flex-direction: column;
@@ -170,7 +176,7 @@
     gap: 8px;
     cursor: pointer;
   }
-  
+
   .call_button i {
     width: 70px;
     height: 70px;
@@ -180,33 +186,34 @@
     justify-content: center;
     font-size: 32px;
   }
-  
+
   .call_button span {
     font-size: 14px;
     color: #fff;
   }
-  
+
   .call_button.decline i {
     background: #ff3b30;
     color: #fff;
   }
-  
+
   .call_button.accept i {
     background: #34c759;
     color: #fff;
   }
-  
+
   .call_button:active i {
     transform: scale(0.95);
   }
-  
+
   /* In-Call Screen Styles */
   #in_call_screen {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
-    height: calc(100% - 120px);;
+    height: calc(100% - 120px);
+    ;
     background: linear-gradient(to bottom, #1c1c1e 0%, #000 100%);
     display: none;
     flex-direction: column;
@@ -215,7 +222,7 @@
     padding: 60px 0px;
     z-index: 1001;
   }
-  
+
   .incall_header {
     text-align: center;
     flex: 1;
@@ -224,7 +231,7 @@
     justify-content: center;
     align-items: center;
   }
-  
+
   .incall_caller_avatar {
     width: 100px;
     height: 100px;
@@ -234,33 +241,33 @@
     margin-bottom: 20px;
     border: 2px solid rgba(255, 255, 255, 0.3);
   }
-  
+
   .incall_caller_name {
     color: #fff;
     font-size: 28px;
     font-weight: 400;
     margin-bottom: 8px;
   }
-  
+
   .incall_duration {
     color: #8e8e93;
     font-size: 16px;
   }
-  
+
   .incall_actions {
     width: 100%;
     display: flex;
     flex-direction: column;
     gap: 40px;
   }
-  
+
   .incall_button_row {
     display: flex;
     justify-content: space-around;
     align-items: center;
     width: 100%;
   }
-  
+
   .incall_button {
     display: flex;
     flex-direction: column;
@@ -269,7 +276,7 @@
     cursor: pointer;
     user-select: none;
   }
-  
+
   .incall_button i {
     width: 64px;
     height: 64px;
@@ -282,17 +289,17 @@
     color: #fff;
     transition: transform 0.1s, background 0.2s;
   }
-  
+
   .incall_button span {
     font-size: 13px;
     color: #fff;
   }
-  
+
   .incall_button.active i {
     background: #fff;
     color: #000;
   }
-  
+
   .incall_button.hangup i {
     width: 64px;
     height: 64px;
@@ -300,7 +307,7 @@
     color: #fff;
     font-size: 32px;
   }
-  
+
   .incall_button:active i {
     transform: scale(0.95);
   }
@@ -332,14 +339,14 @@
         ringtoneSound = playRingtone();
       }
     }
-    
+
     function stopCallRingtone() {
       if (ringtoneSound) {
         stopSound(ringtoneSound);
         ringtoneSound = null;
       }
     }
-    
+
     function triggerVibrationPattern() {
       if ('vibrate' in navigator) {
         // Repeated vibration pattern for incoming call
@@ -355,20 +362,22 @@
 
     // Function to trigger the call overlay
     function triggerCall() {
+      // Hide blank overlay if it was shown
+      $$('#blank_overlay').hide();      // Show call overlay and other elements
       $$('#call_overlay').css('display', 'flex');
       playCallRingtone();
       triggerVibrationPattern();
     }
-    
+
     let callTimer = null;
     let callSeconds = 0;
-    
+
     function answerCall() {
       stopCallRingtone();
       navigator.vibrate && navigator.vibrate(0); // Stop vibration
       $$('#call_overlay').hide();
       $$('#in_call_screen').css('display', 'flex');
-      
+
       // Start call duration timer
       callSeconds = 0;
       updateCallDuration();
@@ -377,19 +386,19 @@
         updateCallDuration();
       }, 1000);
     }
-    
+
     function updateCallDuration() {
       const minutes = Math.floor(callSeconds / 60);
       const seconds = callSeconds % 60;
       const formatted = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
       $$('#call_duration').text(formatted);
     }
-    
+
     function declineCall() {
       stopCallRingtone();
       navigator.vibrate && navigator.vibrate(0); // Stop vibration
       $$('#call_overlay').hide();
-      
+
       // Show a notification that call was declined
       app.notification.create({
         title: 'Call Declined',
@@ -398,28 +407,28 @@
         closeOnClick: true,
       }).open();
     }
-    
+
     function hangupCall() {
       // Stop call timer
       if (callTimer) {
         clearInterval(callTimer);
         callTimer = null;
       }
-      
+
       $$('#in_call_screen').hide();
-      
+
       // Show call ended notification
       const minutes = Math.floor(callSeconds / 60);
       const seconds = callSeconds % 60;
       const duration = minutes > 0 ? `${minutes}m ${seconds}s` : `${seconds}s`;
-      
+
       app.notification.create({
         title: 'Call Ended',
         text: `Call duration: ${duration}`,
         closeTimeout: 2000,
         closeOnClick: true,
       }).open();
-      
+
       callSeconds = 0;
     }
 
@@ -429,29 +438,37 @@
         console.error('No valid incoming call sim');
         return;
       }
-      
+
       // Preload ringtone
       if (!currentSim.custom_ringtone || !currentSim.custom_ringtone.startsWith('data:')) {
         const ringtone = appData.global.ringtone_sound || 'ringtone_1';
         preloadSound(`sounds/${ringtone}.mp3`, ringtone);
       }
-      
+
       // Set background
       if (appData.global.background_img) {
         $$('.page[data-name="call_in"]').css('background-image', `url(${appData.global.background_img})`);
       } else {
         $$('.page[data-name="call_in"]').css('background-image', 'none');
       }
-      
+
       // Hide/show elements based on settings
-      if (currentSim.background_type === 'website' && currentSim.website_url.trim() !== '') {
+      if (currentSim.background_type === 'blank') {
+        // Show blank (phone off) overlay
+        $$('#blank_overlay').show();
+        $$('#website').hide();
+        $$('#clock').hide();
+        $$('#call_overlay').hide();
+      } else if (currentSim.background_type === 'website' && currentSim.website_url.trim() !== '') {
+        $$('#blank_overlay').hide();
         $$('#website').attr('src', currentSim.website_url);
         $$('#website').show();
         $$('#call_overlay').css('background', 'rgba(0, 0, 0, 0.85)');
       } else if (currentSim.background_type === 'lockscreen') {
+        $$('#blank_overlay').hide();
         $$('#website').hide();
         $$('#call_overlay').css('background', 'rgba(0, 0, 0, 0.95)');
-        
+
         if (currentSim.clock_time && currentSim.clock_time.trim() !== '') {
           $$('#clock').show();
         } else {
@@ -470,23 +487,23 @@
       // Set up button handlers
       $$('#accept_button').off('click').on('click', answerCall);
       $$('#decline_button').off('click').on('click', declineCall);
-      
+
       // In-call screen button handlers
       $$('#hangup_button').off('click').on('click', hangupCall);
-      
-      $$('#mute_button').off('click').on('click', function() {
+
+      $$('#mute_button').off('click').on('click', function () {
         $$(this).toggleClass('active');
         const isMuted = $$(this).hasClass('active');
         $$(this).find('span').text(isMuted ? 'Unmute' : 'Mute');
       });
-      
-      $$('#speaker_button').off('click').on('click', function() {
+
+      $$('#speaker_button').off('click').on('click', function () {
         $$(this).toggleClass('active');
         const isOn = $$(this).hasClass('active');
         $$(this).find('span').text(isOn ? 'Speaker On' : 'Speaker Off');
       });
-      
-      $$('#keypad_button').off('click').on('click', function() {
+
+      $$('#keypad_button').off('click').on('click', function () {
         // Keypad functionality could be added here
         app.notification.create({
           title: 'Keypad',
@@ -511,13 +528,13 @@
       // Clean up
       stopCallRingtone();
       navigator.vibrate && navigator.vibrate(0);
-      
+
       // Clean up call timer
       if (callTimer) {
         clearInterval(callTimer);
         callTimer = null;
       }
-      
+
       cleanupPeerConnection();
     });
 

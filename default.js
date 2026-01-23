@@ -32,6 +32,9 @@ const defaultAppData = {
             trigger_type: 'timed',
             sound_enabled: true,
             vibration_enabled: true,
+            clock_time: '',
+            background_type: 'lockscreen',
+            website_url: '',
             senders: generateContacts(2),
             prefilled: [
                 //already on the page when it loads

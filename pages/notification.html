@@ -1,14 +1,9 @@
 <!-- NOTIFICATION COMPONENT -->
 <template>
   <div data-name="notification" class="page">
-    <div class="navbar">
-      <div class="navbar-inner">
-        <div class="left">
-          <a href="/" class="link back"><i class="f7-icons">chevron_left</i></a>
-        </div>
-      </div>
-    </div>
+    
     <div class="page-content">
+      <div id="blank_overlay"></div>
       <div id="clock">${currentSim.clock_time}</div>
       <iframe id="website" src=""></iframe>
     </div>
@@ -18,6 +13,17 @@
 <!-- component styles -->
 <style>
   /* Add custom styles here if needed */
+  #blank_overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    z-index: 10000;
+    display: none;
+  }
+  
   #clock {
     width: 100%;
     text-align: center;
@@ -45,6 +51,9 @@
   export default (props, { $f7, $on }) => {
     // Function to trigger the notification
     function triggerNotification() {
+      // Hide blank overlay if it was shown
+      $$('#blank_overlay').hide();
+      
       // Play sound effect if enabled
       if (currentSim.sound_enabled) {
         playNotificationSound();
@@ -95,11 +104,19 @@
 
       // hide/show various elements based on SIM settings
       // show the website if it's set
-      if (currentSim.background_type === 'website' && currentSim.website_url.trim() !== '') {
+      if (currentSim.background_type === 'blank') {
+        // Show blank (phone off) overlay
+        $$('#blank_overlay').show();
+        $$('#website').hide();
+        $$('#clock').hide();
+      }
+      else if (currentSim.background_type === 'website' && currentSim.website_url.trim() !== '') {
+        $$('#blank_overlay').hide();
         $$('#website').attr('src', currentSim.website_url);
         $$('#website').show();
       }
       else if (currentSim.background_type === 'lockscreen') {
+        $$('#blank_overlay').hide();
         //  if it's the lock screen, hide the website
         $$('#website').hide();
 

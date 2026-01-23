@@ -81,6 +81,46 @@
                         </div>
                     </li>
 
+                    <!-- clock_time -->
+                    <li>
+                        <div class="item-content item-input">
+                            <div class="item-inner">
+                                <div class="item-title item-label">Clock Time (blank if not shown)</div>
+                                <div class="item-input-wrap">
+                                    <input type="text" name="clock_time" placeholder="Clock Time" />
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+
+                    <!-- background type -->
+                    <li>
+                        <div class="item-content item-input">
+                            <div class="item-inner">
+                                <div class="item-title item-label">Background Type</div>
+                                <div class="item-input-wrap">
+                                    <select name="background_type">
+                                        <option value="lockscreen">Lock-Screen</option>
+                                        <option value="website">Website</option>
+                                        <option value="blank">Blank (Phone Off)</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+
+                    <!-- website_url -->
+                    <li>
+                        <div class="item-content item-input">
+                            <div class="item-inner">
+                                <div class="item-title item-label">Website URL</div>
+                                <div class="item-input-wrap">
+                                    <input type="text" name="website_url" placeholder="Website URL" />
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+
                 </ul>
             </form>
 
@@ -292,6 +332,9 @@
                     currentSim.delay = $settings.find('input[name="delay"]').val();
                     currentSim.sound_enabled = $settings.find('input[name="sound_enabled"]').prop('checked');
                     currentSim.vibration_enabled = $settings.find('input[name="vibration_enabled"]').prop('checked');
+                    currentSim.clock_time = $settings.find('input[name="clock_time"]').val();
+                    currentSim.background_type = $settings.find('select[name="background_type"]').val();
+                    currentSim.website_url = $settings.find('input[name="website_url"]').val();
                     console.log('SMS settings updated:', currentSim);
                     appData.sims[currentSim.id] = currentSim;
                     saveAppData();
@@ -730,6 +773,9 @@
             $settings.find('input[name="delay"]').val(s.delay || 3);
             $settings.find('input[name="sound_enabled"]').prop('checked', s.sound_enabled || false);
             $settings.find('input[name="vibration_enabled"]').prop('checked', s.vibration_enabled || false);
+            $settings.find('input[name="clock_time"]').val(s.clock_time || '');
+            $settings.find('select[name="background_type"]').val(s.background_type || 'lockscreen');
+            $settings.find('input[name="website_url"]').val(s.website_url || '');
 
             // Render lists
             renderSendersList();

@@ -1,19 +1,23 @@
 <!-- SMS COMPONENT -->
 <template>
   <div data-name="sms" class="page">
-    <div class="navbar">
+    <!-- <div class="navbar">
       <div class="navbar-inner">
         <div class="left">
           <a href="/" class="link back"><i class="f7-icons">chevron_left</i></a>
         </div>
       </div>
-    </div>
+    </div> -->
 
 
 
     <div class="page-content messages-content">
+      <div id="blank_overlay"></div>
+      <div id="clock"></div>
+      <iframe id="website" src=""></iframe>
+
       <div class="messages">
-        <div class="messages-title"></div>
+        <!-- <div class="messages-title"></div> -->
 
       </div>
     </div>
@@ -58,6 +62,43 @@
 
 <!-- component styles -->
 <style>
+  #blank_overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    z-index: 10000;
+    display: none;
+  }
+
+  #clock {
+    width: 100%;
+    text-align: center;
+    font-size: 4em;
+    color: white;
+    text-shadow: 4px 2px 5px #00000052;
+    margin-top: 10vh;
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 100;
+  }
+
+  #website {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    left: 0;
+    height: 100%;
+    overflow: hidden;
+    border: 0px;
+    display: none;
+    z-index: 50;
+  }
+
   .template.message {
     display: none;
   }
@@ -72,16 +113,17 @@
     margin-left: 5px;
   }
 
-  .md, .md .dark, .md [class*=color-] {
+  .md,
+  .md .dark,
+  .md [class*=color-] {
     --f7-message-received-bg-color: #494a5c;
   }
 
-  .md, .md .dark, .md [class*=color-] {
+  .md,
+  .md .dark,
+  .md [class*=color-] {
     --f7-messagebar-textarea-bg-color: #272727;
   }
-
-
-
 </style>
 
 <!-- component logic -->
@@ -93,10 +135,64 @@
     let messagebar;
     let messages;
     let messageCounter = 0;
+    let notificationShown = false;
 
+    // Function to trigger the SMS notification
+    function triggerSMSNotification() {
+      // Hide blank overlay if it was shown
+      $$('#blank_overlay').hide();
+
+      // Play sound effect if enabled
+      if (currentSim.sound_enabled) {
+        playSMSSound();
+      }
+
+      // Trigger vibration if enabled
+      if (currentSim.vibration_enabled) {
+        triggerVibration();
+      }
+
+      // Get the last prefilled message
+      const lastMessage = currentSim.prefilled[currentSim.prefilled.length - 1];
+      const sender = currentSim.senders[lastMessage.from];
+
+      let notification = app.notification.create({
+        icon: `<div class="avatar" style="background-image: url('${sender.picture.medium}');"></div>`,
+        title: sender.fullname,
+        titleRightText: lastMessage.time || 'now',
+        text: lastMessage.text,
+        closeOnClick: true,
+        swipeToClose: true,
+        on: {
+          close: function () {
+            // Show the full SMS interface when notification is closed
+            showSMSInterface();
+          }
+        }
+      });
+      notification.open();
+      notificationShown = true;
+    }
+
+    // Function to show the SMS interface
+    function showSMSInterface() {
+      // Show the messages interface
+      $$('.messages').show();
+      $$('.messagebar').show();
+      $$('.page[data-name="sms"] .page-content').css('background-image', 'none');
+      $$('#website').hide();
+    }
 
 
     const sendMessage = () => {
+      // Hide blank overlay when user starts interacting (sending first message)
+      $$('#blank_overlay').hide();
+
+      // If notification mode and user is typing, ensure interface is shown
+      if (!notificationShown && currentSim.prefilled && currentSim.prefilled.length > 0) {
+        showSMSInterface();
+      }
+
       var text = messagebar.getValue().replace(/\n/g, '<br />').trim();
       var messagesToSend = [];
 
@@ -195,6 +291,8 @@
         preloadSound(`sounds/${alertSound}.mp3`, alertSound);
       }
 
+
+
       //setup all messages based on the prefilled sim data
       currentSim.prefilled.forEach(m => {
         let $$m = $$($$(".template.message")[0].cloneNode(true));
@@ -209,7 +307,7 @@
           $$m.addClass("message-received");
           $$m.find(".message-name .name").text(currentSim.senders[m.from].fullname);
           // $$m.find(".message-name .time").text(m.time ? `~ ${m.time}` : "");
-          $$m.find(".message-avatar").css("background-image", "url(" + currentSim.senders[m.from].picture.medium + ")");
+          $$m.find(".message-avatar").css("background-image", "url(" + currentSim.senders[m.from].picture.thumbnail + ")");
         }
         if (m.time) {
           $$(".messages").append(`<div class="messages-title">${m.time}</div>`);
@@ -217,6 +315,11 @@
         $$(".messages").append($$m);
       });
 
+
+
+
+
+      // Initialize messagebar and messages first
       messagebar = $f7.messagebar.create({
         el: $el.value.find('.messagebar'),
         attachments: []
@@ -241,6 +344,19 @@
         }
       });
 
+      // Check if there are prefilled messages to show as notification
+      const hasPrefilledMessages = currentSim.prefilled && currentSim.prefilled.length > 0;
+
+      if (!hasPrefilledMessages) {
+        // No prefilled messages - go straight to SMS interface
+        $$('.messages').show();
+        $$('.messagebar').show();
+      } else {
+        // Has prefilled messages - hide interface initially to show notification first
+        $$('.messages').hide();
+        $$('.messagebar').hide();
+      }
+
       $$("#message_text").keypress(function (event) {
         if (event.key === "Enter" && !event.shiftKey) {
           event.preventDefault();
@@ -250,43 +366,6 @@
 
 
 
-      // THIS IS JUST FOR SCROLLING TEXTBAR INTO VIEW WHEN KEYBOARD OPENS
-      // Use Visual Viewport API for Chromium-based browsers
-      // const pageEl = $el.value.find('.page')[0];
-      // const textareaEl = $$("#message_text")[0];
-      // const visualViewport = window.visualViewport;
-
-      // const setKeyboardHeight = (height) => {
-      //   if (!pageEl) return;
-      //   pageEl.style.setProperty('--sms-keyboard-height', `${height || 0}px`);
-      //   console.log('Setting keyboard height:', height);
-      // };
-
-      // const updateKeyboardState = () => {
-      //   if (!visualViewport) return;
-
-      //   const windowHeight = window.innerHeight;
-      //   const viewportHeight = visualViewport.height;
-      //   const keyboardHeight = Math.max(0, windowHeight - viewportHeight);
-
-      //   console.log('Window height:', windowHeight, 'Viewport height:', viewportHeight, 'Keyboard:', keyboardHeight);
-      //   setKeyboardHeight(keyboardHeight);
-
-      //   // Scroll the textarea into view when keyboard opens
-      //   if (keyboardHeight > 0 && textareaEl) {
-      //     setTimeout(() => {
-      //       console.log('Scrolling textarea into view');
-      //       textareaEl.scrollIntoView({ behavior: 'instant', block: 'center' });
-      //     }, 1000);
-      //   }
-      // };
-
-      // if (visualViewport) {
-      //   visualViewport.addEventListener('resize', updateKeyboardState);
-      //   visualViewport.addEventListener('scroll', updateKeyboardState);
-      // }
-
-      // END SCROLLING TEXTBAR INTO VIEW WHEN KEYBOARD OPENS
 
 
 
@@ -295,7 +374,7 @@
           visualViewport.removeEventListener('resize', updateMessagebarPosition);
           visualViewport.removeEventListener('scroll', updateMessagebarPosition);
         }
-        
+
         // Clean up PeerJS connection
         cleanupPeerConnection();
       });
@@ -311,18 +390,73 @@
     $on('pageBeforeIn', function (e, page) {
       console.log('Preparing page...');
 
+      // Set background image if configured
+      if (appData.global.background_img) {
+        $$('.page[data-name="sms"] .page-content').css('background-image', `url(${appData.global.background_img})`);
+        $$('.page[data-name="sms"] .page-content').css('background-size', 'cover');
+        $$('.page[data-name="sms"] .page-content').css('background-position', 'center');
+      } else {
+        $$('.page[data-name="sms"] .page-content').css('background-image', 'none');
+      }
     });
 
     $on('pageAfterIn', function (e, page) {
       console.log('page displayed...', currentSim);
 
-      // if trigger type is 'remote', set up PeerJS to wait for triggers for each response...
-      if (currentSim.trigger_type === 'remote') {
-        // Remote mode: set up PeerJS and wait for trigger
-        initializePeerConnection(() => {
-          // Trigger the first message response
-          doResponses(0);
-        });
+      // Check if there are prefilled messages
+      const hasPrefilledMessages = currentSim.prefilled && currentSim.prefilled.length > 0;
+
+      // Handle background display based on settings
+      if (currentSim.background_type === 'blank') {
+        // Show blank (phone off) overlay
+        $$('#blank_overlay').show();
+        $$('#website').hide();
+        $$('#clock').hide();
+      } else if (currentSim.background_type === 'website' && currentSim.website_url && currentSim.website_url.trim() !== '') {
+        $$('#blank_overlay').hide();
+        $$('#website').attr('src', currentSim.website_url);
+        $$('#website').show();
+      } else if (currentSim.background_type === 'lockscreen') {
+        $$('#blank_overlay').hide();
+        $$('#website').hide();
+
+        // Show clock if configured
+        if (currentSim.clock_time && currentSim.clock_time.trim() !== '') {
+          $$('#clock').text(currentSim.clock_time).show();
+        } else {
+          $$('#clock').hide();
+        }
+      }
+
+      // Handle notification trigger if there are prefilled messages
+      if (hasPrefilledMessages) {
+        if (currentSim.trigger_type === 'timed') {
+          // Timed trigger - show notification after delay
+          setTimeout(() => {
+            triggerSMSNotification();
+          }, currentSim.delay * 1000);
+        } else if (currentSim.trigger_type === 'remote') {
+          // Remote mode: set up PeerJS with a callback that handles both notification and subsequent messages
+          initializePeerConnection(() => {
+            if (!notificationShown) {
+              // First trigger - show notification
+              triggerSMSNotification();
+            } else {
+              // Subsequent triggers - trigger next message response
+              doResponses(0);
+            }
+          });
+        }
+      } else {
+        // No prefilled messages - hide blank overlay immediately if present
+        $$('#blank_overlay').hide();
+
+        // Still set up remote trigger for subsequent messages if needed
+        if (currentSim.trigger_type === 'remote') {
+          initializePeerConnection(() => {
+            doResponses(0);
+          });
+        }
       }
 
     });

@@ -16,6 +16,9 @@
     </div>
 
     <div class="page-content" id="main_page_content">
+      <!-- Blank overlay for phone off mode -->
+      <div id="blank_overlay"></div>
+      
       <!-- Clock for lockscreen notification mode -->
       <div id="clock">${currentSim.clock_time}</div>
       
@@ -139,6 +142,18 @@
   
   #email_navbar.navbar-with-bg {
     background: var(--f7-bars-bg-color);
+  }
+
+  /* Blank overlay for phone off mode */
+  #blank_overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    z-index: 10000;
+    display: none;
   }
 
   /* Clock and website background for notifications */
@@ -552,6 +567,9 @@
 
     // Trigger notification
     function triggerNotification() {
+      // Hide blank overlay if it was shown
+      $$('#blank_overlay').hide();
+      
       // Play sound effect if enabled
       if (currentSim.sound_enabled) {
         playNotificationSound();
@@ -687,11 +705,21 @@
         $$('#main_page_content').css('padding-top', '0');
         
         // Show background elements
-        if (currentSim.background_type === 'lockscreen') {
+        if (currentSim.background_type === 'blank') {
+          // Show blank (phone off) overlay
+          $$('#blank_overlay').show();
+          $$('#clock').hide();
+          $$('#website').hide();
+          $$('#inbox_view').hide();
+          $$('#reader_view').hide();
+          $$('#compose_view').hide();
+        } else if (currentSim.background_type === 'lockscreen') {
+          $$('#blank_overlay').hide();
           if (currentSim.clock_time) {
             $$('#clock').text(currentSim.clock_time).show();
           }
         } else if (currentSim.background_type === 'website' && currentSim.website_url) {
+          $$('#blank_overlay').hide();
           $$('#website').attr('src', currentSim.website_url).show();
           // Ensure navbar and views stay hidden when website is the background
           $$('#email_navbar').hide();
