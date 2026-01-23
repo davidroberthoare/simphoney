@@ -27,21 +27,6 @@ const defaultAppData = {
         },
         s_2: {
             id: 's_2',
-            type: 'notification',
-            name: 'Another Notice',
-            delay: 3,
-            trigger_type: 'timed',
-            sent_time: '12:30pm',
-            sender: generateContacts(1)[0],
-            message: 'Here is the message.',
-            clock_time: "",
-            background_type: "website",
-            website_url: "https://davidhoare.net",
-            sound_enabled: true,
-            vibration_enabled: true
-            },
-            s_3: {
-            id: 's_3',
             type: 'sms',
             name: 'Sample SMS',
             trigger_type: 'timed',
@@ -62,8 +47,8 @@ const defaultAppData = {
                 { from: 0, text: 'No way ;)', autofollow: false, delay: 3 },
             ],
         },
-        s_4: {
-            id: 's_4',
+        s_3: {
+            id: 's_3',
             type: 'call_in',
             name: 'Sample Incoming Call',
             trigger_type: 'timed',
@@ -74,8 +59,8 @@ const defaultAppData = {
             website_url: '',
             custom_ringtone: ''
         },
-        s_5: {
-            id: 's_5',
+        s_4: {
+            id: 's_4',
             type: 'call_out',
             name: 'Sample Outgoing Call',
             trigger_type: 'timed',
@@ -91,8 +76,8 @@ const defaultAppData = {
             selected_contact_id: null,
             clock_time: '12:34pm',
         },
-        s_6: {
-            id: 's_6',
+        s_5: {
+            id: 's_5',
             type: 'email',
             name: 'Sample Email',
             trigger_type: 'timed',
