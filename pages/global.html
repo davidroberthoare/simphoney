@@ -147,6 +147,29 @@
             </div>
           </li>
 
+          <!-- analytics toggle -->
+          <li>
+            <div class="item-content">
+              <div class="item-inner">
+                <div class="item-title">Usage Analytics</div>
+                <div class="item-after">
+                  <label class="toggle">
+                    <input type="checkbox" id="global-analytics_enabled" value="true" /><i class="toggle-icon"></i>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </li>
+          <li>
+            <div class="item-content">
+              <div class="item-inner">
+                <div class="item-text" style="font-size: 12px; color: #888;">
+                  Help improve SimPhoney by sharing anonymous usage data. You can change this anytime.
+                </div>
+              </div>
+            </div>
+          </li>
+
         </ul>
       </form>
 
@@ -235,6 +258,7 @@
       $$('#global-player_slot').val(appData.global.player_slot || 'player1');
       $$('#global-alert_sound').val(appData.global.alert_sound || 'alert1');
       $$('#global-ringtone_sound').val(appData.global.ringtone_sound || 'ringtone_1');
+      $$('#global-analytics_enabled').prop('checked', appData.global.analytics_enabled ? 'checked' : '');
     };
 
     const updateGlobalSettings = () => {
@@ -253,8 +277,18 @@
       }
 
       appData.global.remote_channel = $$('#global-remote_channel').val() || 'default';
-      appData.global.player_slot = $$('#global-player_slot').val() || 'player1'; appData.global.alert_sound = $$('#global-alert_sound').val() || 'alert1';
-      appData.global.ringtone_sound = $$('#global-ringtone_sound').val() || 'ringtone_1'; console.log('Global settings updated:', appData.global);
+      appData.global.player_slot = $$('#global-player_slot').val() || 'player1';
+      appData.global.alert_sound = $$('#global-alert_sound').val() || 'alert1';
+      appData.global.ringtone_sound = $$('#global-ringtone_sound').val() || 'ringtone_1';
+      
+      // Handle analytics toggle
+      const newAnalyticsEnabled = $$('#global-analytics_enabled').prop('checked');
+      if (newAnalyticsEnabled !== appData.global.analytics_enabled) {
+        appData.global.analytics_enabled = newAnalyticsEnabled;
+        loadAnalyticsScript(); // Reload analytics script based on new setting
+      }
+      
+      console.log('Global settings updated:', appData.global);
       saveAppData();
     };
 

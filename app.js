@@ -92,6 +92,83 @@ if (appData.global.dark_mode) {
   document.documentElement.classList.add('dark');
 }
 
+
+
+
+// Analytics consent and loading
+function loadAnalyticsScript() {
+  const container = document.getElementById('analytics-container');
+  if (!container) return; // Analytics completely removed from project
+  
+  // Remove existing script if present
+  const existingScript = container.querySelector('script');
+  if (existingScript) {
+    existingScript.remove();
+  }
+  
+  // Load script only if user has consented
+  if (appData.global.analytics_enabled === true) {
+    const script = document.createElement('script');
+    script.defer = true;
+    script.src = 'https://cloud.umami.is/script.js';
+    script.setAttribute('data-website-id', 'd94a4235-f753-4ccc-ba62-776b072e9cc0');
+    container.appendChild(script);
+    console.log('[Analytics] Script loaded');
+  } else {
+    console.log('[Analytics] Script not loaded (user opt-out or no consent)');
+  }
+}
+
+// Show cookie consent popup for first-time users
+function showCookieConsent() {
+  // Check if analytics container exists (user hasn't removed it)
+  if (!document.getElementById('analytics-container')) {
+    return; // Analytics removed, skip consent
+  }
+  
+  // Check if user has already made a choice
+  if (appData.global.analytics_enabled !== null) {
+    loadAnalyticsScript();
+    return;
+  }
+  
+  // Show consent dialog
+  app.dialog.create({
+    title: 'Privacy & Analytics',
+    text: 'SimPhoney uses anonymous usage analytics to help improve the app. No personal data is collected. You can change this anytime in Settings.',
+    buttons: [
+      {
+        text: 'Decline',
+        onClick: function() {
+          appData.global.analytics_enabled = false;
+          saveAppData();
+          loadAnalyticsScript();
+        }
+      },
+      {
+        text: 'Accept',
+        bold: true,
+        onClick: function() {
+          appData.global.analytics_enabled = true;
+          saveAppData();
+          loadAnalyticsScript();
+        }
+      }
+    ],
+    verticalButtons: false,
+    closeByBackdropClick: false
+  }).open();
+}
+
+// Show cookie consent after app initializes
+setTimeout(() => {
+  showCookieConsent();
+}, 500);
+
+
+
+
+
 // Theme switching functions
 function applyTheme(theme) {
   if (theme === 'ios' || theme === 'md') {

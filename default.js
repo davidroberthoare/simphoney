@@ -8,6 +8,7 @@ const defaultAppData = {
         player_slot: 'player1',
         alert_sound: 'alert_1',
         ringtone_sound: 'ringtone_1',
+        analytics_enabled: null, // null = not decided yet, true/false = user choice
     },
     sims: {
         s_1: {

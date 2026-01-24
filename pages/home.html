@@ -28,7 +28,7 @@
                             <div class="f7-icons size-14 link create" data-type="sms">plus</div>
                         </div>
                     </li>
-                    
+
                     <li class="list-group-title" data-type="call_in">Incoming Calls<div class="item-after">
                             <div class="f7-icons size-14 link create" data-type="call_in">plus</div>
                         </div>
@@ -109,6 +109,13 @@
                 currentSim = appData.sims[simId];
                 enterFullscreen();
                 mainView.router.navigate('/' + currentSim.type + '/');
+
+                // Track analytics event for sim 'play'
+                if (appData.global.analytics_enabled && umami) {
+                    umami.track('play', { type: currentSim.type });
+                }
+                // end analytics tracking for this event
+
             } else {
                 console.error('Sim not found:', simId);
                 return;
@@ -123,6 +130,13 @@
                 const route = '/' + currentSim.type + '_edit/';
                 console.log('Navigating to route:', route);
                 mainView.router.navigate(route);
+
+                // Track analytics event for sim 'edit'
+                if (appData.global.analytics_enabled && umami) {
+                    umami.track('edit', { type: currentSim.type });
+                }
+                // end analytics tracking for this event
+
             } else {
                 console.error('Sim not found for editing:', simId);
                 return;
@@ -143,6 +157,13 @@
             // Store current sim to edit in a temporary variable or state
             currentSim = newSim;
             mainView.router.navigate('/' + newSim.type + '_edit/');
+
+            // Track analytics event for sim 'new'
+            if (appData.global.analytics_enabled && umami) {
+                umami.track('new', { type: currentSim.type });
+            }
+            // end analytics tracking for this event
+            
         }
 
         // Update fullscreen button icon based on current fullscreen state

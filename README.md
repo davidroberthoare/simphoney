@@ -1,6 +1,6 @@
 # SimPhoney
 
-A practical tool for filmmakers to simulate phone notifications and SMS conversations on real devices during filming.
+A practical tool for filmmakers to simulate phone notifications, messaging and other common interactions on real devices during filming.
 
 ## About
 
@@ -13,12 +13,14 @@ Instead of adding notifications in post or using fake phone mockups, SimPhoney l
 ## Features
 
 ### Notification Simulations
+
 - Create custom push notifications with sender name, avatar, message text, and timestamp
 - Choose between lockscreen or website background display
 - Optional clock display for lockscreen mode
 - Control timing with timed delays or remote triggers
 
 ### SMS Conversation Simulations
+
 - Simulate multi-party SMS conversations
 - Pre-filled messages that appear on load
 - Sequential incoming messages with customizable delays
@@ -26,6 +28,7 @@ Instead of adding notifications in post or using fake phone mockups, SimPhoney l
 - Auto-follow mode for rapid-fire message sequences
 
 ### Remote Control
+
 - Trigger simulations from a separate remote control device/browser
 - Auto-discovery of devices on the same network/channel
 - Support for up to 5 simultaneous player devices
@@ -33,6 +36,7 @@ Instead of adding notifications in post or using fake phone mockups, SimPhoney l
 - Perfect for coordinating with crew during takes
 
 ### Customization
+
 - iOS or Android styling
 - Dark mode support
 - Custom background images
@@ -59,6 +63,7 @@ Instead of adding notifications in post or using fake phone mockups, SimPhoney l
 ## Technology
 
 Built with:
+
 - Framework7 v9+ (mobile-first UI framework)
 - Vanilla JavaScript (no frameworks)
 - Vanilla CSS (no preprocessors)
@@ -76,6 +81,7 @@ For best results, install as a Progressive Web App on your device for a full-scr
 ⚠️ **Work in Progress** - This is an active hobby project. Expect bugs, missing features, and breaking changes.
 
 ### Working
+
 - Notification simulations (timed and remote)
 - SMS conversation simulations (timed and remote)
 - Remote control with auto-discovery
@@ -86,6 +92,7 @@ For best results, install as a Progressive Web App on your device for a full-scr
 - Sound effects
 
 ### Planned
+
 - Additional notification types
 - More messaging apps (WhatsApp, iMessage, etc.)
 - Better error handling
@@ -95,14 +102,21 @@ For best results, install as a Progressive Web App on your device for a full-scr
 
 This is a personal hobby project, but contributions, suggestions, and bug reports are welcome! Feel free to open issues or submit pull requests.
 
+## Privacy
+
+No personal data is collected or shared at any time. All customizations you make (data and images) are stored in your local browser, and never sent to any server.
+
+I have included [Umami](https://umami.is/) analytics calls at the top of the index.html page and during navigation events in home.html, just so I can see if anyone's using the app, but feel free to remove it if you host your own version. Analytics can also be simply disabled in-app on first load, or via the global settings page.
+
+
 ## License
 
 Open source and free to use for any purpose. No warranty provided.
 
 ## Credits
 
-- Created for filmmakers, by a film teacher, **David Hoare** (https://davidhoare.net).
-- "Using phone" icons created by **kornkun** (https://www.flaticon.com/free-icons/using-phone)
-- Random users provided by **randomuser.me** (https://randomuser.me/api/?results=200&nat=us,dk,fr,gb&inc=gender,name,nat,phone,email,picture)
+- Created for filmmakers, by a film teacher, **[David Hoare](https://davidhoare.net)**.
+- "Using phone" icons created by **[kornkun](https://www.flaticon.com/free-icons/using-phone)**
+- Random users provided by **[randomuser.me](https://randomuser.me/api/?results=200&nat=us,dk,fr,gb&inc=gender,name,nat,phone,email,picture)**
 
 :)
