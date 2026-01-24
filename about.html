@@ -14,143 +14,145 @@
 
 <body>
     <div id="app">
-        <div class="page">
-            <div class="navbar">
-                <div class="navbar-bg"></div>
-                <div class="navbar-inner">
-                    <div class="left">
-                        <a href="index.html" class="link external">
-                            <i class="f7-icons">chevron_left</i>
-                            <span>Back</span>
+        <div class="view view-main">
+            <div class="page">
+                <div class="navbar">
+                    <div class="navbar-bg"></div>
+                    <div class="navbar-inner">
+                        <div class="left">
+                            <a href="index.html" class="link external">
+                                <i class="f7-icons">chevron_left</i>
+                                <span>Back</span>
+                            </a>
+                        </div>
+                        <div class="title">About</div>
+                    </div>
+                </div>
+                <div class="page-content">
+                    <div class="block-title">SimPhoney</div>
+                    <div class="block block-strong inset">
+
+                        <p>A practical tool for filmmakers to simulate phone notifications, messaging and other common interactions on real devices during filming.</p>
+                    </div>
+
+                    <div class="block-title">About</div>
+                    <div class="block block-strong inset">
+                        <p>SimPhoney is a hobby project and very much a work in progress. It was created to solve a common filmmaking problem: capturing realistic phone interactions on camera without relying on post-production overlays or screen replacements.</p>
+                        <p>Instead of adding notifications in post or using fake phone mockups, SimPhoney lets you trigger realistic iOS/Android notifications and SMS conversations on an actual device in frame, giving you authentic reactions and timing during the shoot.</p>
+                        <p><strong>This project is open source and completely free to use.</strong></p>
+                    </div>
+
+                    <div class="block-title">Features</div>
+                    <div class="block block-strong inset">
+                        <ul>
+                            <li><strong>Notification Simulations:</strong> Create custom push notifications with sender name, avatar, message text, and timestamp</li>
+                            <li><strong>SMS Conversation Simulations:</strong> Simulate multi-party SMS conversations • Pre-filled messages • Sequential incoming messages • Typing indicators • Auto-follow mode</li>
+                            <li><strong>Incoming Call Simulations:</strong> Simulate realistic incoming phone calls with caller name and avatar • Choose between timed delay or remote trigger • Custom ringtone selection</li>
+                            <li><strong>Outgoing Call Simulations:</strong> Simulate placing an outgoing call with customizable contact</li>
+                            <li><strong>Email Simulations:</strong> Simulate receiving email notifications • Reply, forward, delete, and compose • Fully functional inbox with prepopulated or custom emails • Timed or remote-triggered delivery</li>
+                            <li><strong>Remote Control:</strong> Trigger simulations from a separate device • Auto-discovery on same network • Support for up to 5 simultaneous devices • Configurable channels • Perfect for coordinating with crew</li>
+                            <li><strong>Customization:</strong> Custom backgrounds and timing • Selectable notification sounds • Custom avatars and text • iOS or Android styling • Dark mode support</li>
+                        </ul>
+                    </div>
+
+                    <div class="block-title">How It Works</div>
+                    <div class="block block-strong inset">
+                        <ol>
+                            <li><strong>Create a Simulation</strong> - Set up notification or SMS conversations with your desired content</li>
+                            <li><strong>Choose Trigger Type</strong> - <strong>Timed:</strong> Automatically triggers after a specified delay | <strong>Remote:</strong> Waits for trigger from remote control device</li>
+                            <li><strong>Play the Simulation</strong> - Device displays the notification/conversation just like a real phone</li>
+                            <li><strong>Remote Control</strong> (optional) - Use a second device to trigger the simulation on cue</li>
+                        </ol>
+                    </div>
+
+                    <div class="block-title">Use Cases</div>
+                    <div class="block block-strong inset">
+                        <ul>
+                            <li>Film scenes where a character receives a text or notification</li>
+                            <li>Capture genuine reactions to phone interactions</li>
+                            <li>Control timing precisely during takes</li>
+                            <li>Multiple devices for scenes with multiple characters</li>
+                            <li>Background phone activity in wide shots</li>
+                        </ul>
+                    </div>
+
+                    <div class="block-title">Technology</div>
+                    <div class="block block-strong inset">
+                        <p>Built with:</p>
+                        <ul>
+                            <li>Framework7 v9+ (mobile-first UI framework)</li>
+                            <li>Vanilla JavaScript (no frameworks)</li>
+                            <li>Vanilla CSS (no preprocessors)</li>
+                            <li>PeerJS (for remote control functionality)</li>
+                            <li>Progressive Web App (installable, works offline)</li>
+                        </ul>
+                    </div>
+
+                    <div class="block-title">Installation</div>
+                    <div class="block block-strong inset">
+                        <p>Simply open <a href="https://simphoney.drhmedia.net/" class="external" target="_blank">https://simphoney.drhmedia.net/</a> in a mobile browser (and again on another device if you want to remote control the first one). If you'd like to host it on your own web server, you can clone the repo or download the zip archive straight to the web root. No build process or dependencies to install.</p>
+                        <p>For best results, install as a Progressive Web App on your device for a full-screen, native-like experience.</p>
+                    </div>
+
+                    <div class="block-title">Current Status</div>
+                    <div class="block block-strong inset color-yellow">
+                        <p><strong>⚠️ Work in Progress</strong> - This is an active hobby project. Expect bugs, missing features, and breaking changes. I will attempt to keep the 'live' branch (hosted at <a href="https://simphoney.drhmedia.net/" class="external" target="_blank">https://simphoney.drhmedia.net/</a>) fully working at all times. It's possible you might have to clear your cache and reset the data (there is a built-in function on the global settings page for that).</p>
+                    </div>
+
+                    <div class="block block-strong inset">
+                        <p><strong>Working:</strong></p>
+                        <ul>
+                            <li>Notification simulations (timed and remote)</li>
+                            <li>SMS conversation simulations</li>
+                            <li>Remote control with auto-discovery</li>
+                            <li>Global settings</li>
+                            <li>PWA installation</li>
+                            <li>iOS/Android styling</li>
+                            <li>Phone call simulations</li>
+                            <li>Sound effects</li>
+                        </ul>
+
+                        <p><strong>Planned:</strong></p>
+                        <ul>
+                            <li>Additional notification types</li>
+                            <li>More messaging apps (WhatsApp, iMessage, etc.)</li>
+                            <li>Better error handling</li>
+                            <li>Documentation improvements</li>
+                        </ul>
+                    </div>
+
+                    <div class="block-title">Contributing</div>
+                    <div class="block block-strong inset">
+                        <p>This is a personal hobby project, but contributions, suggestions, and bug reports are welcome! Feel free to open issues or submit pull requests.</p>
+                        <p>If you find this app useful, especially if you use it in a project, please let us know in the <a href="https://github.com/davidroberthoare/simphoney/discussions/categories/show-and-tell" class="external" target="_blank">discussions</a>, or you can sponsor the project here: <a href="https://github.com/sponsors/davidroberthoare" class="external" target="_blank">GitHub Sponsors</a> or here: <a href="https://ko-fi.com/davidhoare" class="external" target="_blank">Ko-fi</a>.</p>
+                    </div>
+
+                    <div class="block-title">Privacy</div>
+                    <div class="block block-strong inset">
+                        <p>No personal data is collected or shared at any time. All customizations you make (data and images) are stored in your local browser, and never sent to any server.</p>
+                        <p>I have included <a href="https://umami.is/" class="external" target="_blank">Umami</a> analytics calls at the top of the index.html page and during navigation events in home.html, just so I can see if anyone's using the app, but feel free to remove it if you host your own version. Analytics can also be simply disabled in-app on first load, or via the global settings page.</p>
+                    </div>
+
+                    <div class="block-title">License</div>
+                    <div class="block block-strong inset">
+                        <p>Open source and free to use for any purpose. No warranty provided.</p>
+                    </div>
+
+                    <div class="block-title">Credits</div>
+                    <div class="block block-strong inset">
+                        <ul>
+                            <li>Created for filmmakers, by a film teacher, <strong><a href="https://davidhoare.net" class="external" target="_blank">David Hoare</a></strong></li>
+                            <li>"Using phone" icons created by <strong><a href="https://www.flaticon.com/free-icons/using-phone" class="external" target="_blank">kornkun</a></strong></li>
+                            <li>Random users provided by <strong><a href="https://randomuser.me/api/?results=200&nat=us,dk,fr,gb&inc=gender,name,nat,phone,email,picture" class="external" target="_blank">randomuser.me</a></strong></li>
+                        </ul>
+                        <p style="text-align: center;">:)</p>
+                    </div>
+
+                    <div class="block">
+                        <a href="index.html" class="button button-large button-fill external">
+                            <i class="f7-icons">chevron_left</i> Back to App
                         </a>
                     </div>
-                    <div class="title">About</div>
-                </div>
-            </div>
-            <div class="page-content">
-                <div class="block-title">SimPhoney</div>
-                <div class="block block-strong inset">
-
-                    <p>A practical tool for filmmakers to simulate phone notifications, messaging and other common interactions on real devices during filming.</p>
-                </div>
-
-                <div class="block-title">About</div>
-                <div class="block block-strong inset">
-                    <p>SimPhoney is a hobby project and very much a work in progress. It was created to solve a common filmmaking problem: capturing realistic phone interactions on camera without relying on post-production overlays or screen replacements.</p>
-                    <p>Instead of adding notifications in post or using fake phone mockups, SimPhoney lets you trigger realistic iOS/Android notifications and SMS conversations on an actual device in frame, giving you authentic reactions and timing during the shoot.</p>
-                    <p><strong>This project is open source and completely free to use.</strong></p>
-                </div>
-
-                <div class="block-title">Features</div>
-                <div class="block block-strong inset">
-                    <ul>
-                        <li><strong>Notification Simulations:</strong> Create custom push notifications with sender name, avatar, message text, and timestamp</li>
-                        <li><strong>SMS Conversation Simulations:</strong> Simulate multi-party SMS conversations • Pre-filled messages • Sequential incoming messages • Typing indicators • Auto-follow mode</li>
-                        <li><strong>Incoming Call Simulations:</strong> Simulate realistic incoming phone calls with caller name and avatar • Choose between timed delay or remote trigger • Custom ringtone selection</li>
-                        <li><strong>Outgoing Call Simulations:</strong> Simulate placing an outgoing call with customizable contact</li>
-                        <li><strong>Email Simulations:</strong> Simulate receiving email notifications • Reply, forward, delete, and compose • Fully functional inbox with prepopulated or custom emails • Timed or remote-triggered delivery</li>
-                        <li><strong>Remote Control:</strong> Trigger simulations from a separate device • Auto-discovery on same network • Support for up to 5 simultaneous devices • Configurable channels • Perfect for coordinating with crew</li>
-                        <li><strong>Customization:</strong> Custom backgrounds and timing • Selectable notification sounds • Custom avatars and text • iOS or Android styling • Dark mode support</li>
-                    </ul>
-                </div>
-
-                <div class="block-title">How It Works</div>
-                <div class="block block-strong inset">
-                    <ol>
-                        <li><strong>Create a Simulation</strong> - Set up notification or SMS conversations with your desired content</li>
-                        <li><strong>Choose Trigger Type</strong> - <strong>Timed:</strong> Automatically triggers after a specified delay | <strong>Remote:</strong> Waits for trigger from remote control device</li>
-                        <li><strong>Play the Simulation</strong> - Device displays the notification/conversation just like a real phone</li>
-                        <li><strong>Remote Control</strong> (optional) - Use a second device to trigger the simulation on cue</li>
-                    </ol>
-                </div>
-
-                <div class="block-title">Use Cases</div>
-                <div class="block block-strong inset">
-                    <ul>
-                        <li>Film scenes where a character receives a text or notification</li>
-                        <li>Capture genuine reactions to phone interactions</li>
-                        <li>Control timing precisely during takes</li>
-                        <li>Multiple devices for scenes with multiple characters</li>
-                        <li>Background phone activity in wide shots</li>
-                    </ul>
-                </div>
-
-                <div class="block-title">Technology</div>
-                <div class="block block-strong inset">
-                    <p>Built with:</p>
-                    <ul>
-                        <li>Framework7 v9+ (mobile-first UI framework)</li>
-                        <li>Vanilla JavaScript (no frameworks)</li>
-                        <li>Vanilla CSS (no preprocessors)</li>
-                        <li>PeerJS (for remote control functionality)</li>
-                        <li>Progressive Web App (installable, works offline)</li>
-                    </ul>
-                </div>
-
-                <div class="block-title">Installation</div>
-                <div class="block block-strong inset">
-                    <p>Simply open <a href="https://simphoney.drhmedia.net/" class="external" target="_blank">https://simphoney.drhmedia.net/</a> in a mobile browser (and again on another device if you want to remote control the first one). If you'd like to host it on your own web server, you can clone the repo or download the zip archive straight to the web root. No build process or dependencies to install.</p>
-                    <p>For best results, install as a Progressive Web App on your device for a full-screen, native-like experience.</p>
-                </div>
-
-                <div class="block-title">Current Status</div>
-                <div class="block block-strong inset color-yellow">
-                    <p><strong>⚠️ Work in Progress</strong> - This is an active hobby project. Expect bugs, missing features, and breaking changes. I will attempt to keep the 'live' branch (hosted at <a href="https://simphoney.drhmedia.net/" class="external" target="_blank">https://simphoney.drhmedia.net/</a>) fully working at all times. It's possible you might have to clear your cache and reset the data (there is a built-in function on the global settings page for that).</p>
-                </div>
-
-                <div class="block block-strong inset">
-                    <p><strong>Working:</strong></p>
-                    <ul>
-                        <li>Notification simulations (timed and remote)</li>
-                        <li>SMS conversation simulations</li>
-                        <li>Remote control with auto-discovery</li>
-                        <li>Global settings</li>
-                        <li>PWA installation</li>
-                        <li>iOS/Android styling</li>
-                        <li>Phone call simulations</li>
-                        <li>Sound effects</li>
-                    </ul>
-
-                    <p><strong>Planned:</strong></p>
-                    <ul>
-                        <li>Additional notification types</li>
-                        <li>More messaging apps (WhatsApp, iMessage, etc.)</li>
-                        <li>Better error handling</li>
-                        <li>Documentation improvements</li>
-                    </ul>
-                </div>
-
-                <div class="block-title">Contributing</div>
-                <div class="block block-strong inset">
-                    <p>This is a personal hobby project, but contributions, suggestions, and bug reports are welcome! Feel free to open issues or submit pull requests.</p>
-                    <p>If you find this app useful, especially if you use it in a project, please let us know in the <a href="https://github.com/davidroberthoare/simphoney/discussions/categories/show-and-tell" class="external" target="_blank">discussions</a>, or you can sponsor the project here: <a href="https://github.com/sponsors/davidroberthoare" class="external" target="_blank">GitHub Sponsors</a> or here: <a href="https://ko-fi.com/davidhoare" class="external" target="_blank">Ko-fi</a>.</p>
-                </div>
-
-                <div class="block-title">Privacy</div>
-                <div class="block block-strong inset">
-                    <p>No personal data is collected or shared at any time. All customizations you make (data and images) are stored in your local browser, and never sent to any server.</p>
-                    <p>I have included <a href="https://umami.is/" class="external" target="_blank">Umami</a> analytics calls at the top of the index.html page and during navigation events in home.html, just so I can see if anyone's using the app, but feel free to remove it if you host your own version. Analytics can also be simply disabled in-app on first load, or via the global settings page.</p>
-                </div>
-
-                <div class="block-title">License</div>
-                <div class="block block-strong inset">
-                    <p>Open source and free to use for any purpose. No warranty provided.</p>
-                </div>
-
-                <div class="block-title">Credits</div>
-                <div class="block block-strong inset">
-                    <ul>
-                        <li>Created for filmmakers, by a film teacher, <strong><a href="https://davidhoare.net" class="external" target="_blank">David Hoare</a></strong></li>
-                        <li>"Using phone" icons created by <strong><a href="https://www.flaticon.com/free-icons/using-phone" class="external" target="_blank">kornkun</a></strong></li>
-                        <li>Random users provided by <strong><a href="https://randomuser.me/api/?results=200&nat=us,dk,fr,gb&inc=gender,name,nat,phone,email,picture" class="external" target="_blank">randomuser.me</a></strong></li>
-                    </ul>
-                    <p style="text-align: center;">:)</p>
-                </div>
-
-                <div class="block">
-                    <a href="index.html" class="button button-large button-fill external">
-                        <i class="f7-icons">chevron_left</i> Back to App
-                    </a>
                 </div>
             </div>
         </div>
