@@ -102,7 +102,7 @@ For best results, install as a Progressive Web App on your device for a full-scr
 
 This is a personal hobby project, but contributions, suggestions, and bug reports are welcome! Feel free to open issues or submit pull requests.
 
-If you find this app useful, especially if you use it in a project, please share 
+If you find this app useful, especially if you use it in a project, please let us know in the [discussions](https://github.com/davidroberthoare/simphoney/discussions/categories/show-and-tell), or you can sponsor the project here: [https://github.com/sponsors/davidroberthoare](https://github.com/sponsors/davidroberthoare) or here: [https://ko-fi.com/davidhoare](https://ko-fi.com/davidhoare).
 
 ## Privacy
 
