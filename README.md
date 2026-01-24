@@ -102,12 +102,13 @@ For best results, install as a Progressive Web App on your device for a full-scr
 
 This is a personal hobby project, but contributions, suggestions, and bug reports are welcome! Feel free to open issues or submit pull requests.
 
+If you find this app useful, especially if you use it in a project, please share 
+
 ## Privacy
 
 No personal data is collected or shared at any time. All customizations you make (data and images) are stored in your local browser, and never sent to any server.
 
 I have included [Umami](https://umami.is/) analytics calls at the top of the index.html page and during navigation events in home.html, just so I can see if anyone's using the app, but feel free to remove it if you host your own version. Analytics can also be simply disabled in-app on first load, or via the global settings page.
-
 
 ## License
 
