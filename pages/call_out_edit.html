@@ -952,15 +952,7 @@
 
             // Delete button
             $$('#delete_button').on('click', function () {
-                app.dialog.confirm(
-                    'Are you sure you want to delete this simulation?',
-                    'Confirm Delete',
-                    function () {
-                        delete appData.sims[currentSim.id];
-                        saveAppData();
-                        app.views.main.router.back();
-                    }
-                );
+                deleteThisSim();
             });
 
             // Hide delete button if new sim

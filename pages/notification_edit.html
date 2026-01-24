@@ -177,7 +177,7 @@
                 </ul>
             </form>
 
-            <div class="block"><button class="button button-fill color-red" onclick="deleteThisSim()">Delete</button></div>
+            <div class="block"><button id="delete_button" class="button button-fill color-red">Delete</button></div>
         </div>
     </div>
 </template>
@@ -306,6 +306,11 @@
             $$("#play_now_button").on('click', function (e) {
                 e.preventDefault();
                 playThisSim();
+            });
+
+            $$("#delete_button").on('click', function (e) {
+                e.preventDefault();
+                deleteThisSim();
             });
 
             $$('select[name="background_type"]').on('change', function () {

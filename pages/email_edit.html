@@ -251,6 +251,7 @@
                 </ul>
             </form>
 
+            <div class="block"><button id="delete_button" class="button button-fill color-red">Delete</button></div>
         </div>
     </div>
 </template>
@@ -339,6 +340,12 @@
 
             // Avatar upload
             $$('#featured_sender_avatar_upload').on('change', handleAvatarUpload);
+
+            // Delete button
+            $$('#delete_button').on('click', function (e) {
+                e.preventDefault();
+                deleteThisSim();
+            });
 
             // Auto-save on input changes
             $$('.settings input, .settings select, .settings textarea').on('change', () => {

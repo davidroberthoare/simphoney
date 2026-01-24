@@ -148,7 +148,7 @@
                 <ul></ul>
             </div>
 
-            <div class="block"><button class="button button-fill color-red" onclick="deleteThisSim()">Delete</button></div>
+            <div class="block"><button id="delete_button" class="button button-fill color-red">Delete</button></div>
         </div>
 
         <!-- SENDER EDIT POPUP -->
@@ -727,6 +727,11 @@
             $$('#add_message_button').on('click', function (e) {
                 e.preventDefault();
                 openMessagePopup('messages');
+            });
+
+            $$('#delete_button').on('click', function (e) {
+                e.preventDefault();
+                deleteThisSim();
             });
 
             $$('select[name="trigger_type"]').on('change', function () {

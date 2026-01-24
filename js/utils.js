@@ -75,6 +75,42 @@ async function resetApp() {
   }
 }
 
+
+// make a new sim based on the default types
+function createNewSim(type) {
+    if (simTypes[type]) {
+        const newSim = { ...simTypes[type] };
+        newSim.id = generateUniqueId();
+        newSim.type = type;
+        newSim.name = `New ${type.charAt(0).toUpperCase() + type.slice(1)} Sim`;
+        return newSim;
+    }
+}
+
+
+
+function deleteThisSim() {
+    //if user confirms, delete the current sim
+    app.dialog.confirm(
+        'Are you sure you want to delete this simulation?',
+        'Confirm Delete',
+        function () {
+            const id = currentSim.id;
+            if (appData.sims[id]) {
+                delete appData.sims[id];
+                saveAppData();
+                console.log('Deleted sim with ID:', id);
+                
+            } else {
+                console.warn('Sim ID not found for deletion:', id);
+            }
+            currentSim = {};
+            mainView.router.navigate('/');
+        }
+    );
+}
+
+
 // Generate a unique ID
 function generateUniqueId() {
     return 'sim-' + Math.random().toString(36).slice(2, 16);

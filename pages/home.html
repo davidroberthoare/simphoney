@@ -150,12 +150,7 @@
             console.log('Creating new sim of type:', type);
             // Generate a new sim object with default values
             const newSimId = generateUniqueId();
-            const newSim = {
-                id: newSimId,
-                name: `New ${type.charAt(0).toUpperCase() + type.slice(1)} Sim`,
-                type: type,
-                // Add other default properties as needed
-            };
+            const newSim = createNewSim(type);
             // Store current sim to edit in a temporary variable or state
             currentSim = newSim;
             mainView.router.navigate('/' + newSim.type + '_edit/');
