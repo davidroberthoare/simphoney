@@ -113,7 +113,7 @@
                 mainView.router.navigate('/' + currentSim.type + '/');
 
                 // Track analytics event for sim 'play'
-                if (appData.global.analytics_enabled && umami) {
+                if (appData.global.analytics_enabled && typeof umami !== 'undefined') {
                     umami.track('play', { type: currentSim.type });
                 }
                 // end analytics tracking for this event
@@ -134,7 +134,7 @@
                 mainView.router.navigate(route);
 
                 // Track analytics event for sim 'edit'
-                if (appData.global.analytics_enabled && umami) {
+                if (appData.global.analytics_enabled && typeof umami !== 'undefined') {
                     umami.track('edit', { type: currentSim.type });
                 }
                 // end analytics tracking for this event
@@ -161,7 +161,7 @@
             mainView.router.navigate('/' + newSim.type + '_edit/');
 
             // Track analytics event for sim 'new'
-            if (appData.global.analytics_enabled && umami) {
+            if (appData.global.analytics_enabled && typeof umami !== 'undefined') {
                 umami.track('new', { type: currentSim.type });
             }
             // end analytics tracking for this event
