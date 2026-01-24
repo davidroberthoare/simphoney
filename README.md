@@ -12,12 +12,10 @@ Instead of adding notifications in post or using fake phone mockups, SimPhoney l
 
 ## Features
 
+
 ### Notification Simulations
 
 - Create custom push notifications with sender name, avatar, message text, and timestamp
-- Choose between lockscreen or website background display
-- Optional clock display for lockscreen mode
-- Control timing with timed delays or remote triggers
 
 ### SMS Conversation Simulations
 
@@ -27,21 +25,43 @@ Instead of adding notifications in post or using fake phone mockups, SimPhoney l
 - Typing indicators for realistic message flow
 - Auto-follow mode for rapid-fire message sequences
 
+### Incoming Call Simulations
+
+- Simulate realistic incoming phone calls with caller name and avatar
+- Choose between timed delay or remote trigger
+- Custom ringtone selection
+
+### Outgoing Call Simulations
+
+- Simulate placing an outgoing call with customizable contact
+
+### Email Simulations
+
+- Simulate receiving email notifications
+- Can reply, forward, delete, and compose new emails
+- Simulated sending action
+- Fully 'functional' inbox, with prepopulated random, or customized emails
+- Custom sender name, subject line, and preview text
+- Timed or remote-triggered delivery
+
 ### Remote Control
 
 - Trigger simulations from a separate remote control device/browser
 - Auto-discovery of devices on the same network/channel
 - Support for up to 5 simultaneous player devices
+- Configurable remote channels for multiple setups
 - Real-time connection status and device management
 - Perfect for coordinating with crew during takes
 
 ### Customization
 
+- Control timing with timed delays or remote triggers
+- Choose between lockscreen or website background display, or 'blank'
+- Custom backgrounds (images, websites, or blank)
+- Selectable notification sounds
+- Custom avatars and text content on all features
 - iOS or Android styling
 - Dark mode support
-- Custom background images
-- Configurable remote channels for multiple setups
-- Player slot assignment (Player 1-5)
 
 ## How It Works
 
@@ -72,13 +92,13 @@ Built with:
 
 ## Installation
 
-Simply open `index.html` in a web browser or host it on any web server. No build process or dependencies to install.
+Simply open [https://simphoney.drhmedia.net/](https://simphoney.drhmedia.net/) in a mobile browser (and again on another device if you wanat to remote control the first one). If you'd like to host it on your own web server, you can clone the repo or download the zip archive straight to the web root. No build process or dependencies to install.
 
 For best results, install as a Progressive Web App on your device for a full-screen, native-like experience.
 
 ## Current Status
 
-⚠️ **Work in Progress** - This is an active hobby project. Expect bugs, missing features, and breaking changes.
+⚠️ **Work in Progress** - This is an active hobby project. Expect bugs, missing features, and breaking changes. I will attempt to keep the 'live' branch (hosted at https://simphoney.drhmedia.net/) fully working at all times. It's possible you might have to clear your cache and reset the data (there is a built-in function on the global settings page for that).
 
 ### Working
 
