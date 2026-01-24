@@ -40,7 +40,7 @@ const defaultAppData = {
                 //already on the page when it loads
                 { from: 0, text: 'Hey, how are you?', time: "10:15pm" },
                 { from: 'me', text: 'I am good, thanks! How about you?', time: "10:17pm" },
-                { from: 1, text: 'We\'re all doing well, and just wanted to check in.', time: "10:19pm" },
+                { from: 1, text: 'We\'re all doing well, and just wanted to check in.', time: "Now" },
             ],
             messages: [
                 //to be added during the simulation
