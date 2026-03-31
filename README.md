@@ -112,30 +112,25 @@ For best results, install as a Progressive Web App on your device for a full-scr
 - Sound effects
 
 ### Planned
-
 - Additional notification types
 - More messaging apps (WhatsApp, iMessage, etc.)
 - Better error handling
 - Documentation improvements
 
 ## Contributing
-
 This is a personal hobby project, but contributions, suggestions, and bug reports are welcome! Feel free to open issues or submit pull requests.
 
 If you find this app useful, especially if you use it in a project, please let us know in the [discussions](https://github.com/davidroberthoare/simphoney/discussions/categories/show-and-tell), or you can sponsor the project here: [https://github.com/sponsors/davidroberthoare](https://github.com/sponsors/davidroberthoare) or here: [https://ko-fi.com/davidhoare](https://ko-fi.com/davidhoare).
 
 ## Privacy
-
 No personal data is collected or shared at any time. All customizations you make (data and images) are stored in your local browser, and never sent to any server.
 
 I have included [Umami](https://umami.is/) analytics calls at the top of the index.html page and during navigation events in home.html, just so I can see if anyone's using the app, but feel free to remove it if you host your own version. Analytics can also be simply disabled in-app on first load, or via the global settings page.
 
 ## License
-
-Open source and free to use for any purpose. No warranty provided.
+See LICENSE file for Creative Commons details. 
 
 ## Credits
-
 - Created for filmmakers, by a film teacher, **[David Hoare](https://davidhoare.net)**.
 - "Using phone" icons created by **[kornkun](https://www.flaticon.com/free-icons/using-phone)**
 - Random users provided by **[randomuser.me](https://randomuser.me/api/?results=200&nat=us,dk,fr,gb&inc=gender,name,nat,phone,email,picture)**
